@@ -1,0 +1,15 @@
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+/app/src/main/res/mipmap-hdpi/*.png
+/app/src/main/res/mipmap-mdpi/*.png
+/app/src/main/res/mipmap-xhdpi/*.png
+/app/src/main/res/mipmap-xxhdpi/*.png
+/app/src/main/res/mipmap-xxxhdpi/*.png
+
