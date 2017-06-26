@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:title="Start a story"
+        android:id="@+id/start"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/menu"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:title="Join the story"
+        android:id="@+id/join"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/menu"
+        tools:ignore="AppCompatResource" />
+
+
+</menu>
