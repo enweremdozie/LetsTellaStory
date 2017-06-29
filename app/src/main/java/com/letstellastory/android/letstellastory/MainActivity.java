@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
         /*Intent intent = new Intent(this, Drama.class);
         startActivity(intent);*/
+
+
     }
 
     @Override
