@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -17,7 +18,11 @@ public class StartAStory extends AppCompatActivity {
     EditText storyName;
     String et;
     RadioGroup genre;
-    RadioButton btnDisplay;
+    RadioGroup length;
+    RadioButton genreDisplay;
+    RadioButton storyLength;
+    CheckBox pass;
+    String passState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +32,9 @@ public class StartAStory extends AppCompatActivity {
         okay = (TextView) findViewById(R.id.ok);
 
         genre = (RadioGroup) findViewById(R.id.radGroup);
+        length = (RadioGroup) findViewById(R.id.length);
+        pass = (CheckBox) findViewById(R.id.PassaStart);
+
 
 
 
@@ -40,18 +48,51 @@ public class StartAStory extends AppCompatActivity {
 
         okay.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 storyName = (EditText) findViewById(R.id.storyName);
                 et = storyName.getText().toString();
                 int selectedId = genre.getCheckedRadioButtonId();
+                int lengthId =  length.getCheckedRadioButtonId();
 
-                btnDisplay = (RadioButton) findViewById(selectedId);
+                genreDisplay = (RadioButton) findViewById(selectedId);
+                storyLength = (RadioButton) findViewById(lengthId);
+                if(pass.isChecked()){
+                    passState = "yes";
+                }
+                else{
+                    passState = "no";
+                }
+
                 if(et.length() > 0) {
-                    Intent intent = new Intent(v.getContext(), Story.class);
-                    intent.putExtra("title", et);
-                    intent.putExtra("genre", btnDisplay.getText());
-                    //Toast.makeText(StartAStory.this, radioButton.getText(), Toast.LENGTH_LONG).show();
-                    startActivity(intent);
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(StartAStory.this);
+                    builder.setTitle("Story snippet");
+                    builder.setMessage("Story name: " + et + "\n" +
+                                        "Genre: " + genreDisplay.getText().toString() + "\n" +
+                                          "Story length: " + storyLength.getText().toString() + "\n" +
+                                            "Pass a start: " + passState);
+
+
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(v.getContext(), Story.class);
+                            intent.putExtra("title", et);
+                            intent.putExtra("genre", genreDisplay.getText());
+                            //Toast.makeText(StartAStory.this, radioButton.getText(), Toast.LENGTH_LONG).show();
+                            startActivity(intent);
+                            // You don't have to do anything here if you just want it dismissed when clicked
+                        }
+                    });
+
+                    builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            // You don't have to do anything here if you just want it dismissed when clicked
+                        }
+                    });
+                    builder.show();
+
                 }
 
                 else{
