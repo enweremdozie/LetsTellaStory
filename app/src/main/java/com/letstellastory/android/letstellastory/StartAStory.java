@@ -23,6 +23,8 @@ public class StartAStory extends AppCompatActivity {
     RadioButton storyLength;
     CheckBox pass;
     String passState;
+    TextView show;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,8 @@ public class StartAStory extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+
 
 
         okay.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +81,7 @@ public class StartAStory extends AppCompatActivity {
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             Intent intent = new Intent(v.getContext(), Story.class);
+                            //Intent intent = new Intent(v.getContext(), Story_Grid.class);                         //over here
                             intent.putExtra("title", et);
                             intent.putExtra("genre", genreDisplay.getText());
                             //Toast.makeText(StartAStory.this, radioButton.getText(), Toast.LENGTH_LONG).show();
