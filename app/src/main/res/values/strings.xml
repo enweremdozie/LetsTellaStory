@@ -6,4 +6,6 @@
     <string name="drama_fragment">Fiction represented in PERFORMANCE</string>
     <string name="romance_fragment">Fiction represented in LOVE</string>
     <string name="horror_fragment">Fiction represented in FEAR</string>
+    <string name="post">POST</string>
+    <string name="hello_world">genre</string>
 </resources>

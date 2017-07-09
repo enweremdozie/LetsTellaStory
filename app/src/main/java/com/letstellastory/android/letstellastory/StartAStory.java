@@ -80,10 +80,16 @@ public class StartAStory extends AppCompatActivity {
 
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            Intent intent = new Intent(v.getContext(), Story.class);
-                            //Intent intent = new Intent(v.getContext(), Story_Grid.class);                         //over here
+                            //Intent intent = new Intent(v.getContext(), Story.class);
+                            Intent intent = new Intent(v.getContext(), theStories.class);
                             intent.putExtra("title", et);
                             intent.putExtra("genre", genreDisplay.getText());
+                            /*getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.container, new Invited_Stories_Fragment())
+                                    .commit();*/
+
+                            //Intent intent = new Intent(v.getContext(), Story_Grid.class);                         //over here
+
                             //Toast.makeText(StartAStory.this, radioButton.getText(), Toast.LENGTH_LONG).show();
                             startActivity(intent);
                             // You don't have to do anything here if you just want it dismissed when clicked

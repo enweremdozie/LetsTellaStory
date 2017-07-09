@@ -1,22 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:title="Start a story"
         android:id="@+id/start"
+        android:title="Start a story"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:icon="@drawable/menu"
         tools:ignore="AppCompatResource" />
 
     <item
-        android:title="Join the story"
         android:id="@+id/join"
+        android:title="Join the story"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:icon="@drawable/menu"
         tools:ignore="AppCompatResource" />
 
+
+    <item
+        android:id="@+id/menu_stories"
+        android:title="Stories"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/menu"
+        tools:ignore="AppCompatResource"
+        />
+
+    <item
+        android:id="@+id/menu_sign_out"
+        android:title="Sign Out"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/menu"
+        tools:ignore="AppCompatResource"
+        />
 
 </menu>

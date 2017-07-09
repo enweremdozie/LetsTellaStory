@@ -13,8 +13,7 @@ import java.util.List;
         private List<ItemObject> itemList;
         private Context context;
 
-        public StoryRecycler(Context context,
-                                         List<ItemObject> itemList)
+        public StoryRecycler(Context context, List<ItemObject> itemList)
         {
             this.itemList = itemList;
             this.context = context;

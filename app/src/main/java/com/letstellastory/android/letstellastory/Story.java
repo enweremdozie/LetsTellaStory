@@ -7,14 +7,22 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class Story extends AppCompatActivity {
     TextView post, show;
     DBHelper db;
     EditText storyED;
-    String ActTitle, genre, story;
+    String ActTitle, genre, story, storyTeller;
+    long storyTime;
+    private FirebaseListAdapter<newStory> adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,15 +31,68 @@ public class Story extends AppCompatActivity {
         db = new DBHelper(this);
 
         post = (TextView) findViewById(R.id.post);
-        show = (TextView) findViewById(R.id.showAll);
+        //show = (TextView) findViewById(R.id.showAll);
         Intent intent = getIntent();
         ActTitle = intent.getExtras().getString("title");
         genre = intent.getExtras().getString("genre");
-        Toast.makeText(Story.this, genre, Toast.LENGTH_LONG).show();
+        //Toast.makeText(Story.this, genre, Toast.LENGTH_LONG).show();
         setTitle(ActTitle);
         AddData();
-        viewAll();
+        //viewAll();
+
     }
+
+    private void displayStory() {
+        ListView storyList = (ListView)findViewById(R.id.stories);
+        adapter = new FirebaseListAdapter<newStory>(this, newStory.class, R.layout.list_item, FirebaseDatabase.getInstance().getReference())
+        {
+            @Override
+            protected void populateView(View v, newStory model, int position) {
+                TextView story;
+                story = (TextView) v.findViewById(R.id.userStory);
+
+                story.setText(model.getStory());
+            }
+        };
+        storyList.setAdapter(adapter);
+    }
+
+
+    /*public Story(String story, String storyTeller) {
+        this.story = story;
+        this.storyTeller = storyTeller;
+
+        storyTime = new Date().getTime();
+    }
+
+    public Story() {
+
+
+    }
+
+    public String getStory() {
+        return story;
+    }
+
+    public void setStory(String story) {
+        this.story = story;
+    }
+
+    public String getStoryTeller() {
+        return storyTeller;
+    }
+
+    public void setStoryTeller(String storyTeller) {
+        this.storyTeller = storyTeller;
+    }
+
+    public long getStoryTime() {
+        return storyTime;
+    }
+
+    public void setStoryTime(long storyTime) {
+        this.storyTime = storyTime;
+    }*/
 
     public void AddData() {
 
@@ -40,6 +101,13 @@ public class Story extends AppCompatActivity {
             //story = ()
             @Override
             public void onClick(View v) {
+
+                EditText input = (EditText) findViewById(R.id.storyEdit);
+                FirebaseDatabase.getInstance().getReference().push().setValue(new newStory(input.getText().toString(),
+                        FirebaseAuth.getInstance().getCurrentUser().getEmail()));
+                input.setText("");
+
+
                 storyED = (EditText) findViewById(R.id.storyEdit);
                 story = storyED.getText().toString();
                 boolean isInserted = db.insertData(ActTitle, genre, story);
@@ -50,6 +118,7 @@ public class Story extends AppCompatActivity {
                     Toast.makeText(Story.this, "Data not Inserted", Toast.LENGTH_LONG).show();
 
                 }
+                //displayStory();
             }
         });
     }
