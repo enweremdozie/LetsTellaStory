@@ -54,12 +54,12 @@ public class Invited_Stories_Fragment extends Fragment {
         //genre = intent.getExtras().getString("genre");
         List<ItemObject> listViewItems = new ArrayList<ItemObject>();
         listViewItems.add(new ItemObject("story", "genre"));
-        /*listViewItems.add(new ItemObject("Pride and Prejudice", "Horror"));
+        listViewItems.add(new ItemObject("Pride and Prejudice", "Horror"));
         listViewItems.add(new ItemObject("One Hundred Years of Solitude", "Romance"));
         listViewItems.add(new ItemObject("The Book Thief", "Romance"));
         listViewItems.add(new ItemObject("The Hunger Games", "Horror"));
         listViewItems.add(new ItemObject("The Hitchhiker's Guide to the Galaxy", "Drama"));
-        listViewItems.add(new ItemObject("The Theory Of Everything", "Romance"));*/
+        listViewItems.add(new ItemObject("The Theory Of Everything", "Romance"));
 
         return listViewItems;
     }

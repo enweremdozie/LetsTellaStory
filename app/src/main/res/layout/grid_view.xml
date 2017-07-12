@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/card_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,21 +20,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:text="@string/hello_world"
-            android:inputType="text"
-            android:textColor="#000"
             android:layout_marginTop="8dp"
-            android:textSize="12sp"/>
+            android:text="@string/hello_world"
+            android:maxLines="1"
+            android:ellipsize="marquee"
+            android:textColor="#000"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/genreView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/storyView"
             android:layout_alignLeft="@+id/storyView"
+            android:layout_below="@+id/storyView"
+            android:layout_marginTop="4dp"
             android:text="@string/hello_world"
-            android:textSize="12sp"
-            android:layout_marginTop="4dp"/>
+            android:textSize="12sp" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>
