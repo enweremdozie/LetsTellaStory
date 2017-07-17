@@ -15,6 +15,7 @@ import android.widget.GridView;
 
 import com.letstellastory.android.letstellastory.Common.Common;
 import com.letstellastory.android.letstellastory.Holder.QBUsersHolder;
+import com.letstellastory.android.letstellastory.adapter.StoryDialogAdapters;
 import com.quickblox.auth.QBAuth;
 import com.quickblox.auth.session.BaseService;
 import com.quickblox.auth.session.QBSession;
@@ -175,13 +176,14 @@ public class My_Stories_Fragment extends Fragment {
             public void onSuccess(ArrayList<QBChatDialog> qbChatDialogs, Bundle bundle) {
 
                 Log.d("CREATION","Inside of my stories fragment");
-                List<ItemObject> sList = getListItemData();
+                /*List<ItemObject> sList = getListItemData();
                 CustomAdapter customAdapter = new CustomAdapter(getActivity(), sList);
-                /*StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity(), qbChatDialogs);
-                gridview.setAdapter(adapter);
-                adapter.notifyDataSetChanged();*/
                 gridview.setAdapter(customAdapter);
-                customAdapter.notifyDataSetChanged();
+                customAdapter.notifyDataSetChanged();*/
+                StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity(), qbChatDialogs);
+                gridview.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+
             }
 
             @Override

@@ -47,7 +47,7 @@ public class StoryDialogAdapters extends BaseAdapter{
 
         if(view == null){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.story_grid_layout, null);
+            view = inflater.inflate(R.layout.grid_view, null);
 
             TextView story,genre;
             story = (TextView) view.findViewById(R.id.storyView);
