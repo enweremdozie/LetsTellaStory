@@ -13,23 +13,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StartAStory"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Story"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Story_Grid"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".theStories"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".StartAStory"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Story"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Story_Grid"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".theStories"
+            android:screenOrientation="portrait" />
+        <activity android:name=".SignUpActivity" />
+        <activity android:name=".ChatDialogsActivity" />
+        <activity android:name=".ListUsersActivity"></activity>
     </application>
 
 </manifest>

@@ -3,10 +3,8 @@ package com.letstellastory.android.letstellastory;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+//Not needed
 
-/**
- * Provides the appropriate {@link Fragment} for a view pager.
- */
 public class SimpleFragmentPagerAdaptor extends FragmentPagerAdapter {
     int frag = 0;
     MainActivity mActivity = new MainActivity();
@@ -19,15 +17,15 @@ public class SimpleFragmentPagerAdaptor extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            mActivity.setFragPos(position);
+            //mActivity.setFragPos(position);
             return new Drama_Fragment();
         }
         else if (position == 1){
-            mActivity.setFragPos(position);
+            //mActivity.setFragPos(position);
             return new Horror_Fragment();
         }
         else {
-            mActivity.setFragPos(position);
+            //mActivity.setFragPos(position);
             return new Romance_Fragment();
         }
     }
@@ -37,7 +35,7 @@ public class SimpleFragmentPagerAdaptor extends FragmentPagerAdapter {
         return 3;
     }
 
-    @Override
+   /* @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
@@ -55,6 +53,6 @@ public class SimpleFragmentPagerAdaptor extends FragmentPagerAdapter {
         }
 
         return null;
-    }
+    }*/
 
 }

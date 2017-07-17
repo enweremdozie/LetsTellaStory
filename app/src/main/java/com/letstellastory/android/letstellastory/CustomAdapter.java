@@ -16,56 +16,57 @@ import java.util.List;
 
 public class CustomAdapter extends BaseAdapter{
     private LayoutInflater layoutinflater;
-        private List<ItemObject> listStorage;
-        private Context context;
+    private List<ItemObject> listStorage;
+    private Context context;
 
-        public CustomAdapter(Context context, List<ItemObject> customizedListView) {
-            this.context = context;
-            layoutinflater =(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            listStorage = customizedListView;
+    public CustomAdapter(Context context, List<ItemObject> customizedListView) {
+        this.context = context;
+        layoutinflater =(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        listStorage = customizedListView;
+    }
+
+
+    @Override
+    public int getCount() {
+        return listStorage.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+        ViewHolder listViewHolder;
+        if(convertView == null){
+            listViewHolder = new ViewHolder();
+            convertView = layoutinflater.inflate(R.layout.grid_view, parent, false);
+            //listViewHolder.screenShot = (ImageView)convertView.findViewById(R.id.screen_shot);
+            listViewHolder.story = (TextView)convertView.findViewById(R.id.storyView);
+            listViewHolder.genre = (TextView)convertView.findViewById(R.id.genreView);
+
+            convertView.setTag(listViewHolder);
         }
-
-        @Override
-        public int getCount() {
-            return listStorage.size();
+        else{
+            listViewHolder = (ViewHolder)convertView.getTag();
         }
+        //listViewHolder.screenShot.setImageResource(listStorage.get(position).getScreenShot());
+        listViewHolder.story.setText(listStorage.get(position).getName());
+        listViewHolder.genre.setText(listStorage.get(position).getGenre());
 
-        @Override
-        public Object getItem(int position) {
-            return position;
-        }
+        return convertView;
+    }
 
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            ViewHolder listViewHolder;
-            if(convertView == null){
-                listViewHolder = new ViewHolder();
-                convertView = layoutinflater.inflate(R.layout.grid_view, parent, false);
-                //listViewHolder.screenShot = (ImageView)convertView.findViewById(R.id.screen_shot);
-                listViewHolder.story = (TextView)convertView.findViewById(R.id.storyView);
-                listViewHolder.genre = (TextView)convertView.findViewById(R.id.genreView);
-
-                convertView.setTag(listViewHolder);
-            }
-            else{
-                listViewHolder = (ViewHolder)convertView.getTag();
-            }
-            //listViewHolder.screenShot.setImageResource(listStorage.get(position).getScreenShot());
-            listViewHolder.story.setText(listStorage.get(position).getName());
-            listViewHolder.genre.setText(listStorage.get(position).getGenre());
-
-            return convertView;
-        }
-
-static class ViewHolder{
-    ImageView screenShot;
-    TextView story;
-    TextView genre;
-}
+    static class ViewHolder{
+        ImageView screenShot;
+        TextView story;
+        TextView genre;
+    }
 }

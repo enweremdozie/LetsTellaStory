@@ -6,17 +6,24 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
 /**
  * Created by dozie on 2017-06-25.
  */
 
 public class CreateDialogFragment extends DialogFragment {
-
+        String user,password,story,genre;
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
+            Bundle mArgs = getArguments();
+            user = mArgs.getString("user");
+            password = mArgs.getString("password");
+            story = mArgs.getString("story");
+            genre = mArgs.getString("genre");
 
+            Log.d("CREATION", "in DialogFrag password is " + password);
                 // Use the Builder class for convenient dialog construction
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Start a story");
@@ -28,8 +35,13 @@ public class CreateDialogFragment extends DialogFragment {
                 builder.setPositiveButton("GO", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         //Context context = getContext();
-                        Intent myIntent = new Intent(getActivity(), StartAStory.class);
-                        startActivity(myIntent);
+
+                        Intent intent = new Intent(getActivity(), StartAStory.class);
+                        intent.putExtra("user", user);
+                        intent.putExtra("password", password);
+                        intent.putExtra("story", story);
+                        intent.putExtra("genre", genre);
+                        startActivity(intent);
                         // You don't have to do anything here if you just want it dismissed when clicked
                     }
                 });

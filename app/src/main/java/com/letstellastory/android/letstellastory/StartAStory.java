@@ -1,5 +1,6 @@
 package com.letstellastory.android.letstellastory;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ public class StartAStory extends AppCompatActivity {
     CheckBox pass;
     String passState;
     TextView show;
+    String user, password;
 
 
     @Override
@@ -37,6 +39,9 @@ public class StartAStory extends AppCompatActivity {
         length = (RadioGroup) findViewById(R.id.length);
         pass = (CheckBox) findViewById(R.id.PassaStart);
 
+        Intent intent = getIntent();
+        user = intent.getExtras().getString("user");
+        password = intent.getExtras().getString("password");
 
 
 
@@ -80,10 +85,13 @@ public class StartAStory extends AppCompatActivity {
 
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            //Intent intent = new Intent(v.getContext(), Story.class);
                             Intent intent = new Intent(v.getContext(), theStories.class);
                             intent.putExtra("title", et);
                             intent.putExtra("genre", genreDisplay.getText());
+                            intent.putExtra("user", user);
+                            intent.putExtra("password", password);
+                            startActivity(intent);
+                            finish();
                             /*getSupportFragmentManager().beginTransaction()
                                     .replace(R.id.container, new Invited_Stories_Fragment())
                                     .commit();*/
@@ -91,7 +99,8 @@ public class StartAStory extends AppCompatActivity {
                             //Intent intent = new Intent(v.getContext(), Story_Grid.class);                         //over here
 
                             //Toast.makeText(StartAStory.this, radioButton.getText(), Toast.LENGTH_LONG).show();
-                            startActivity(intent);
+                            //createSessionForStory(et, genreDisplay.getText());
+
                             // You don't have to do anything here if you just want it dismissed when clicked
                         }
                     });
@@ -126,4 +135,8 @@ public class StartAStory extends AppCompatActivity {
         });
     }
 
+    public void createSessionForStory(){
+        ProgressDialog mDialog = new ProgressDialog(StartAStory.this);
+
+    }
 }
