@@ -46,9 +46,9 @@ public class Local_Stories_Fragment extends Fragment {
         }
 
         gridview = (GridView) view.findViewById(R.id.gridview);
-        List<ItemObject> sList = getListItemData();
+        /*List<ItemObject> sList = getListItemData();
         CustomAdapter customAdapter = new CustomAdapter(getActivity(), sList);
-        gridview.setAdapter(customAdapter);
+        gridview.setAdapter(customAdapter);*/
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

@@ -79,7 +79,6 @@ public class My_Stories_Fragment extends Fragment {
         //StoryRecycler rcAdapter = new StoryRecycler(getActivity(), sList);
         //recyclerView.setAdapter(rcAdapter);
 
-        //createSessionForStory();
 
         //gridview = (GridView)view.findViewById(R.id.gridview);
         story = theStories.story;
@@ -87,20 +86,27 @@ public class My_Stories_Fragment extends Fragment {
         user = theStories.user;
         password = theStories.password;
 
+        if (story != null) {
+            createSessionForStory();
+
+        }
+
         DBHelper mystories = new DBHelper(getActivity());
         if(story != null && genre != null) {
             mystories.insertData_my_stories(story, genre);
         }
 
         gridview = (GridView)view.findViewById(R.id.gridview);
-        List<ItemObject> sList = getListItemData();
+        /*List<ItemObject> sList = getListItemData();
         CustomAdapter customAdapter = new CustomAdapter(getActivity(), sList);
-        gridview.setAdapter(customAdapter);
+        gridview.setAdapter(customAdapter);*/
+
+
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                createSessionForStory();
+                //createSessionForStory();
 
                 QBChatDialog qbChatDialog = (QBChatDialog) gridview.getAdapter().getItem(position);
                 Intent intent = new Intent(getActivity(), Story.class);
@@ -114,7 +120,7 @@ public class My_Stories_Fragment extends Fragment {
         });
 
             loadStoryDialogs();
-            //createSessionForStory();
+
 
 
         return view;
@@ -178,12 +184,11 @@ public class My_Stories_Fragment extends Fragment {
                 Log.d("CREATION","Inside of my stories fragment");
                 /*List<ItemObject> sList = getListItemData();
                 CustomAdapter customAdapter = new CustomAdapter(getActivity(), sList);
-                gridview.setAdapter(customAdapter);
+                listview.setAdapter(customAdapter);
                 customAdapter.notifyDataSetChanged();*/
-                StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity(), qbChatDialogs);
+                StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), qbChatDialogs);
                 gridview.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
-
             }
 
             @Override

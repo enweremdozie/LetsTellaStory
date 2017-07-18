@@ -37,8 +37,8 @@ public class CreateDialogFragment extends DialogFragment {
                         //Context context = getContext();
 
                         Intent intent = new Intent(getActivity(), StartAStory.class);
-                        intent.putExtra("user", user);
-                        intent.putExtra("password", password);
+                        //intent.putExtra("user", user);
+                        //intent.putExtra("password", password);
                         intent.putExtra("story", story);
                         intent.putExtra("genre", genre);
                         startActivity(intent);

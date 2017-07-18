@@ -13,6 +13,15 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.quickblox.chat.QBRestChatService;
+import com.quickblox.chat.model.QBChatDialog;
+import com.quickblox.chat.model.QBDialogType;
+import com.quickblox.chat.utils.DialogUtils;
+import com.quickblox.core.QBEntityCallback;
+import com.quickblox.core.exception.QBResponseException;
+
+import java.util.ArrayList;
+
 public class StartAStory extends AppCompatActivity {
     TextView cancel;
     TextView okay;
@@ -85,11 +94,30 @@ public class StartAStory extends AppCompatActivity {
 
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+
+
+                            ArrayList<Integer> occupantIdsList = new ArrayList<Integer>();
+                            QBChatDialog mdialog = DialogUtils.buildDialog(storyName.getText().toString() + "-" + genreDisplay.getText().toString(), QBDialogType.GROUP, occupantIdsList);
+
+                            QBRestChatService.createChatDialog(mdialog).performAsync(new QBEntityCallback<QBChatDialog>() {
+                                @Override
+                                public void onSuccess(QBChatDialog result, Bundle params) {
+
+                                }
+
+                                @Override
+                                public void onError(QBResponseException responseException) {
+
+                                }
+                            });
+
+
+
                             Intent intent = new Intent(v.getContext(), theStories.class);
                             intent.putExtra("title", et);
                             intent.putExtra("genre", genreDisplay.getText());
-                            intent.putExtra("user", user);
-                            intent.putExtra("password", password);
+                            //intent.putExtra("user", user);
+                            //intent.putExtra("password", password);
                             startActivity(intent);
                             finish();
                             /*getSupportFragmentManager().beginTransaction()

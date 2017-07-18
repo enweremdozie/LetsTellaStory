@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.quickblox.auth.session.QBSettings;
+import com.quickblox.chat.QBChatService;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.QBResponseException;
 import com.quickblox.users.QBUsers;
@@ -29,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        QBChatService.ConfigurationBuilder builder = new QBChatService.ConfigurationBuilder();
+        builder.setAutojoinEnabled(true);
+        QBChatService.setConfigurationBuilder(builder);
 
         initializeFramework();
 

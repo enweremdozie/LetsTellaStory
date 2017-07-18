@@ -10,4 +10,6 @@
     <string name="hello_world">genre</string>
     <string name="pass">pass</string>
     <string name="what_happens_next">What happens next</string>
+    <item name="visible" type="id"/>
+    <item name="masked" type="id"/>
 </resources>

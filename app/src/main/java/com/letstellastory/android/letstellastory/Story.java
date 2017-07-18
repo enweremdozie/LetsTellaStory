@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.letstellastory.android.letstellastory.Common.Common;
 import com.letstellastory.android.letstellastory.Holder.QBStoryMessageHolder;
@@ -40,7 +41,7 @@ import java.util.ArrayList;
 //Not needed
 
 public class Story extends AppCompatActivity {
-    TextView post, pass;
+    TextView pass, post;
     DBHelper db;
     EditText storyED;
     String ActTitle, genre, story, storyTeller;
@@ -56,6 +57,8 @@ public class Story extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //loadChatDialogs();
+        //initChatDialogs();
+
     }
 
     @Override
@@ -64,24 +67,29 @@ public class Story extends AppCompatActivity {
         setContentView(R.layout.activity_story);
         //db = new DBHelper(this);
 
-        post = (TextView) findViewById(R.id.post);
-        pass = (TextView) findViewById(R.id.pass);
+        lstStoryMessages = (ListView) findViewById(R.id.storyList);
+        post = (TextView) findViewById(R.id.postStory);
+        pass = (TextView) findViewById(R.id.passStory);
         storyED = (EditText) findViewById(R.id.storyEdit);
         //show = (TextView) findViewById(R.id.showAll);
         Intent intent = getIntent();
         ActTitle = intent.getExtras().getString("story");
         genre = intent.getExtras().getString("genre");
         //Toast.makeText(Story.this, genre, Toast.LENGTH_LONG).show();
-        setTitle(ActTitle);
+        //setTitle(ActTitle);
+
         //AddData();
         //createSessionForStory();
+
+
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-
+            if(storyED.getText() != null && storyED.getText().toString().trim().length() > 0){
                 post.setVisibility(View.INVISIBLE);
                 pass.setVisibility(View.VISIBLE);
+                Toast.makeText(Story.this, "posting", Toast.LENGTH_LONG).show();
 
                 QBChatMessage storyMessage = new QBChatMessage();
                 storyMessage.setBody(storyED.getText().toString());
@@ -94,15 +102,21 @@ public class Story extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                QBStoryMessageHolder.getInstance().putStory(qbChatDialog.getDialogId(), storyMessage);
+                /*QBStoryMessageHolder.getInstance().putStory(qbChatDialog.getDialogId(), storyMessage);
                 ArrayList<QBChatMessage> messages = QBStoryMessageHolder.getInstance().getStoryMessageByDialogId(qbChatDialog.getDialogId());
                 adapter = new StoryMessageAdapter(getBaseContext(), messages);
                 lstStoryMessages.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();*/
 
 
                 storyED.setText("");
                 storyED.setFocusable(true);
+
+            }
+          else {
+                Toast.makeText(Story.this, "\"What happens next\" cannot be empty", Toast.LENGTH_LONG).show();
+            }
+
             }
         });
 
@@ -115,10 +129,11 @@ public class Story extends AppCompatActivity {
         });
 
 
-        initChatDialogs();
+
+
+        initStoryDialogs();
 
         retrieveStories();
-
         //loadChatDialogs();
 
     }
@@ -133,6 +148,7 @@ public class Story extends AppCompatActivity {
                 public void onSuccess(ArrayList<QBChatMessage> qbChatMessages, Bundle bundle) {
                     QBStoryMessageHolder.getInstance().putStories(qbChatDialog.getDialogId(), qbChatMessages);
                     adapter = new StoryMessageAdapter(getBaseContext(), qbChatMessages);
+                    lstStoryMessages.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 }
 
@@ -145,8 +161,8 @@ public class Story extends AppCompatActivity {
 
     }
 
-    private void initChatDialogs() {
-        qbChatDialog = (QBChatDialog) getIntent().getSerializableExtra(Common.DIALOG_EXTRA);
+    private void initStoryDialogs() {
+        qbChatDialog = (QBChatDialog)getIntent().getSerializableExtra(Common.DIALOG_EXTRA);
         qbChatDialog.initForChat(QBChatService.getInstance());
 
         QBIncomingMessagesManager incomingMessage = QBChatService.getInstance().getIncomingMessagesManager();
@@ -162,12 +178,13 @@ public class Story extends AppCompatActivity {
             }
         });
 
+
+
         qbChatDialog.addMessageListener(new QBChatDialogMessageListener() {
             @Override
             public void processMessage(String s, QBChatMessage qbChatMessage, Integer integer) {
                 QBStoryMessageHolder.getInstance().putStory(qbChatMessage.getDialogId(),qbChatMessage);
                 ArrayList<QBChatMessage> messages = QBStoryMessageHolder.getInstance().getStoryMessageByDialogId(qbChatMessage.getDialogId());
-
                 adapter = new StoryMessageAdapter(getBaseContext(), messages);
                 lstStoryMessages.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
@@ -206,7 +223,7 @@ public class Story extends AppCompatActivity {
         }
 
         else if(item.getItemId() == R.id.my_stories){
-            Intent intent = new Intent(this,theStories.class);
+            Intent intent = new Intent(Story.this,theStories.class);
             startActivity(intent);
         }
         else if(item.getItemId() == R.id.menu_sign_out){

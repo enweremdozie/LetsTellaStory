@@ -7,10 +7,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.letstellastory.android.letstellastory.Story">
-  <TextView
+  <!--TextView
       android:id="@+id/stories"
       android:layout_alignParentTop="true"
-      android:layout_above="@+id/post"
+      android:layout_above="@+id/postStory"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:dividerHeight="2dp"
@@ -18,15 +18,25 @@
       android:paddingRight="2dp"
       android:divider="@android:color/transparent"
       android:layout_marginBottom="15dp"
-      ></TextView>
+      ></TextView-->
+
+    <ListView
+        android:id="@+id/storyList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:divider="@android:color/transparent"
+        android:stackFromBottom="false"
+        android:layout_above="@+id/editLayout"
+        ></ListView>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/editLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/post"
-        android:layout_toStartOf="@+id/post">
+        android:layout_toLeftOf="@+id/postStory"
+        android:layout_toStartOf="@+id/postStory">
 
         <EditText
             android:id="@+id/storyEdit"
@@ -36,7 +46,8 @@
             android:maxLength="150"/>
     </android.support.design.widget.TextInputLayout>
 
-        <TextView
+
+        <!--TextView
             android:id="@+id/post"
             android:layout_width = "wrap_content"
             android:layout_height ="wrap_content"
@@ -48,10 +59,26 @@
             android:visibility="visible"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"/>
+            android:layout_alignParentEnd="true"/-->
 
     <TextView
-        android:id="@+id/pass"
+        android:id="@+id/postStory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text = "@string/post"
+        android:textSize = "20sp"
+        android:padding = "5dp"
+        android:textColor="@android:color/black"
+        android:visibility="visible"
+        android:clickable="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+
+        />
+
+    <TextView
+        android:id="@+id/passStory"
         android:layout_width = "wrap_content"
         android:layout_height ="wrap_content"
         android:text = "@string/pass"
@@ -64,13 +91,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 
-    <ListView
-        android:id="@+id/storyList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:divider="@android:color/transparent"
-        android:stackFromBottom="true"
-        ></ListView>
+
     <!--android:layout_alignParentStart="true"-->
 </RelativeLayout>

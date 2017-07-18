@@ -19,6 +19,8 @@ import java.util.ArrayList;
 public class StoryDialogAdapters extends BaseAdapter{
     private Context context;
     private ArrayList<QBChatDialog> qbChatDialogs;
+    int index = 0;
+
 
     public StoryDialogAdapters(Context context, ArrayList<QBChatDialog> qbChatDialogs) {
         this.context = context;
@@ -49,9 +51,34 @@ public class StoryDialogAdapters extends BaseAdapter{
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.grid_view, null);
 
-            TextView story,genre;
-            story = (TextView) view.findViewById(R.id.storyView);
-            genre = (TextView) view.findViewById(R.id.genreView);
+            TextView storyShow,genreShow;
+            storyShow = (TextView) view.findViewById(R.id.storyView);
+            genreShow = (TextView) view.findViewById(R.id.genreView);
+
+            /*if(position == 0) {
+                storyShow.setText("position 1");
+                genreShow.setText("genre 1");
+            }
+
+            if(position == 1){
+                storyShow.setText("position 2");
+                genreShow.setText("genre 2");
+            }*/
+
+            //for(int i = 0; i < qbChatDialogs.size(); i++){
+
+                String name,dialstory,dialgenre;
+                int pos;
+                if(position == index) {
+                    name = qbChatDialogs.get(position).getName();
+                    pos = name.lastIndexOf("-");
+                    dialstory = name.substring(0, pos);
+                    dialgenre = name.substring((pos + 1), (name.length()));
+                    storyShow.setText(dialstory);
+                    genreShow.setText(dialgenre);
+                    index++;
+               // }
+            }
         }
         return view;
     }

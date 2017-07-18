@@ -1,20 +1,35 @@
 package com.letstellastory.android.letstellastory;
 
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.letstellastory.android.letstellastory.Holder.QBUsersHolder;
+import com.quickblox.auth.QBAuth;
+import com.quickblox.auth.session.BaseService;
+import com.quickblox.auth.session.QBSession;
+import com.quickblox.chat.QBChatService;
+import com.quickblox.core.QBEntityCallback;
+import com.quickblox.core.exception.BaseServiceException;
+import com.quickblox.core.exception.QBResponseException;
+import com.quickblox.users.QBUsers;
+import com.quickblox.users.model.QBUser;
+
+import java.util.ArrayList;
+
 public class theStories extends AppCompatActivity {
     int fragPos;
     TextView back;
-    static String story, genre;
+    public static String story, genre;
     Invited_Stories_Fragment isFrag;
     static String user;
     static String password;
@@ -54,6 +69,7 @@ public class theStories extends AppCompatActivity {
         //isFrag.setGenre(genre);
 
         //Log.d("CREATION", "in the stories password is " + password);
+        createSessionForStory();
     }
 
     @Override
@@ -103,7 +119,59 @@ public class theStories extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+    private void createSessionForStory(){
+        final ProgressDialog mDialog = new ProgressDialog(theStories.this);
+        mDialog.setMessage("Please wait...");
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
 
+        //String user = theStories.user;
+        //String password = theStories.password;
+
+        QBUsers.getUsers(null).performAsync(new QBEntityCallback<ArrayList<QBUser>>() {
+            @Override
+            public void onSuccess(ArrayList<QBUser> qbUsers, Bundle bundle) {
+                QBUsersHolder.getInstance().putUsers(qbUsers);
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+
+            }
+        });
+
+
+        final QBUser qbUser = new QBUser(user, password);
+        Log.d("CREATION", "in story fragment password is " + password);
+        QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
+            @Override
+            public void onSuccess(QBSession qbSession, Bundle bundle) {
+                qbUser.setId(qbSession.getUserId());
+                try {
+                    qbUser.setPassword(BaseService.getBaseService().getToken());
+                } catch (BaseServiceException e) {
+                    e.printStackTrace();
+                }
+
+                QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
+                    @Override
+                    public void onSuccess(Object o, Bundle bundle) {
+                        mDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(QBResponseException e) {
+                        Log.e("ERROR",""+e.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+
+            }
+        });
+    }
 }
 
 
