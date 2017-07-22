@@ -1,7 +1,6 @@
 package com.letstellastory.android.letstellastory;
 
 import android.app.DialogFragment;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -12,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.letstellastory.android.letstellastory.Holder.QBUsersHolder;
 import com.quickblox.auth.QBAuth;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 public class theStories extends AppCompatActivity {
     int fragPos;
     TextView back;
-    public static String story, genre;
+    static String story, genre;
     Invited_Stories_Fragment isFrag;
     static String user;
     static String password;
@@ -67,9 +67,13 @@ public class theStories extends AppCompatActivity {
         password = intent.getExtras().getString("password");
         //isFrag.setaStory(story);
         //isFrag.setGenre(genre);
+        //Toast.makeText(theStories.this, story, Toast.LENGTH_LONG).show();
 
         //Log.d("CREATION", "in the stories password is " + password);
-        createSessionForStory();
+        if(story == null) {
+            //Toast.makeText(theStories.this, story, Toast.LENGTH_LONG).show();
+            createSessionForStory();
+        }
     }
 
     @Override
@@ -96,6 +100,9 @@ public class theStories extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         fragPos = getFragPos();
+        if(item.getItemId() == R.id.profile){
+            showUserProfile();
+        }
         if(item.getItemId() == R.id.start){
             Bundle args = new Bundle();
             args.putString("user", user);
@@ -115,15 +122,49 @@ public class theStories extends AppCompatActivity {
         }
 
         else if(item.getItemId() == R.id.menu_sign_out){
-
+            logOut();
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void logOut() {
+        QBUsers.signOut().performAsync(new QBEntityCallback<Void>() {
+            @Override
+            public void onSuccess(Void aVoid, Bundle bundle) {
+                QBChatService.getInstance().logout(new QBEntityCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid, Bundle bundle) {
+                        Toast.makeText(theStories.this, "Logged out", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(theStories.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(QBResponseException e) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+
+            }
+        });
+    }
+
+    private void showUserProfile() {
+        Intent intent = new Intent(theStories.this, UserProfile.class);
+        startActivity(intent);
+    }
+
     private void createSessionForStory(){
-        final ProgressDialog mDialog = new ProgressDialog(theStories.this);
+        /*final ProgressDialog mDialog = new ProgressDialog(theStories.this);
         mDialog.setMessage("Please wait...");
         mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();
+        mDialog.show();*/
 
         //String user = theStories.user;
         //String password = theStories.password;
@@ -156,7 +197,7 @@ public class theStories extends AppCompatActivity {
                 QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
                     @Override
                     public void onSuccess(Object o, Bundle bundle) {
-                        mDialog.dismiss();
+                        //mDialog.dismiss();
                     }
 
                     @Override

@@ -28,6 +28,7 @@
         android:divider="@android:color/transparent"
         android:stackFromBottom="false"
         android:layout_above="@+id/editLayout"
+        android:paddingTop="10dp"
         ></ListView>
 
     <android.support.design.widget.TextInputLayout

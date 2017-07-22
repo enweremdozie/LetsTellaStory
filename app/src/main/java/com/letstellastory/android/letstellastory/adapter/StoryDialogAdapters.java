@@ -1,12 +1,16 @@
 package com.letstellastory.android.letstellastory.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.letstellastory.android.letstellastory.Holder.QBUnreadMessageHolder;
 import com.letstellastory.android.letstellastory.R;
 import com.quickblox.chat.model.QBChatDialog;
 
@@ -20,6 +24,7 @@ public class StoryDialogAdapters extends BaseAdapter{
     private Context context;
     private ArrayList<QBChatDialog> qbChatDialogs;
     int index = 0;
+
 
 
     public StoryDialogAdapters(Context context, ArrayList<QBChatDialog> qbChatDialogs) {
@@ -50,11 +55,23 @@ public class StoryDialogAdapters extends BaseAdapter{
         if(view == null){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.grid_view, null);
-
             TextView storyShow,genreShow;
+            ImageView image_unread;
+
             storyShow = (TextView) view.findViewById(R.id.storyView);
             genreShow = (TextView) view.findViewById(R.id.genreView);
+            image_unread = (ImageView) view.findViewById(R.id.image_unread);
 
+            TextDrawable.IBuilder unreadBuilder = TextDrawable.builder().beginConfig()
+                    .withBorder(4)
+                    .endConfig()
+                    .round();
+
+            int unread_count = QBUnreadMessageHolder.getInstance().getBundle().getInt(qbChatDialogs.get(position).getDialogId());
+            if(unread_count > 0){
+                TextDrawable unread_drawable = unreadBuilder.build(""+unread_count, Color.RED);
+                image_unread.setImageDrawable(unread_drawable);
+            }
             /*if(position == 0) {
                 storyShow.setText("position 1");
                 genreShow.setText("genre 1");

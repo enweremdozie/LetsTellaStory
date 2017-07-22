@@ -36,7 +36,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".ChatDialogsActivity" />
-        <activity android:name=".ListUsersActivity"></activity>
+        <activity android:name=".ListUsersActivity" />
+        <activity android:name=".UserProfile"></activity>
     </application>
 
 </manifest>

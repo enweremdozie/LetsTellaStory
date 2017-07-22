@@ -1,6 +1,5 @@
 package com.letstellastory.android.letstellastory;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,16 +11,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.letstellastory.android.letstellastory.Common.Common;
+import com.letstellastory.android.letstellastory.Holder.QBChatDialogHolder;
+import com.letstellastory.android.letstellastory.Holder.QBUnreadMessageHolder;
 import com.letstellastory.android.letstellastory.Holder.QBUsersHolder;
 import com.letstellastory.android.letstellastory.adapter.StoryDialogAdapters;
 import com.quickblox.auth.QBAuth;
 import com.quickblox.auth.session.BaseService;
 import com.quickblox.auth.session.QBSession;
 import com.quickblox.chat.QBChatService;
+import com.quickblox.chat.QBIncomingMessagesManager;
 import com.quickblox.chat.QBRestChatService;
+import com.quickblox.chat.exception.QBChatException;
+import com.quickblox.chat.listeners.QBChatDialogMessageListener;
+import com.quickblox.chat.listeners.QBSystemMessageListener;
 import com.quickblox.chat.model.QBChatDialog;
+import com.quickblox.chat.model.QBChatMessage;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.BaseServiceException;
 import com.quickblox.core.exception.QBResponseException;
@@ -30,13 +38,15 @@ import com.quickblox.users.QBUsers;
 import com.quickblox.users.model.QBUser;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by dozie on 2017-07-08.
  */
 
-public class My_Stories_Fragment extends Fragment {
+public class My_Stories_Fragment extends Fragment implements QBSystemMessageListener, QBChatDialogMessageListener{
     GridView gridview;
     String story, genre, user, password;
 
@@ -85,16 +95,17 @@ public class My_Stories_Fragment extends Fragment {
         genre = theStories.genre;
         user = theStories.user;
         password = theStories.password;
+       Log.d("CREATION", story + "inside My fragment");
+        if (story == null) {
 
-        if (story != null) {
             createSessionForStory();
 
         }
 
-        DBHelper mystories = new DBHelper(getActivity());
+        /*DBHelper mystories = new DBHelper(getActivity());
         if(story != null && genre != null) {
             mystories.insertData_my_stories(story, genre);
-        }
+        }*/
 
         gridview = (GridView)view.findViewById(R.id.gridview);
         /*List<ItemObject> sList = getListItemData();
@@ -107,12 +118,15 @@ public class My_Stories_Fragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //createSessionForStory();
-
+                TextView storyShow,genreShow;
+                storyShow = (TextView) view.findViewById(R.id.storyView);
+                genreShow = (TextView) view.findViewById(R.id.genreView);
+                ImageView image_unread;
                 QBChatDialog qbChatDialog = (QBChatDialog) gridview.getAdapter().getItem(position);
                 Intent intent = new Intent(getActivity(), Story.class);
-                intent.putExtra("story", story);
+                intent.putExtra("story", storyShow.getText());
                 intent.putExtra(Common.DIALOG_EXTRA, qbChatDialog);
-                intent.putExtra("genre", genre);
+                intent.putExtra("genre", genreShow.getText());
                 intent.putExtra("user", user);
                 intent.putExtra("password", password);
                 startActivity(intent);
@@ -186,9 +200,29 @@ public class My_Stories_Fragment extends Fragment {
                 CustomAdapter customAdapter = new CustomAdapter(getActivity(), sList);
                 listview.setAdapter(customAdapter);
                 customAdapter.notifyDataSetChanged();*/
-                StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), qbChatDialogs);
-                gridview.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+/*right here*/  QBChatDialogHolder.getInstance().putDialogs(qbChatDialogs);
+
+                Set<String> setIds = new HashSet<String>();
+                for(QBChatDialog chatDialog: qbChatDialogs){
+                    setIds.add(chatDialog.getDialogId());
+
+                    QBRestChatService.getTotalUnreadMessagesCount(setIds, QBUnreadMessageHolder.getInstance().getBundle())
+                            .performAsync(new QBEntityCallback<Integer>() {
+                                @Override
+                                public void onSuccess(Integer integer, Bundle bundle) {
+                                    QBUnreadMessageHolder.getInstance().setBundle(bundle);
+
+                                    StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), QBChatDialogHolder.getInstance().getAllChatDialogs());
+                                    gridview.setAdapter(adapter);
+                                    adapter.notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onError(QBResponseException e) {
+
+                                }
+                            });
+                }
             }
 
             @Override
@@ -202,10 +236,10 @@ public class My_Stories_Fragment extends Fragment {
 
 
     private void createSessionForStory(){
-        final ProgressDialog mDialog = new ProgressDialog(getActivity());
+        /*final ProgressDialog mDialog = new ProgressDialog(getActivity());
         mDialog.setMessage("Please wait...");
         mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();
+        mDialog.show();*/
 
         String user = theStories.user;
         String password = theStories.password;
@@ -238,7 +272,10 @@ public class My_Stories_Fragment extends Fragment {
                 QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
                     @Override
                     public void onSuccess(Object o, Bundle bundle) {
-                        mDialog.dismiss();
+                        //mDialog.dismiss();
+
+                        QBIncomingMessagesManager qbIncomingMessagesManager = QBChatService.getInstance().getIncomingMessagesManager();
+                        qbIncomingMessagesManager.addDialogMessageListener(My_Stories_Fragment.this);
                     }
 
                     @Override
@@ -253,5 +290,25 @@ public class My_Stories_Fragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void processMessage(String s, QBChatMessage qbChatMessage, Integer integer) {
+        loadStoryDialogs();
+    }
+
+    @Override
+    public void processError(String s, QBChatException e, QBChatMessage qbChatMessage, Integer integer) {
+
+    }
+
+    @Override
+    public void processMessage(QBChatMessage qbChatMessage) {
+
+    }
+
+    @Override
+    public void processError(QBChatException e, QBChatMessage qbChatMessage) {
+
     }
 }
