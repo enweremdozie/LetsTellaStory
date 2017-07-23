@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.letstellastory.android.letstellastory.Holder.QBUsersHolder;
 import com.letstellastory.android.letstellastory.R;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.chat.model.QBChatMessage;
@@ -57,8 +56,8 @@ public class StoryMessageAdapter extends BaseAdapter {
                 view = inflater.inflate(R.layout.list_send_story,null);
                 TextView textView = (TextView)view.findViewById(R.id.story_content);
                 textView.setText(qbChatMessages.get(position).getBody());
-                TextView txtName = (TextView)view.findViewById(R.id.story_user);
-                txtName.setText(QBUsersHolder.getInstance().getUserById(qbChatMessages.get(position).getSenderId()).getFullName());
+                //TextView txtName = (TextView)view.findViewById(R.id.story_user);
+                //txtName.setText(QBUsersHolder.getInstance().getUserById(qbChatMessages.get(position).getSenderId()).getFullName());
 
             }
         }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -38,6 +39,10 @@ public class theStories extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_the_stories);
 
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
        /* back = (TextView) findViewById(R.id.story_back);
 
         back.setOnClickListener(new View.OnClickListener() {
@@ -65,6 +70,10 @@ public class theStories extends AppCompatActivity {
 
         user = intent.getExtras().getString("user");
         password = intent.getExtras().getString("password");
+
+        DBHelper mystories = new DBHelper(theStories.this);
+            mystories.insertData_my_stories(user, password);
+
         //isFrag.setaStory(story);
         //isFrag.setGenre(genre);
         //Toast.makeText(theStories.this, story, Toast.LENGTH_LONG).show();
@@ -88,6 +97,7 @@ public class theStories extends AppCompatActivity {
         fragPos = newFrag;
     }
 
+
     public int getFragPos() {
         return fragPos;
     }
@@ -100,6 +110,11 @@ public class theStories extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         fragPos = getFragPos();
+
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+
         if(item.getItemId() == R.id.profile){
             showUserProfile();
         }
@@ -107,8 +122,8 @@ public class theStories extends AppCompatActivity {
             Bundle args = new Bundle();
             args.putString("user", user);
             args.putString("password", password);
-            /*args.putString("story", story);
-            args.putString("genre", genre);*/
+            args.putString("story", story);
+            args.putString("genre", genre);
 
             DialogFragment dialog = new CreateDialogFragment();
             dialog.setArguments(args);

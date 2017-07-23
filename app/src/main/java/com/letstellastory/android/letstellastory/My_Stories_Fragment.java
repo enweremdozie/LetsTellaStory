@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -49,6 +51,7 @@ import java.util.Set;
 public class My_Stories_Fragment extends Fragment implements QBSystemMessageListener, QBChatDialogMessageListener{
     GridView gridview;
     String story, genre, user, password;
+    //int contextMenuIndexClicked = -1;
 
     @Override
     public void onResume() {
@@ -111,7 +114,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         /*List<ItemObject> sList = getListItemData();
         CustomAdapter customAdapter = new CustomAdapter(getActivity(), sList);
         gridview.setAdapter(customAdapter);*/
-
+        registerForContextMenu(gridview);
 
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -142,6 +145,44 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
 
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getActivity().getMenuInflater().inflate(R.menu.story_dialog_context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        //contextMenuIndexClicked = info.position;
+
+        switch(item.getItemId()){
+            case R.id.context_delete_dialog:
+                deleteDialog(info.position);
+                break;
+        }
+        return true;
+    }
+
+    private void deleteDialog(int index) {
+        final QBChatDialog chatDialog = (QBChatDialog)gridview.getAdapter().getItem(index);
+        QBRestChatService.deleteDialog(chatDialog.getDialogId(), false)
+                .performAsync(new QBEntityCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid, Bundle bundle) {
+                        QBChatDialogHolder.getInstance().removeDialog(chatDialog.getDialogId());
+                        StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), QBChatDialogHolder.getInstance().getAllChatDialogs());
+                        gridview.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+
+                    }
+
+                    @Override
+                    public void onError(QBResponseException e) {
+
+                    }
+                });
+    }
 
     private List<ItemObject> getListItemData() {
         //Intent intent = getIntent();

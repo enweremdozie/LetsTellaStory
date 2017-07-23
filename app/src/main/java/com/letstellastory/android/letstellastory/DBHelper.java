@@ -19,7 +19,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public static String COL_ID = "ID";
     public static String COL_TITLE = "TITLE";
     public static String COL_GENRE = "GENRE";
-    //public static String COL_STORY = "STORY";
 
 
 
@@ -38,6 +37,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL("create table " + TABLE3_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "TITLE TEXT, GENRE TEXT)");
+
+
 
 
 

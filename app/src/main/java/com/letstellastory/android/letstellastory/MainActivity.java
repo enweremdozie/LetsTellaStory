@@ -1,8 +1,12 @@
 package com.letstellastory.android.letstellastory;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,10 +35,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         QBChatService.ConfigurationBuilder builder = new QBChatService.ConfigurationBuilder();
         builder.setAutojoinEnabled(true);
         QBChatService.setConfigurationBuilder(builder);
 
+        //getListItemData();
         initializeFramework();
 
         btnLogin = (Button) findViewById(R.id.main_btnLogin);
@@ -42,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         edtPassword = (EditText)findViewById(R.id.main_editPassword);
         edtUser = (EditText)findViewById(R.id.main_editLogin);
+        getListItemData();
 
         btnSignUp.setOnClickListener(new View.OnClickListener(){
 
@@ -84,6 +94,39 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void getListItemData() {
+        DBHelper helper = new DBHelper(MainActivity.this);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = helper.getMyStoriesInformations(db);
+        String id, user, password;
+
+        //user = cursor.getString(cursor.getColumnIndex(helper.COL_TITLE));
+
+        //Toast.makeText(this, "user " + user, Toast.LENGTH_SHORT).show();
+        /*edtUser.setText("dozie");
+        edtPassword.setText("evans909");*/
+        while (cursor.moveToNext()) {
+            id = cursor.getString(cursor.getColumnIndex(helper.COL_ID));
+            user = cursor.getString(cursor.getColumnIndex(helper.COL_TITLE));
+            password = cursor.getString(cursor.getColumnIndex(helper.COL_GENRE));
+            //Toast.makeText(this, "user "+ user, Toast.LENGTH_SHORT).show();
+            if(user != null && password != null){
+                edtUser.setText(user);
+                edtPassword.setText(password);
+            }
+
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initializeFramework() {

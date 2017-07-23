@@ -38,7 +38,7 @@ public class ListUsersActivity extends AppCompatActivity {
 
     String mode ="";
     QBChatDialog qbChatDialog;
-    ArrayList<QBUser> userAdd = new ArrayList<>();
+    List<QBUser> userAdd = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,18 +58,79 @@ public class ListUsersActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                int countChoice = lstUsers.getCount();
 
-                if(lstUsers.getCheckedItemPositions().size() == 1){
-                    passStory(lstUsers.getCheckedItemPositions());
-                    //loadListAvailableUser();                      stopped here
+                if(mode == null) {
+                    int countChoice = lstUsers.getCount();
 
+                    if (lstUsers.getCheckedItemPositions().size() == 1) {
+                        passStory(lstUsers.getCheckedItemPositions());
+                        //loadListAvailableUser();                      stopped here
+
+                    } else if (lstUsers.getCheckedItemPositions().size() > 1) {
+                        Toast.makeText(ListUsersActivity.this, "Select only one friend", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ListUsersActivity.this, "Please Select a friend", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                else if (lstUsers.getCheckedItemPositions().size() > 1){
-                    Toast.makeText(ListUsersActivity.this, "Select only one friend", Toast.LENGTH_SHORT).show();
+
+                else if(mode.equals(Common.UPDATE_ADD_MODE) && qbChatDialog != null){
+                    if(userAdd.size() > 0){
+                        QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
+
+                        int cntChoice = lstUsers.getCount();
+                        SparseBooleanArray checkItemPositions = lstUsers.getCheckedItemPositions();
+                        for(int i = 0; i < cntChoice; i++){
+                            if(checkItemPositions.get(i))
+                            {
+                                QBUser user = (QBUser)lstUsers.getItemAtPosition(i);
+                                requestBuilder.addUsers(user);
+                            }
+                        }
+
+                        QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
+                                .performAsync(new QBEntityCallback<QBChatDialog>() {
+                                    @Override
+                                    public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+                                        Toast.makeText(ListUsersActivity.this, "PASS successful", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onError(QBResponseException e) {
+
+                                    }
+                                });
+                    }
                 }
-                else {
-                    Toast.makeText(ListUsersActivity.this, "Please Select a friend", Toast.LENGTH_SHORT).show();
+
+                else if(mode.equals(Common.UPDATE_REMOVE_MODE) && qbChatDialog != null){
+                    if(userAdd.size() > 0){
+                        QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
+                        int cntChoice = lstUsers.getCount();
+                        SparseBooleanArray checkItemPositions = lstUsers.getCheckedItemPositions();
+
+                        for(int i = 0; i < cntChoice; i++){
+                            if(checkItemPositions.get(i))
+                            {
+                                QBUser user = (QBUser)lstUsers.getItemAtPosition(i);
+                                requestBuilder.removeUsers(user);
+                            }
+                        }
+
+                        QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
+                                .performAsync(new QBEntityCallback<QBChatDialog>() {
+                                    @Override
+                                    public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+                                        Toast.makeText(ListUsersActivity.this, "REMOVAL successful", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onError(QBResponseException e) {
+
+                                    }
+                                });
+                    }
                 }
             }
         });
@@ -88,7 +149,26 @@ public class ListUsersActivity extends AppCompatActivity {
     }
 
     private void loadListUserInGroup() {
+    QBRestChatService.getChatDialogById(qbChatDialog.getDialogId())
+            .performAsync(new QBEntityCallback<QBChatDialog>() {
+                @Override
+                public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+                    List<Integer> occupantsId = qbChatDialog.getOccupants();
+                    List<QBUser> listUserAlreadyInGroup = QBUsersHolder.getInstance().getUserByIds(occupantsId);
+                    ArrayList<QBUser> users = new ArrayList<QBUser>();
+                    users.addAll(listUserAlreadyInGroup);
 
+                    ListUsersAdapter adapter = new ListUsersAdapter(getBaseContext(), users);
+                    lstUsers.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                    userAdd = users;
+                }
+
+                @Override
+                public void onError(QBResponseException e) {
+                    Toast.makeText(ListUsersActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     private void loadListAvailableUser() {
@@ -109,13 +189,14 @@ public class ListUsersActivity extends AppCompatActivity {
                             adapter.notifyDataSetChanged();
                             userAdd = listUsers;
 
-                            QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
-                            requestBuilder.addUsers(userAdd.get(0));
+                           // QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
+                           // requestBuilder.addUsers(userAdd.get(0));
                         }
                     }
 
                     @Override
                     public void onError(QBResponseException e) {
+                            Toast.makeText(ListUsersActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
 
                     }
                 });

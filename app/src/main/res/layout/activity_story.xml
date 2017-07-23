@@ -84,7 +84,7 @@
         android:layout_height ="wrap_content"
         android:text = "@string/pass"
         android:textSize = "20sp"
-        android:padding = "15dp"
+        android:padding = "5dp"
         android:textColor="#212121"
         android:clickable="true"
         android:visibility="invisible"

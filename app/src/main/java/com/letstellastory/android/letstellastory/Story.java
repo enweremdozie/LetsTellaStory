@@ -4,6 +4,7 @@ import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -50,7 +51,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     TextView pass, post;
     DBHelper db;
     EditText storyED;
-    String ActTitle, genre, story, storyTeller;
+    String ActTitle, genre, story, user, password;
     long storyTime;
     StoryMessageAdapter adapter;
 
@@ -82,8 +83,9 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         setContentView(R.layout.activity_story);
         //db = new DBHelper(this);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         lstStoryMessages = (ListView) findViewById(R.id.storyList);
         post = (TextView) findViewById(R.id.postStory);
@@ -92,8 +94,11 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         registerForContextMenu(lstStoryMessages);
         //show = (TextView) findViewById(R.id.showAll);
         Intent intent = getIntent();
+        story = intent.getExtras().getString("story");
         ActTitle = intent.getExtras().getString("story");
         genre = intent.getExtras().getString("genre");
+        user = intent.getExtras().getString("user");
+        password = intent.getExtras().getString("password");
         //Toast.makeText(Story.this, genre, Toast.LENGTH_LONG).show();
         setTitle(ActTitle);
 
@@ -187,12 +192,14 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     }
 
     private void addUser(){
-        Intent intent = new Intent(Story.this, ListUsersActivity.class);
+        Intent intent = new Intent(this, ListUsersActivity.class);
         intent.putExtra(Common.UPDATE_DIALOG_EXTRA,qbChatDialog);
         intent.putExtra(Common.UPDATE_MODE,Common.UPDATE_ADD_MODE);
         startActivity(intent);
 
     }
+
+
 
     private void retrieveStories() {
         QBMessageGetBuilder messageGetBuilder = new QBMessageGetBuilder();
@@ -281,15 +288,29 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.profile){
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(Story.this, theStories.class);
+            intent.putExtra("title", story);
+            intent.putExtra("genre", genre);
+            intent.putExtra("user", user);
+            intent.putExtra("password", password);
+            startActivity(intent);
+        }
 
+        else if(item.getItemId() == R.id.profile){
+            showUserProfile();
         }
 
         else if(item.getItemId() == R.id.start){
+            Bundle args = new Bundle();
+            args.putString("user", user);
+            args.putString("password", password);
+            /*args.putString("story", story);
+            args.putString("genre", genre);*/
+
             DialogFragment dialog = new CreateDialogFragment();
+            dialog.setArguments(args);
             dialog.show(getFragmentManager(), "CreateDialogFragment.tag");
-            //Toast.makeText(this, "start", Toast.LENGTH_LONG).show();
-            Log.d("CREATION", "creating in drama");
         }
 
         else if(item.getItemId() == R.id.join){
@@ -306,7 +327,10 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         return super.onOptionsItemSelected(item);
     }
 
-
+    private void showUserProfile() {
+        Intent intent = new Intent(Story.this, UserProfile.class);
+        startActivity(intent);
+    }
     private void createSessionForStory(){
        final ProgressDialog mDialog = new ProgressDialog(Story.this);
        mDialog.setMessage("Please wait...");

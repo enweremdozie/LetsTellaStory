@@ -38,6 +38,7 @@
         <activity android:name=".ChatDialogsActivity" />
         <activity android:name=".ListUsersActivity" />
         <activity android:name=".UserProfile"></activity>
+
     </application>
 
 </manifest>

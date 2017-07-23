@@ -129,45 +129,47 @@
         android:textSize="15dp"
         android:text="Pass a start"/>
 
-</LinearLayout>
 
 
-
-
-
-
-
-
-
-
-
-
-
-    <TextView
-        android:id="@+id/cancel"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAllCaps="true"
-        android:text="cancel"
-        android:textSize="20dp"
-        android:padding="30dp"
-        android:clickable="true"
-        android:layout_alignParentBottom="true"
-        />
-    <TextView
-        android:id="@+id/ok"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="true"
-        android:text="ok"
-        android:textSize="20dp"
-        android:padding="30dp"
-        android:clickable="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:paddingTop="40dp">
 
 
 
 
+        <Button
+            android:id="@+id/cancel"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:text="cancel"
+            android:textSize="20dp"
+            android:clickable="true"
+            android:textColor="#FAFAFA"
+            android:background="#212121"
+            android:layout_marginRight="5dp"/>
+
+        <Button
+            android:id="@+id/ok"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:text="ok"
+            android:textSize="20dp"
+            android:textColor="#FAFAFA"
+            android:background="#212121"
+            android:layout_marginLeft="5dp"/>
+
+
+
+         </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>
