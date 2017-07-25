@@ -3,11 +3,15 @@ package com.letstellastory.android.letstellastory;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,6 +23,8 @@ import com.quickblox.core.exception.QBResponseException;
 import com.quickblox.users.QBUsers;
 import com.quickblox.users.model.QBUser;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -29,12 +35,15 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnLogin, btnSignUp;
     EditText edtUser, edtPassword;
+    DBHelper helper;
+    SQLiteDatabase sqLiteDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //helper.onCreate(sqLiteDatabase);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -43,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setAutojoinEnabled(true);
         QBChatService.setConfigurationBuilder(builder);
 
+        centerTitle();
         //getListItemData();
         initializeFramework();
 
@@ -104,14 +114,14 @@ public class MainActivity extends AppCompatActivity {
 
         //user = cursor.getString(cursor.getColumnIndex(helper.COL_TITLE));
 
-        //Toast.makeText(this, "user " + user, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "user" , Toast.LENGTH_SHORT).show();
         /*edtUser.setText("dozie");
         edtPassword.setText("evans909");*/
         while (cursor.moveToNext()) {
             id = cursor.getString(cursor.getColumnIndex(helper.COL_ID));
             user = cursor.getString(cursor.getColumnIndex(helper.COL_TITLE));
             password = cursor.getString(cursor.getColumnIndex(helper.COL_GENRE));
-            //Toast.makeText(this, "user "+ user, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "user "+ user, Toast.LENGTH_LONG).show();
             if(user != null && password != null){
                 edtUser.setText(user);
                 edtPassword.setText(password);
@@ -124,7 +134,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            finish();
+            moveTaskToBack(true);
+            MainActivity.this.finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -132,5 +143,34 @@ public class MainActivity extends AppCompatActivity {
     private void initializeFramework() {
         QBSettings.getInstance().init(getApplicationContext(),APP_ID,AUTH_KEY,AUTH_SECRET);
         QBSettings.getInstance().setAccountKey(ACCOUNT_KEY);
+    }
+
+    private void centerTitle() {
+        ArrayList<View> textViews = new ArrayList<>();
+
+        getWindow().getDecorView().findViewsWithText(textViews, getTitle(), View.FIND_VIEWS_WITH_TEXT);
+
+        if(textViews.size() > 0) {
+            AppCompatTextView appCompatTextView = null;
+            if(textViews.size() == 1) {
+                appCompatTextView = (AppCompatTextView) textViews.get(0);
+            } else {
+                for(View v : textViews) {
+                    if(v.getParent() instanceof Toolbar) {
+                        appCompatTextView = (AppCompatTextView) v;
+                        break;
+                    }
+                }
+            }
+
+            if(appCompatTextView != null) {
+                ViewGroup.LayoutParams params = appCompatTextView.getLayoutParams();
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                appCompatTextView.setLayoutParams(params);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    appCompatTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                }
+            }
+        }
     }
 }

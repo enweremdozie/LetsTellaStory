@@ -19,13 +19,13 @@
         android:icon="@drawable/menu"
         tools:ignore="AppCompatResource" />
 
-    <item
+    <!--item
         android:id="@+id/my_stories"
         android:title="My stories"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:icon="@drawable/menu"
-        tools:ignore="AppCompatResource" />
+        tools:ignore="AppCompatResource" /-->
 
     <item
         android:id="@+id/profile"

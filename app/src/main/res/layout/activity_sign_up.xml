@@ -68,6 +68,7 @@
             android:text="Sign Up"
             android:background="#212121"
             android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
             style="@style/Widget.AppCompat.Button.Borderless"/>
 
         <Button
@@ -79,6 +80,8 @@
             android:text="Cancel"
             android:background="#212121"
             android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+
             style="@style/Widget.AppCompat.Button.Borderless"/>
     </LinearLayout>
 </LinearLayout>

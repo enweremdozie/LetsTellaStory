@@ -12,6 +12,7 @@
         android:icon="@drawable/menu"
         tools:ignore="AppCompatResource" />
 
+
     <item
         android:id="@+id/join"
         android:title="Join a story"

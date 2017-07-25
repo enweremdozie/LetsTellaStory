@@ -13,10 +13,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
     public static String DATABASE_NAME = "mystories.db";
     public static String TABLE_NAME = "mystory_table";
-    public static String TABLE2_NAME = "invited_story_table";
-    public static String TABLE3_NAME = "local_story_table";
+    public static String TABLE2_NAME = "post_table";
+    public static String TABLE3_NAME = "pass_table";
 
     public static String COL_ID = "ID";
+    public static String COL_PASS = "PASS";
+    public static String COL_POS = "POSITION";
+
     public static String COL_TITLE = "TITLE";
     public static String COL_GENRE = "GENRE";
 
@@ -33,10 +36,10 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("create table " + TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "TITLE TEXT, GENRE TEXT)");
         sqLiteDatabase.execSQL("create table " + TABLE2_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "TITLE TEXT, GENRE TEXT)");
+                "POSITION INTEGER)");
 
-        sqLiteDatabase.execSQL("create table " + TABLE3_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "TITLE TEXT, GENRE TEXT)");
+        sqLiteDatabase.execSQL("create table " + TABLE2_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "PASS INTEGER)");
 
 
 
@@ -51,14 +54,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 COL_GENRE + " TEXT NOT NULL);";
 
         String createTable2 = "CREATE TABLE " + TABLE2_NAME + " ( " +
-                DBStory.DBMain._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_TITLE + " TEXT NOT NULL, " +
-                COL_GENRE + " TEXT NOT NULL);";
+                DBState.DBMain._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_POS + " INTEGER NOT NULL);";
 
         String createTable3 = "CREATE TABLE " + TABLE3_NAME + " ( " +
-                DBStory.DBMain._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_TITLE + " TEXT NOT NULL, " +
-                COL_GENRE + " TEXT NOT NULL);";
+                DBStoryState.DBMain._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COL_PASS + " INTEGER NOT NULL);";
 
     }
 
@@ -86,13 +87,27 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
     }
 
-    public boolean insertData_invited_stories(String story, String genre){
+    public boolean insertPostedStory (int position){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_TITLE, story);
-        contentValues.put(COL_GENRE, genre);
+        //contentValues.put(COL_STATE, state);
+        contentValues.put(COL_POS, position);
         //contentValues.put(COL_STORY, story);
-        long result = sqLiteDatabase.insert(TABLE_NAME, null, contentValues);
+        long result = sqLiteDatabase.insert(TABLE2_NAME, null, contentValues);
+
+        if(result == -1)
+            return false;
+        else
+            return true;
+    }
+
+    public boolean insertPassedStory (int pass){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        //contentValues.put(COL_STATE, state);
+        contentValues.put(COL_PASS, pass);
+        //contentValues.put(COL_STORY, story);
+        long result = sqLiteDatabase.insert(TABLE3_NAME, null, contentValues);
 
         if(result == -1)
             return false;
@@ -106,7 +121,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put(COL_TITLE, story);
         contentValues.put(COL_GENRE, genre);
         //contentValues.put(COL_STORY, story);
-        long result = sqLiteDatabase.insert(TABLE_NAME, null, contentValues);
+        long result = sqLiteDatabase.insert(TABLE3_NAME, null, contentValues);
 
         if(result == -1)
             return false;
@@ -128,10 +143,18 @@ public class DBHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor getInvitedStoriesInformations(SQLiteDatabase db){
+    public Cursor getPostedStoryInfo(SQLiteDatabase db){
 
-        String[] projections = {COL_ID, COL_TITLE, COL_GENRE};
+        String[] projections = {COL_ID, COL_POS};
         Cursor cursor = db.query(TABLE2_NAME, projections,null, null, null, null, null);
+
+        return cursor;
+    }
+
+    public Cursor getPassedStoryInfo(SQLiteDatabase db){
+
+        String[] projections = {COL_ID, COL_PASS};
+        Cursor cursor = db.query(TABLE3_NAME, projections,null, null, null, null, null);
 
         return cursor;
     }

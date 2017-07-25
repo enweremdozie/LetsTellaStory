@@ -2,15 +2,19 @@ package com.letstellastory.android.letstellastory;
 
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,19 +43,9 @@ public class theStories extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_the_stories);
 
+        setTitle("STORIES");
+        centerTitle();
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-       /* back = (TextView) findViewById(R.id.story_back);
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(theStories.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });*/
         // Find the view pager that will allow the user to swipe between fragments
         ViewPager viewPager = (ViewPager) findViewById(R.id.story_viewpager);
 
@@ -70,7 +64,7 @@ public class theStories extends AppCompatActivity {
 
         user = intent.getExtras().getString("user");
         password = intent.getExtras().getString("password");
-
+        //Toast.makeText(this, "user: " + user, Toast.LENGTH_SHORT).show();
         DBHelper mystories = new DBHelper(theStories.this);
             mystories.insertData_my_stories(user, password);
 
@@ -79,10 +73,10 @@ public class theStories extends AppCompatActivity {
         //Toast.makeText(theStories.this, story, Toast.LENGTH_LONG).show();
 
         //Log.d("CREATION", "in the stories password is " + password);
-        if(story == null) {
+        //if(story == null) {
             //Toast.makeText(theStories.this, story, Toast.LENGTH_LONG).show();
-            createSessionForStory();
-        }
+            //createSessionForStory();
+        //}
     }
 
     @Override
@@ -111,14 +105,14 @@ public class theStories extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         fragPos = getFragPos();
 
-        if (item.getItemId() == android.R.id.home) {
+       /* if (item.getItemId() == android.R.id.home) {
             finish();
-        }
+        }*/
 
-        if(item.getItemId() == R.id.profile){
+         if(item.getItemId() == R.id.profile){
             showUserProfile();
         }
-        if(item.getItemId() == R.id.start){
+        else if(item.getItemId() == R.id.start){
             Bundle args = new Bundle();
             args.putString("user", user);
             args.putString("password", password);
@@ -227,6 +221,35 @@ public class theStories extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void centerTitle() {
+        ArrayList<View> textViews = new ArrayList<>();
+
+        getWindow().getDecorView().findViewsWithText(textViews, getTitle(), View.FIND_VIEWS_WITH_TEXT);
+
+        if(textViews.size() > 0) {
+            AppCompatTextView appCompatTextView = null;
+            if(textViews.size() == 1) {
+                appCompatTextView = (AppCompatTextView) textViews.get(0);
+            } else {
+                for(View v : textViews) {
+                    if(v.getParent() instanceof Toolbar) {
+                        appCompatTextView = (AppCompatTextView) v;
+                        break;
+                    }
+                }
+            }
+
+            if(appCompatTextView != null) {
+                ViewGroup.LayoutParams params = appCompatTextView.getLayoutParams();
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                appCompatTextView.setLayoutParams(params);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    appCompatTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                }
+            }
+        }
     }
 }
 

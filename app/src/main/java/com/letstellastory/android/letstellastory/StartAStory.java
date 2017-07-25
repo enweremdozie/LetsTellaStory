@@ -3,10 +3,14 @@ package com.letstellastory.android.letstellastory;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -52,6 +56,8 @@ public class StartAStory extends AppCompatActivity {
         user = intent.getExtras().getString("user");
         password = intent.getExtras().getString("password");
 
+        setTitle("START A STORY");
+        centerTitle();
 
 
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -166,5 +172,34 @@ public class StartAStory extends AppCompatActivity {
     public void createSessionForStory(){
         ProgressDialog mDialog = new ProgressDialog(StartAStory.this);
 
+    }
+
+    private void centerTitle() {
+        ArrayList<View> textViews = new ArrayList<>();
+
+        getWindow().getDecorView().findViewsWithText(textViews, getTitle(), View.FIND_VIEWS_WITH_TEXT);
+
+        if(textViews.size() > 0) {
+            AppCompatTextView appCompatTextView = null;
+            if(textViews.size() == 1) {
+                appCompatTextView = (AppCompatTextView) textViews.get(0);
+            } else {
+                for(View v : textViews) {
+                    if(v.getParent() instanceof Toolbar) {
+                        appCompatTextView = (AppCompatTextView) v;
+                        break;
+                    }
+                }
+            }
+
+            if(appCompatTextView != null) {
+                ViewGroup.LayoutParams params = appCompatTextView.getLayoutParams();
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                appCompatTextView.setLayoutParams(params);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    appCompatTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                }
+            }
+        }
     }
 }

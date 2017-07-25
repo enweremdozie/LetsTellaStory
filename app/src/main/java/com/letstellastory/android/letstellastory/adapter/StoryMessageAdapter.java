@@ -58,7 +58,6 @@ public class StoryMessageAdapter extends BaseAdapter {
                 textView.setText(qbChatMessages.get(position).getBody());
                 //TextView txtName = (TextView)view.findViewById(R.id.story_user);
                 //txtName.setText(QBUsersHolder.getInstance().getUserById(qbChatMessages.get(position).getSenderId()).getFullName());
-
             }
         }
 

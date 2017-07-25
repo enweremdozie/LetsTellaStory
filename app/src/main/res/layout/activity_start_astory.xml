@@ -152,6 +152,7 @@
             android:clickable="true"
             android:textColor="#FAFAFA"
             android:background="#212121"
+            android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"/>
 
         <Button
@@ -164,7 +165,8 @@
             android:textSize="20dp"
             android:textColor="#FAFAFA"
             android:background="#212121"
-            android:layout_marginLeft="5dp"/>
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
 
 
 

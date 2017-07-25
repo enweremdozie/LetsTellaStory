@@ -42,11 +42,10 @@
 
         <ImageView
             android:id="@+id/image_unread"
-            android:layout_alignTop="@+id/storyView"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_toRightOf="@+id/genreView"
-            android:layout_alignParentTop="true" />
+            android:layout_marginTop="5dp"
+            />
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

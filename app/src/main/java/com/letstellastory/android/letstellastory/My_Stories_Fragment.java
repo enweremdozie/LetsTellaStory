@@ -25,8 +25,8 @@ import com.quickblox.auth.QBAuth;
 import com.quickblox.auth.session.BaseService;
 import com.quickblox.auth.session.QBSession;
 import com.quickblox.chat.QBChatService;
-import com.quickblox.chat.QBIncomingMessagesManager;
 import com.quickblox.chat.QBRestChatService;
+import com.quickblox.chat.QBSystemMessagesManager;
 import com.quickblox.chat.exception.QBChatException;
 import com.quickblox.chat.listeners.QBChatDialogMessageListener;
 import com.quickblox.chat.listeners.QBSystemMessageListener;
@@ -51,6 +51,8 @@ import java.util.Set;
 public class My_Stories_Fragment extends Fragment implements QBSystemMessageListener, QBChatDialogMessageListener{
     GridView gridview;
     String story, genre, user, password;
+    boolean hasposted;
+    boolean haspassed;
     //int contextMenuIndexClicked = -1;
 
     @Override
@@ -65,9 +67,10 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
     public void onStart() {
         super.onStart();
         //createSessionForStory();
-
-
+        loadStoryDialogs();
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,11 +102,10 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         user = theStories.user;
         password = theStories.password;
        Log.d("CREATION", story + "inside My fragment");
-        if (story == null) {
 
             createSessionForStory();
 
-        }
+
 
         /*DBHelper mystories = new DBHelper(getActivity());
         if(story != null && genre != null) {
@@ -121,6 +123,8 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //createSessionForStory();
+                hasposted = checkIfClicked(position);
+                haspassed = checkifHaspassed(position);
                 TextView storyShow,genreShow;
                 storyShow = (TextView) view.findViewById(R.id.storyView);
                 genreShow = (TextView) view.findViewById(R.id.genreView);
@@ -129,6 +133,9 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
                 Intent intent = new Intent(getActivity(), Story.class);
                 intent.putExtra("story", storyShow.getText());
                 intent.putExtra(Common.DIALOG_EXTRA, qbChatDialog);
+                intent.putExtra("position", position);
+                intent.putExtra("hasposted", hasposted);
+                intent.putExtra("haspassed", haspassed);
                 intent.putExtra("genre", genreShow.getText());
                 intent.putExtra("user", user);
                 intent.putExtra("password", password);
@@ -143,6 +150,51 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         return view;
 
 
+    }
+
+    private boolean checkifHaspassed(int position) {
+        DBHelper helper = new DBHelper(getActivity().getBaseContext());
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = helper.getPassedStoryInfo(db);
+        boolean state = false;
+        int pos;
+        if(cursor.getCount() == 0){
+            state = false;
+        }
+
+        else {
+            while(cursor.moveToNext()){
+                pos = cursor.getInt(1);
+
+                if(pos == position){
+                    state = true;
+                }
+            }
+        }
+        return state;
+
+    }
+
+    private boolean checkIfClicked(int position) {
+        DBHelper helper = new DBHelper(getActivity().getBaseContext());
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = helper.getPostedStoryInfo(db);
+        boolean state = false;
+        int pos;
+        if(cursor.getCount() == 0){
+            state = false;
+        }
+
+        else {
+            while(cursor.moveToNext()){
+                pos = cursor.getInt(1);
+
+                if(pos == position){
+                    state = true;
+                }
+            }
+        }
+        return state;
     }
 
     @Override
@@ -241,7 +293,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
                 CustomAdapter customAdapter = new CustomAdapter(getActivity(), sList);
                 listview.setAdapter(customAdapter);
                 customAdapter.notifyDataSetChanged();*/
-/*right here*/  QBChatDialogHolder.getInstance().putDialogs(qbChatDialogs);
+                QBChatDialogHolder.getInstance().putDialogs(qbChatDialogs);
 
                 Set<String> setIds = new HashSet<String>();
                 for(QBChatDialog chatDialog: qbChatDialogs){
@@ -315,8 +367,11 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
                     public void onSuccess(Object o, Bundle bundle) {
                         //mDialog.dismiss();
 
-                        QBIncomingMessagesManager qbIncomingMessagesManager = QBChatService.getInstance().getIncomingMessagesManager();
-                        qbIncomingMessagesManager.addDialogMessageListener(My_Stories_Fragment.this);
+                        QBSystemMessagesManager qbSystemMessagesManager = QBChatService.getInstance().getSystemMessagesManager();
+                        qbSystemMessagesManager.addSystemMessageListener(My_Stories_Fragment.this);
+
+                        /*QBIncomingMessagesManager qbIncomingMessagesManager = QBChatService.getInstance().getIncomingMessagesManager();
+                        qbIncomingMessagesManager.addDialogMessageListener(My_Stories_Fragment.this);*/
                     }
 
                     @Override
@@ -335,6 +390,8 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
 
     @Override
     public void processMessage(String s, QBChatMessage qbChatMessage, Integer integer) {
+        Log.d("CREATION", "Enters processMessage");
+
         loadStoryDialogs();
     }
 
@@ -346,10 +403,28 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
     @Override
     public void processMessage(QBChatMessage qbChatMessage) {
 
+        Log.d("CREATION", "Enters processMessage");
+
+        QBRestChatService.getChatDialogById(qbChatMessage.getBody()).performAsync(new QBEntityCallback<QBChatDialog>() {
+
+            @Override
+        public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+            QBChatDialogHolder.getInstance().putDialog(qbChatDialog);
+            ArrayList<QBChatDialog> adapterSource = QBChatDialogHolder.getInstance().getAllChatDialogs();
+            StoryDialogAdapters adapters = new StoryDialogAdapters(getActivity().getBaseContext(), adapterSource);
+            gridview.setAdapter(adapters);
+            adapters.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onError(QBResponseException e) {
+
+        }
+    });
     }
 
     @Override
     public void processError(QBChatException e, QBChatMessage qbChatMessage) {
-
+        Log.e("ERROR", ""+e.getMessage());
     }
 }

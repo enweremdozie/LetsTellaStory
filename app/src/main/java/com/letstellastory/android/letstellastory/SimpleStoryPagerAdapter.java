@@ -23,10 +23,10 @@ public class SimpleStoryPagerAdapter extends FragmentPagerAdapter {
             activity.setFragPos(position);
             return new My_Stories_Fragment();
         }
-        else if (position == 1){
+        /*else if (position == 1){
             activity.setFragPos(position);
             return new Invited_Stories_Fragment();
-        }
+        }*/
         else {
             activity.setFragPos(position);
             return new Local_Stories_Fragment();
@@ -35,7 +35,7 @@ public class SimpleStoryPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -45,12 +45,12 @@ public class SimpleStoryPagerAdapter extends FragmentPagerAdapter {
                 frag = 0;
                 activity.setFragPos(position);
                 return "MY STORIES";
-            case 1:
+            /*case 1:
                 frag = 1;
                 activity.setFragPos(position);
-                return "INVITED STORIES";
-            case 2:
-                frag = 2;
+                return "INVITED STORIES";*/
+            case 1:
+                frag = 1;
                 activity.setFragPos(position);
                 return "LOCAL STORIES";
         }

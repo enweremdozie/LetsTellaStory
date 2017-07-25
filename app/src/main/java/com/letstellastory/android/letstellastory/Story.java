@@ -3,15 +3,19 @@ package com.letstellastory.android.letstellastory;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -21,9 +25,6 @@ import android.widget.Toast;
 import com.letstellastory.android.letstellastory.Common.Common;
 import com.letstellastory.android.letstellastory.Holder.QBStoryMessageHolder;
 import com.letstellastory.android.letstellastory.adapter.StoryMessageAdapter;
-import com.quickblox.auth.QBAuth;
-import com.quickblox.auth.session.BaseService;
-import com.quickblox.auth.session.QBSession;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.chat.QBIncomingMessagesManager;
 import com.quickblox.chat.QBRestChatService;
@@ -35,10 +36,8 @@ import com.quickblox.chat.model.QBDialogType;
 import com.quickblox.chat.request.QBMessageGetBuilder;
 import com.quickblox.chat.request.QBMessageUpdateBuilder;
 import com.quickblox.core.QBEntityCallback;
-import com.quickblox.core.exception.BaseServiceException;
 import com.quickblox.core.exception.QBResponseException;
 import com.quickblox.users.QBUsers;
-import com.quickblox.users.model.QBUser;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
@@ -54,13 +53,15 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     String ActTitle, genre, story, user, password;
     long storyTime;
     StoryMessageAdapter adapter;
-
+    int position, passed;
     int contextMenuIndexClicked = -1;
     boolean isEditMode = false;
     QBChatMessage editMessage;
 
     QBChatDialog qbChatDialog;
     ListView lstStoryMessages;
+    boolean hasposted = false;
+    boolean haspassed = false;
 
 
 
@@ -99,21 +100,34 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         genre = intent.getExtras().getString("genre");
         user = intent.getExtras().getString("user");
         password = intent.getExtras().getString("password");
+        hasposted = intent.getExtras().getBoolean("hasposted");
+        haspassed = intent.getExtras().getBoolean("haspassed");
+        position = intent.getExtras().getInt("position");
         //Toast.makeText(Story.this, genre, Toast.LENGTH_LONG).show();
         setTitle(ActTitle);
-
+        centerTitle();
         //AddData();
         //createSessionForStory();
+        if(hasposted){
+            post.setVisibility(View.GONE);
+        }
 
+        if(haspassed){
+            pass.setVisibility(View.GONE);
+        }
 
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+              addPostedToDB();
+
+
+
 
             if(storyED.getText() != null && storyED.getText().toString().trim().length() > 0){
                 post.setVisibility(View.INVISIBLE);
                 pass.setVisibility(View.VISIBLE);
-                Toast.makeText(Story.this, "posting", Toast.LENGTH_LONG).show();
+                Toast.makeText(Story.this, "posting", Toast.LENGTH_SHORT).show();
 
                 if(!isEditMode) {
                     QBChatMessage storyMessage = new QBChatMessage();
@@ -123,18 +137,10 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
                     try {
                         qbChatDialog.sendMessage(storyMessage);
-                    } catch (SmackException.NotConnectedException e) {
+                    }
+                    catch (SmackException.NotConnectedException e) {
                         e.printStackTrace();
                     }
-
-                /*QBStoryMessageHolder.getInstance().putStory(qbChatDialog.getDialogId(), storyMessage);
-                ArrayList<QBChatMessage> messages = QBStoryMessageHolder.getInstance().getStoryMessageByDialogId(qbChatDialog.getDialogId());
-                adapter = new StoryMessageAdapter(getBaseContext(), messages);
-                lstStoryMessages.setAdapter(adapter);
-                adapter.notifyDataSetChanged();*/
-                /*if(qbChatDialog.getType() == QBDialogType.PRIVATE){
-
-                }*/
 
                     storyED.setText("");
                     storyED.setFocusable(true);
@@ -177,6 +183,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         pass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addPassedToDB();
                 addUser();
             }
         });
@@ -189,6 +196,16 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         retrieveStories();
         //loadChatDialogs();
 
+    }
+
+    private void addPassedToDB() {
+        DBHelper helper = new DBHelper(Story.this);
+        helper.insertPassedStory(position);
+    }
+
+    private void addPostedToDB() {
+        DBHelper helper = new DBHelper(Story.this);
+        helper.insertPostedStory(position);
     }
 
     private void addUser(){
@@ -317,10 +334,10 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
         }
 
-        else if(item.getItemId() == R.id.my_stories){
+        /*else if(item.getItemId() == R.id.my_stories){
             Intent intent = new Intent(Story.this,theStories.class);
             startActivity(intent);
-        }
+        }*/
         else if(item.getItemId() == R.id.menu_sign_out){
             logOut();
         }
@@ -331,49 +348,6 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         Intent intent = new Intent(Story.this, UserProfile.class);
         startActivity(intent);
     }
-    private void createSessionForStory(){
-       final ProgressDialog mDialog = new ProgressDialog(Story.this);
-       mDialog.setMessage("Please wait...");
-       mDialog.setCanceledOnTouchOutside(false);
-       mDialog.show();
-
-       String user,password;
-       user = getIntent().getStringExtra("user");
-       password = getIntent().getStringExtra("password");
-
-
-        Log.d("CREATION", "in story password is " + password);
-
-        final QBUser qbUser = new QBUser(user, password);
-       QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
-           @Override
-           public void onSuccess(QBSession qbSession, Bundle bundle) {
-               qbUser.setId(qbSession.getUserId());
-               try {
-                   qbUser.setPassword(BaseService.getBaseService().getToken());
-               } catch (BaseServiceException e) {
-                   e.printStackTrace();
-               }
-
-               QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
-                   @Override
-                   public void onSuccess(Object o, Bundle bundle) {
-                       mDialog.dismiss();
-                   }
-
-                   @Override
-                   public void onError(QBResponseException e) {
-                        Log.e("ERROR",""+e.getMessage());
-                   }
-               });
-           }
-
-           @Override
-           public void onError(QBResponseException e) {
-
-           }
-       });
-   }
 
     @Override
     public void processMessage(String s, QBChatMessage qbChatMessage, Integer integer) {
@@ -464,6 +438,36 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         getMenuInflater().inflate(R.menu.chat_message_context_menu, menu);
+    }
+
+
+    private void centerTitle() {
+        ArrayList<View> textViews = new ArrayList<>();
+
+        getWindow().getDecorView().findViewsWithText(textViews, getTitle(), View.FIND_VIEWS_WITH_TEXT);
+
+        if(textViews.size() > 0) {
+            AppCompatTextView appCompatTextView = null;
+            if(textViews.size() == 1) {
+                appCompatTextView = (AppCompatTextView) textViews.get(0);
+            } else {
+                for(View v : textViews) {
+                    if(v.getParent() instanceof Toolbar) {
+                        appCompatTextView = (AppCompatTextView) v;
+                        break;
+                    }
+                }
+            }
+
+            if(appCompatTextView != null) {
+                ViewGroup.LayoutParams params = appCompatTextView.getLayoutParams();
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                appCompatTextView.setLayoutParams(params);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    appCompatTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                }
+            }
+        }
     }
 }
 

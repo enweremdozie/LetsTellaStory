@@ -2,7 +2,9 @@ package com.letstellastory.android.letstellastory;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +25,10 @@ public class UserProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         initViews();
 
@@ -88,6 +94,14 @@ public class UserProfile extends AppCompatActivity {
         edtEmail.setText(email);
         edtFullName.setText(fullName);
         edtPhone.setText(phone);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+           onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initViews() {
