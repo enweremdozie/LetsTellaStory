@@ -5,10 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +16,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.letstellastory.android.letstellastory.Holder.QBUsersHolder;
+import com.quickblox.auth.QBAuth;
+import com.quickblox.auth.session.BaseService;
+import com.quickblox.auth.session.QBSession;
 import com.quickblox.auth.session.QBSettings;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.core.QBEntityCallback;
+import com.quickblox.core.exception.BaseServiceException;
 import com.quickblox.core.exception.QBResponseException;
 import com.quickblox.users.QBUsers;
 import com.quickblox.users.model.QBUser;
@@ -37,6 +42,13 @@ public class MainActivity extends AppCompatActivity {
     EditText edtUser, edtPassword;
     DBHelper helper;
     SQLiteDatabase sqLiteDatabase;
+    String id, user, password;
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        createSessionForStory();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +56,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //helper.onCreate(sqLiteDatabase);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+
 
         QBChatService.ConfigurationBuilder builder = new QBChatService.ConfigurationBuilder();
         builder.setAutojoinEnabled(true);
@@ -110,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         DBHelper helper = new DBHelper(MainActivity.this);
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = helper.getMyStoriesInformations(db);
-        String id, user, password;
+
 
         //user = cursor.getString(cursor.getColumnIndex(helper.COL_TITLE));
 
@@ -172,5 +182,52 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void createSessionForStory(){
+
+        QBUsers.getUsers(null).performAsync(new QBEntityCallback<ArrayList<QBUser>>() {
+            @Override
+            public void onSuccess(ArrayList<QBUser> qbUsers, Bundle bundle) {
+                QBUsersHolder.getInstance().putUsers(qbUsers);
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+
+            }
+        });
+
+
+        final QBUser qbUser = new QBUser(user, password);
+        //Log.d("CREATION", "in story fragment password is " + password);
+        QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
+            @Override
+            public void onSuccess(QBSession qbSession, Bundle bundle) {
+                qbUser.setId(qbSession.getUserId());
+                try {
+                    qbUser.setPassword(BaseService.getBaseService().getToken());
+                } catch (BaseServiceException e) {
+                    e.printStackTrace();
+                }
+
+                QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
+                    @Override
+                    public void onSuccess(Object o, Bundle bundle) {
+                        //mDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(QBResponseException e) {
+                        Log.e("ERROR",""+e.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+
+            }
+        });
     }
 }

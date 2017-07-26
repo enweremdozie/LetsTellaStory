@@ -38,6 +38,13 @@ public class theStories extends AppCompatActivity {
     Invited_Stories_Fragment isFrag;
     static String user;
     static String password;
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        createSessionForStory();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +52,7 @@ public class theStories extends AppCompatActivity {
 
         setTitle("STORIES");
         centerTitle();
-
+        Log.d("THESTORY", "we entered theStories");
         // Find the view pager that will allow the user to swipe between fragments
         ViewPager viewPager = (ViewPager) findViewById(R.id.story_viewpager);
 
@@ -68,16 +75,9 @@ public class theStories extends AppCompatActivity {
         DBHelper mystories = new DBHelper(theStories.this);
             mystories.insertData_my_stories(user, password);
 
-        //isFrag.setaStory(story);
-        //isFrag.setGenre(genre);
-        //Toast.makeText(theStories.this, story, Toast.LENGTH_LONG).show();
-
-        //Log.d("CREATION", "in the stories password is " + password);
-        //if(story == null) {
-            //Toast.makeText(theStories.this, story, Toast.LENGTH_LONG).show();
-            //createSessionForStory();
-        //}
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -122,6 +122,8 @@ public class theStories extends AppCompatActivity {
             DialogFragment dialog = new CreateDialogFragment();
             dialog.setArguments(args);
             dialog.show(getFragmentManager(), "CreateDialogFragment.tag");
+
+             //finish();
             //Toast.makeText(this, "start", Toast.LENGTH_LONG).show();
             //Log.d("CREATION", "creating in drama");
         }
@@ -166,17 +168,12 @@ public class theStories extends AppCompatActivity {
 
     private void showUserProfile() {
         Intent intent = new Intent(theStories.this, UserProfile.class);
+        intent.putExtra("user", user);
+        intent.putExtra("password", password);
         startActivity(intent);
     }
 
     private void createSessionForStory(){
-        /*final ProgressDialog mDialog = new ProgressDialog(theStories.this);
-        mDialog.setMessage("Please wait...");
-        mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();*/
-
-        //String user = theStories.user;
-        //String password = theStories.password;
 
         QBUsers.getUsers(null).performAsync(new QBEntityCallback<ArrayList<QBUser>>() {
             @Override
@@ -192,7 +189,7 @@ public class theStories extends AppCompatActivity {
 
 
         final QBUser qbUser = new QBUser(user, password);
-        Log.d("CREATION", "in story fragment password is " + password);
+        //Log.d("CREATION", "in story fragment password is " + password);
         QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {

@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class DBHelper extends SQLiteOpenHelper {
-    public static String DATABASE_NAME = "mystories.db";
+    public static String DATABASE_NAME = "story1.db";
     public static String TABLE_NAME = "mystory_table";
     public static String TABLE2_NAME = "post_table";
     public static String TABLE3_NAME = "pass_table";
@@ -22,6 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static String COL_TITLE = "TITLE";
     public static String COL_GENRE = "GENRE";
+    public static final int DATABASE_VERSION = 1;
 
 
 
@@ -36,11 +37,9 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("create table " + TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "TITLE TEXT, GENRE TEXT)");
         sqLiteDatabase.execSQL("create table " + TABLE2_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "POSITION INTEGER)");
-
-        sqLiteDatabase.execSQL("create table " + TABLE2_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "PASS INTEGER)");
-
+                "POSITION TEXT)");
+        sqLiteDatabase.execSQL("create table " + TABLE3_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "PASS TEXT)");
 
 
 
@@ -48,27 +47,42 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 
-        String createTable = "CREATE TABLE " + TABLE_NAME + " ( " +
+
+        /*String createTable = "CREATE TABLE " + TABLE_NAME + " ( " +
                 DBStory.DBMain._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COL_TITLE + " TEXT NOT NULL, " +
                 COL_GENRE + " TEXT NOT NULL);";
 
         String createTable2 = "CREATE TABLE " + TABLE2_NAME + " ( " +
                 DBState.DBMain._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_POS + " INTEGER NOT NULL);";
+                COL_POS + " TEXT NOT NULL);";
 
         String createTable3 = "CREATE TABLE " + TABLE3_NAME + " ( " +
                 DBStoryState.DBMain._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_PASS + " INTEGER NOT NULL);";
+                COL_PASS + " TEXT NOT NULL);";*/
 
+        //onUpgrade(sqLiteDatabase, 1, DATABASE_VERSION);
     }
 
+    public Integer deleteSingleRowPost(String id)
+    {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        return sqLiteDatabase.delete(TABLE2_NAME, "ID = ?", new String[] {id});
+    }
+
+    public Integer deleteSingleRowPass(String id)
+    {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        return sqLiteDatabase.delete(TABLE3_NAME, "ID = ?", new String[] {id});
+    }
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE2_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE3_NAME);
 
+       if(newVersion > oldVersion) {
+           sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+           sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE2_NAME);
+           sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE3_NAME);
+       }
 
         onCreate(sqLiteDatabase);
     }
@@ -87,11 +101,11 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
     }
 
-    public boolean insertPostedStory (int position){
+    public boolean insertPostedStory (String dialogID){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         //contentValues.put(COL_STATE, state);
-        contentValues.put(COL_POS, position);
+        contentValues.put(COL_POS, dialogID);
         //contentValues.put(COL_STORY, story);
         long result = sqLiteDatabase.insert(TABLE2_NAME, null, contentValues);
 
@@ -101,11 +115,11 @@ public class DBHelper extends SQLiteOpenHelper {
             return true;
     }
 
-    public boolean insertPassedStory (int pass){
+    public boolean insertPassedStory (String dialogID){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         //contentValues.put(COL_STATE, state);
-        contentValues.put(COL_PASS, pass);
+        contentValues.put(COL_PASS, dialogID);
         //contentValues.put(COL_STORY, story);
         long result = sqLiteDatabase.insert(TABLE3_NAME, null, contentValues);
 
@@ -131,7 +145,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Cursor getAllData(){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        Cursor res = sqLiteDatabase.rawQuery("select * from " + TABLE_NAME, null);
+        Cursor res = sqLiteDatabase.rawQuery("select * from " + TABLE2_NAME, null);
         return res;
     }
 

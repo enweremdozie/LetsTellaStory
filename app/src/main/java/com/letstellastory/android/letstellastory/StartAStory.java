@@ -1,6 +1,5 @@
 package com.letstellastory.android.letstellastory;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -9,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -17,12 +17,20 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.letstellastory.android.letstellastory.Holder.QBUsersHolder;
+import com.quickblox.auth.QBAuth;
+import com.quickblox.auth.session.BaseService;
+import com.quickblox.auth.session.QBSession;
+import com.quickblox.chat.QBChatService;
 import com.quickblox.chat.QBRestChatService;
 import com.quickblox.chat.model.QBChatDialog;
 import com.quickblox.chat.model.QBDialogType;
 import com.quickblox.chat.utils.DialogUtils;
 import com.quickblox.core.QBEntityCallback;
+import com.quickblox.core.exception.BaseServiceException;
 import com.quickblox.core.exception.QBResponseException;
+import com.quickblox.users.QBUsers;
+import com.quickblox.users.model.QBUser;
 
 import java.util.ArrayList;
 
@@ -40,6 +48,11 @@ public class StartAStory extends AppCompatActivity {
     TextView show;
     String user, password;
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        createSessionForStory();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +116,7 @@ public class StartAStory extends AppCompatActivity {
 
 
                             ArrayList<Integer> occupantIdsList = new ArrayList<Integer>();
-                            QBChatDialog mdialog = DialogUtils.buildDialog(storyName.getText().toString() + "-" + genreDisplay.getText().toString(), QBDialogType.GROUP, occupantIdsList);
+                            QBChatDialog mdialog = DialogUtils.buildDialog(storyName.getText().toString() + "-" + genreDisplay.getText().toString(), QBDialogType.PUBLIC_GROUP, occupantIdsList);
 
                             QBRestChatService.createChatDialog(mdialog).performAsync(new QBEntityCallback<QBChatDialog>() {
                                 @Override
@@ -118,14 +131,23 @@ public class StartAStory extends AppCompatActivity {
                             });
 
 
+                    if(passState.equals("no"))    {
+                        Intent intent = new Intent(v.getContext(), theStories.class);
+                        intent.putExtra("title", et);
+                        intent.putExtra("genre", genreDisplay.getText());
+                        startActivity(intent);
+                        finish();
+                    }
 
-                            Intent intent = new Intent(v.getContext(), theStories.class);
-                            intent.putExtra("title", et);
-                            intent.putExtra("genre", genreDisplay.getText());
-                            //intent.putExtra("user", user);
-                            //intent.putExtra("password", password);
-                            startActivity(intent);
-                            finish();
+                    else if (passState.equals("yes"))    {
+                        Intent intent = new Intent(v.getContext(), ListUsersActivity.class);
+                        intent.putExtra("title", et);
+                        intent.putExtra("genre", genreDisplay.getText());
+                        
+                        startActivity(intent);
+                        finish();
+                    }
+
                             /*getSupportFragmentManager().beginTransaction()
                                     .replace(R.id.container, new Invited_Stories_Fragment())
                                     .commit();*/
@@ -169,10 +191,6 @@ public class StartAStory extends AppCompatActivity {
         });
     }
 
-    public void createSessionForStory(){
-        ProgressDialog mDialog = new ProgressDialog(StartAStory.this);
-
-    }
 
     private void centerTitle() {
         ArrayList<View> textViews = new ArrayList<>();
@@ -201,5 +219,52 @@ public class StartAStory extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void createSessionForStory(){
+
+        QBUsers.getUsers(null).performAsync(new QBEntityCallback<ArrayList<QBUser>>() {
+            @Override
+            public void onSuccess(ArrayList<QBUser> qbUsers, Bundle bundle) {
+                QBUsersHolder.getInstance().putUsers(qbUsers);
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+
+            }
+        });
+
+
+        final QBUser qbUser = new QBUser(user, password);
+        //Log.d("CREATION", "in story fragment password is " + password);
+        QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
+            @Override
+            public void onSuccess(QBSession qbSession, Bundle bundle) {
+                qbUser.setId(qbSession.getUserId());
+                try {
+                    qbUser.setPassword(BaseService.getBaseService().getToken());
+                } catch (BaseServiceException e) {
+                    e.printStackTrace();
+                }
+
+                QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
+                    @Override
+                    public void onSuccess(Object o, Bundle bundle) {
+                        //mDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onError(QBResponseException e) {
+                        Log.e("ERROR",""+e.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+
+            }
+        });
     }
 }

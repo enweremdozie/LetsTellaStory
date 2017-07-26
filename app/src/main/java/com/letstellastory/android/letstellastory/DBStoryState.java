@@ -12,7 +12,7 @@ public class DBStoryState {
 
     public class DBMain implements BaseColumns {
         public static final String TABLE = "state";
-        public static final String COL_POS = "position";
+        public static final String COL_PASS = "pass";
 
 
     }

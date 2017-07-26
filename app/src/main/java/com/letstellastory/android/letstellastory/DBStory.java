@@ -15,6 +15,8 @@ public class DBMain implements BaseColumns {
     public static final String COL_TITLE = "title";
     public static final String COL_GENRE = "genre";
     public static final String COL_STORY = "story";
+    public static final String COL_POS = "position";
+    public static final String COL_PASS = "pass";
 
 
 }
