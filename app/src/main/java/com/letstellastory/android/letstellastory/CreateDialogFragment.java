@@ -28,8 +28,8 @@ public class CreateDialogFragment extends DialogFragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Start a story");
                 builder.setMessage("Start your own story, pass it on to a friend and watch your paragraph become hundreds of pages." +
-                        " As the administrator of a story you have the ability to \n-Keep track of what is added to your story \n-Delete any paragraph that you do not want in your story\n" +
-                        "-Pass a start to any friend you want to start the story \n-End the story");
+                        " As the administrator of a story you have the ability to \n-Keep track of what is added to your story \n-Delete any paragraph that you do not want in your story" +
+                         "\n-End the story");
 
 
                 builder.setPositiveButton("GO", new DialogInterface.OnClickListener() {

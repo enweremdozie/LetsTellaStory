@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
+    <!--item
         android:id="@+id/chat_message_update_mesage"
-        android:title="Update"/>
+        android:title="Update"/-->
 
     <item
-        android:id="@+id/chat_message_delete_mesage"
+        android:id="@+id/chat_message_information"
+        android:title="About writer"/>
+
+    <item
+        android:id="@+id/chat_message_delete_message"
         android:title="Delete"/>
 
 </menu>

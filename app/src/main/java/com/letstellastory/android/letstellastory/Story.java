@@ -2,12 +2,14 @@ package com.letstellastory.android.letstellastory;
 
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
@@ -52,7 +54,7 @@ import org.jivesoftware.smackx.muc.DiscussionHistory;
 
 import java.util.ArrayList;
 
-//Not needed
+
 
 public class Story extends AppCompatActivity implements QBChatDialogMessageListener{
     //TextView pass = (TextView) findViewById(R.id.passStory);
@@ -454,14 +456,38 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         contextMenuIndexClicked = info.position;
 
         switch(item.getItemId()){
-            case R.id.chat_message_update_mesage:
+            /*case R.id.chat_message_update_mesage:
                 updateMessage();
+                break;*/
+            case R.id.chat_message_information:
+                infoMessage();
                 break;
-            case R.id.chat_message_delete_mesage:
+            case R.id.chat_message_delete_message:
                 deleteMessage();
                 break;
         }
         return true;
+    }
+
+    private void infoMessage() {
+        QBChatMessage storyMessage = new QBChatMessage();
+                //setSenderId(QBChatService.getInstance().getUser().getId());
+        AlertDialog.Builder builder = new AlertDialog.Builder(Story.this);
+        builder.setTitle("About writer");
+        QBChatMessage userMsg = QBStoryMessageHolder.getInstance().getStoryMessageByDialogId(qbChatDialog.getDialogId())
+                .get(contextMenuIndexClicked);
+
+        //builder.setMessage("User name: " + userMsg.getSenderId());
+
+        builder.setMessage("Username: " + QBUsersHolder.getInstance().getUserById(userMsg.getSenderId()).getLogin());
+
+
+        builder.setPositiveButton("DONE", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+
+        builder.show();
     }
 
     private void deleteMessage() {

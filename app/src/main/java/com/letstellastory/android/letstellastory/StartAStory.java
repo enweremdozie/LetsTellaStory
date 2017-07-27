@@ -131,23 +131,14 @@ public class StartAStory extends AppCompatActivity {
                             });
 
 
-                    if(passState.equals("no"))    {
-                        Intent intent = new Intent(v.getContext(), theStories.class);
-                        intent.putExtra("title", et);
-                        intent.putExtra("genre", genreDisplay.getText());
-                        startActivity(intent);
-                        finish();
-                    }
 
-                    else if (passState.equals("yes"))    {
-                        Intent intent = new Intent(v.getContext(), ListUsersActivity.class);
-                        intent.putExtra("title", et);
-                        intent.putExtra("genre", genreDisplay.getText());
-                        
-                        startActivity(intent);
-                        finish();
-                    }
-
+                            Intent intent = new Intent(v.getContext(), theStories.class);
+                            intent.putExtra("title", et);
+                            intent.putExtra("genre", genreDisplay.getText());
+                            //intent.putExtra("user", user);
+                            //intent.putExtra("password", password);
+                            startActivity(intent);
+                            finish();
                             /*getSupportFragmentManager().beginTransaction()
                                     .replace(R.id.container, new Invited_Stories_Fragment())
                                     .commit();*/
