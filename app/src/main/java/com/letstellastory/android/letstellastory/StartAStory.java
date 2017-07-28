@@ -63,7 +63,7 @@ public class StartAStory extends AppCompatActivity {
 
         genre = (RadioGroup) findViewById(R.id.radGroup);
         length = (RadioGroup) findViewById(R.id.length);
-        pass = (CheckBox) findViewById(R.id.PassaStart);
+        //pass = (CheckBox) findViewById(R.id.PassaStart);
 
         Intent intent = getIntent();
         user = intent.getExtras().getString("user");
@@ -93,12 +93,12 @@ public class StartAStory extends AppCompatActivity {
 
                 genreDisplay = (RadioButton) findViewById(selectedId);
                 storyLength = (RadioButton) findViewById(lengthId);
-                if(pass.isChecked()){
+                /*if(pass.isChecked()){
                     passState = "yes";
                 }
                 else{
                     passState = "no";
-                }
+                }*/
 
                 if(et.length() > 0) {
 
@@ -107,8 +107,8 @@ public class StartAStory extends AppCompatActivity {
                     builder.setTitle("Story snippet");
                     builder.setMessage("Story name: " + et + "\n" +
                                         "Genre: " + genreDisplay.getText().toString() + "\n" +
-                                          "Story length: " + storyLength.getText().toString() + "\n" +
-                                            "Pass a start: " + passState);
+                                          "Story length: " + storyLength.getText().toString());// + "\n" +
+                                           // "Pass a start: " + passState);
 
 
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -116,7 +116,7 @@ public class StartAStory extends AppCompatActivity {
 
 
                             ArrayList<Integer> occupantIdsList = new ArrayList<Integer>();
-                            QBChatDialog mdialog = DialogUtils.buildDialog(storyName.getText().toString() + "-" + genreDisplay.getText().toString(), QBDialogType.PUBLIC_GROUP, occupantIdsList);
+                            QBChatDialog mdialog = DialogUtils.buildDialog(storyName.getText().toString() + "-" + genreDisplay.getText().toString(), QBDialogType.GROUP, occupantIdsList);
 
                             QBRestChatService.createChatDialog(mdialog).performAsync(new QBEntityCallback<QBChatDialog>() {
                                 @Override

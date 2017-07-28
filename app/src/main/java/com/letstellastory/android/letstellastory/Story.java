@@ -8,11 +8,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -73,6 +76,9 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     ListView lstStoryMessages;
     boolean hasposted = false;
     boolean haspassed = false;
+    TextInputLayout textInputLayout;
+    TextView textCount;
+    TextView textMax;
     //ListUsersActivity list = new ListUsersActivity();
 
 
@@ -127,6 +133,10 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         if(state == true){
             pass.setVisibility(View.GONE);
             post.setVisibility(View.GONE);
+            textInputLayout.setVisibility(View.GONE);
+            textCount.setVisibility(View.GONE);
+            textMax.setVisibility(View.GONE);
+
         }
     }
 
@@ -144,8 +154,14 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         post = (TextView) findViewById(R.id.postStory);
         pass = (TextView) findViewById(R.id.passStory);
         storyED = (EditText) findViewById(R.id.storyEdit);
+        textCount = (TextView) findViewById(R.id.current_amount);
+        textMax = (TextView) findViewById(R.id.textMax);
+        textInputLayout = (TextInputLayout) findViewById(R.id.editLayout);
         registerForContextMenu(lstStoryMessages);
+
+        storyED.addTextChangedListener(mTextEditorWatcher);
         //show = (TextView) findViewById(R.id.showAll);
+
         Intent intent = getIntent();
         story = intent.getExtras().getString("story");
         ActTitle = intent.getExtras().getString("story");
@@ -170,6 +186,9 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         if(haspassed == true){
             pass.setVisibility(View.GONE);
             post.setVisibility(View.GONE);
+            textInputLayout.setVisibility(View.GONE);
+            textCount.setVisibility(View.GONE);
+            textMax.setVisibility(View.GONE);
         }
 
 
@@ -602,5 +621,26 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             }
         });
     }
+
+    private final TextWatcher mTextEditorWatcher = new TextWatcher() {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            //This sets a textview to the current length
+            //storyED.setText(String.valueOf(s.length()));
+           // Log.d("EDITTEXTLENGTH", "Text length: " + s.length());
+
+            StringBuilder sb = new StringBuilder(s.length());
+            sb.append(s);
+            String textLen = String.valueOf(sb.length());
+            textCount.setText(textLen);
+        }
+
+        public void afterTextChanged(Editable s) {
+        }
+    };
+
+
 }
 

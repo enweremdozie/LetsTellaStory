@@ -13,7 +13,7 @@
 <LinearLayout
     android:id="@+id/first"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
 
@@ -114,29 +114,30 @@
     </RadioGroup>
 
 
-    <TextView
+    <!--TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Let a friend start your story"
         android:paddingLeft="15dp"
-        android:textSize="20dp"/>
+        android:textSize="20dp"/-->
 
-    <CheckBox
+    <!--CheckBox
         android:id="@+id/PassaStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:textSize="15dp"
-        android:text="Pass a start"/>
+        android:text="Pass a start"/-->
 
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
         android:weightSum="2"
-        android:paddingTop="40dp">
+        android:paddingTop="40dp"
+        android:gravity="bottom">
 
 
 
@@ -149,9 +150,8 @@
             android:textAllCaps="true"
             android:text="cancel"
             android:textSize="20dp"
-            android:clickable="true"
             android:textColor="#FAFAFA"
-            android:background="#212121"
+            android:background="@layout/rounded_button"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"/>
 
@@ -164,7 +164,7 @@
             android:text="ok"
             android:textSize="20dp"
             android:textColor="#FAFAFA"
-            android:background="#212121"
+            android:background="@layout/rounded_button"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"/>
 

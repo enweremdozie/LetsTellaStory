@@ -22,7 +22,8 @@
                 android:hint="Enter your username"
                 android:padding="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@layout/rounded_border_edittext"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -34,7 +35,8 @@
                 android:hint="Enter your Full name"
                 android:padding="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@layout/rounded_border_edittext"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -47,7 +49,8 @@
                 android:padding="5dp"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@layout/rounded_border_edittext"/>
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 
@@ -66,7 +69,7 @@
             android:layout_height="wrap_content"
             android:textColor="#FAFAFA"
             android:text="Sign Up"
-            android:background="#212121"
+            android:background="@layout/rounded_button"
             android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
             style="@style/Widget.AppCompat.Button.Borderless"/>
@@ -78,7 +81,7 @@
             android:layout_height="wrap_content"
             android:textColor="#FAFAFA"
             android:text="Cancel"
-            android:background="#212121"
+            android:background="@layout/rounded_button"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
 

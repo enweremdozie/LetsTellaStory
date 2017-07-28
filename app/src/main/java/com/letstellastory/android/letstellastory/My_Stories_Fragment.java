@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.letstellastory.android.letstellastory.Common.Common;
 import com.letstellastory.android.letstellastory.Holder.QBChatDialogHolder;
@@ -53,6 +54,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
     String story, genre, user, password;
     boolean hasposted = false;
     boolean haspassed = false;
+    Integer currentUser;
     //int contextMenuIndexClicked = -1;
 
     @Override
@@ -119,10 +121,11 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
             loadStoryDialogs();
 
 
+        //Integer currentUserID = QBAuth.getSession().get;
+
+        //Log.d("CREATION", "current user: " + currentUserID);
 
         return view;
-
-
     }
 
 
@@ -217,25 +220,64 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
     }
 
     private void deleteDialog(int index) {
-        final QBChatDialog chatDialog = (QBChatDialog)gridview.getAdapter().getItem(index);
-        QBRestChatService.deleteDialog(chatDialog.getDialogId(), false)
-                .performAsync(new QBEntityCallback<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid, Bundle bundle) {
-                        QBChatDialogHolder.getInstance().removeDialog(chatDialog.getDialogId());
-                        deleteDBDialogPass(chatDialog.getDialogId());
-                        deleteDBDialogPost(chatDialog.getDialogId());
-                        StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), QBChatDialogHolder.getInstance().getAllChatDialogs());
-                        gridview.setAdapter(adapter);
-                        adapter.notifyDataSetChanged();
+        final QBChatDialog chatDialog = (QBChatDialog) gridview.getAdapter().getItem(index);
+        Integer adminID = chatDialog.getUserId();
+        //List<Integer> occupantsId = chatDialog.getOccupants();
 
-                    }
 
-                    @Override
-                    public void onError(QBResponseException e) {
 
-                    }
-                });
+        Log.d("CREATION", "admin user: " + adminID);
+        Log.d("CREATION", "current user: " + currentUser);
+
+        if (adminID.equals(currentUser)){
+            QBRestChatService.deleteDialog(chatDialog.getDialogId(), false)
+                    .performAsync(new QBEntityCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid, Bundle bundle) {
+                            QBChatDialogHolder.getInstance().removeDialog(chatDialog.getDialogId());
+                            deleteDBDialogPass(chatDialog.getDialogId());
+                            deleteDBDialogPost(chatDialog.getDialogId());
+                            StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), QBChatDialogHolder.getInstance().getAllChatDialogs());
+                            gridview.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
+
+                        }
+
+                        @Override
+                        public void onError(QBResponseException e) {
+
+                        }
+                    });
+            }
+
+            else{
+            Toast.makeText(getActivity(), "Not story admin", Toast.LENGTH_SHORT).show();
+        }
+           /* else {
+            if(chatDialog != null){
+
+                    QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
+                QBUser qbUser = (QBUser) QBUsers.getUser(currentUser);
+                     requestBuilder.removeUsers(qbUser);
+
+
+
+                    /*QBRestChatService.updateGroupChatDialog(chatDialog, requestBuilder)
+                            .performAsync(new QBEntityCallback<QBChatDialog>() {
+                                @Override
+                                public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+                                    Toast.makeText(getContext(), "REMOVAL successful", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onError(QBResponseException e) {
+
+                                }
+                            });
+                }
+            }*/
+
+
     }
 
     private void deleteDBDialogPost(String dialogID) {
@@ -377,6 +419,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
                 qbUser.setId(qbSession.getUserId());
+                currentUser = qbSession.getUserId();
                 try {
                     qbUser.setPassword(BaseService.getBaseService().getToken());
                 } catch (BaseServiceException e) {

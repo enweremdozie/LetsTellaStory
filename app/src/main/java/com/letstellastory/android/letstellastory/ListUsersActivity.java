@@ -176,7 +176,7 @@ public class ListUsersActivity extends AppCompatActivity {
             if(mode.equals(Common.UPDATE_ADD_MODE)){
                 loadListAvailableUser();
             }
-        else if(mode.equals(Common.UPDATE_REMOVE_MODE)){
+            else if(mode.equals(Common.UPDATE_REMOVE_MODE)){
                 loadListUserInGroup();
             }
         }
@@ -185,26 +185,26 @@ public class ListUsersActivity extends AppCompatActivity {
 
 
     private void loadListUserInGroup() {
-    QBRestChatService.getChatDialogById(qbChatDialog.getDialogId())
-            .performAsync(new QBEntityCallback<QBChatDialog>() {
-                @Override
-                public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
-                    List<Integer> occupantsId = qbChatDialog.getOccupants();
-                    List<QBUser> listUserAlreadyInGroup = QBUsersHolder.getInstance().getUserByIds(occupantsId);
-                    ArrayList<QBUser> users = new ArrayList<QBUser>();
-                    users.addAll(listUserAlreadyInGroup);
+        QBRestChatService.getChatDialogById(qbChatDialog.getDialogId())
+                .performAsync(new QBEntityCallback<QBChatDialog>() {
+                    @Override
+                    public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+                        List<Integer> occupantsId = qbChatDialog.getOccupants();
+                        List<QBUser> listUserAlreadyInGroup = QBUsersHolder.getInstance().getUserByIds(occupantsId);
+                        ArrayList<QBUser> users = new ArrayList<QBUser>();
+                        users.addAll(listUserAlreadyInGroup);
 
-                    ListUsersAdapter adapter = new ListUsersAdapter(getBaseContext(), users);
-                    lstUsers.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                    userAdd = users;
-                }
+                        ListUsersAdapter adapter = new ListUsersAdapter(getBaseContext(), users);
+                        lstUsers.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        userAdd = users;
+                    }
 
-                @Override
-                public void onError(QBResponseException e) {
-                    Toast.makeText(ListUsersActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void onError(QBResponseException e) {
+                        Toast.makeText(ListUsersActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void loadListAvailableUser() {
@@ -225,14 +225,14 @@ public class ListUsersActivity extends AppCompatActivity {
                             adapter.notifyDataSetChanged();
                             userAdd = listUsers;
 
-                           // QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
-                           // requestBuilder.addUsers(userAdd.get(0));
+                            // QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
+                            // requestBuilder.addUsers(userAdd.get(0));
                         }
                     }
 
                     @Override
                     public void onError(QBResponseException e) {
-                            Toast.makeText(ListUsersActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ListUsersActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
 
                     }
                 });

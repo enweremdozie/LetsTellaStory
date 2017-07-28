@@ -1,10 +1,14 @@
 package com.letstellastory.android.letstellastory;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
@@ -72,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         edtPassword = (EditText)findViewById(R.id.main_editPassword);
         edtUser = (EditText)findViewById(R.id.main_editLogin);
         getListItemData();
-
         btnSignUp.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -114,6 +117,20 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+
+        QBSettings.getInstance().setEnablePushNotification(true);
+         BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String message = intent.getStringExtra("message");
+                String from = intent.getStringExtra("from");
+                Log.i("CREATION", "Receiving message: " + message + ", from " + from);
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(pushBroadcastReceiver,
+                new IntentFilter("new-push-event"));
+
     }
 
     private void getListItemData() {
@@ -134,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
             //Toast.makeText(this, "user "+ user, Toast.LENGTH_LONG).show();
             if(user != null && password != null){
                 edtUser.setText(user);
+                edtUser.setSelection(user.length());
                 edtPassword.setText(password);
             }
 
@@ -230,4 +248,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }
