@@ -15,6 +15,7 @@ import android.util.Log;
 public class CreateDialogFragment extends DialogFragment {
         String user,password,story,genre;
 
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             Bundle mArgs = getArguments();
@@ -37,10 +38,11 @@ public class CreateDialogFragment extends DialogFragment {
                         //Context context = getContext();
 
                         Intent intent = new Intent(getActivity(), StartAStory.class);
-                        //intent.putExtra("user", user);
-                        //intent.putExtra("password", password);
+                        Log.d("LOADSTORY", "password in Dialog: " + password);
                         intent.putExtra("story", story);
                         intent.putExtra("genre", genre);
+                        intent.putExtra("user", user);
+                        intent.putExtra("password", password);
                         startActivity(intent);
                         // You don't have to do anything here if you just want it dismissed when clicked
                     }

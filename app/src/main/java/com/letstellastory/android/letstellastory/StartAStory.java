@@ -135,8 +135,9 @@ public class StartAStory extends AppCompatActivity {
                             Intent intent = new Intent(v.getContext(), theStories.class);
                             intent.putExtra("title", et);
                             intent.putExtra("genre", genreDisplay.getText());
-                            //intent.putExtra("user", user);
-                            //intent.putExtra("password", password);
+                            intent.putExtra("user", user);
+                            intent.putExtra("password", password);
+                            Log.d("LOADSTORY", "password in Start a story: " + password);
                             startActivity(intent);
                             finish();
                             /*getSupportFragmentManager().beginTransaction()

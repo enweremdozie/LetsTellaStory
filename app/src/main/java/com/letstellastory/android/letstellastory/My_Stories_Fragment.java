@@ -15,7 +15,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.letstellastory.android.letstellastory.Common.Common;
 import com.letstellastory.android.letstellastory.Holder.QBChatDialogHolder;
@@ -60,13 +59,18 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("LOADSTORY", "onresume");
+        Log.d("LOADSTORY", "password: " + password);
         createSessionForStory();
         loadStoryDialogs();
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        Log.d("LOADSTORY", "onstart");
+        Log.d("LOADSTORY", "password: " + password);
         //createSessionForStory();
         loadStoryDialogs();
     }
@@ -117,8 +121,10 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
                 //getAll();
             }
         });
+            Log.d("LOADSTORY", "oncreate");
+            Log.d("LOADSTORY", "password: " + password);
 
-            loadStoryDialogs();
+        loadStoryDialogs();
 
 
         //Integer currentUserID = QBAuth.getSession().get;
@@ -193,7 +199,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         StringBuffer buffer = new StringBuffer();
         while(cursor.moveToNext()){
             buffer.append("posted: " + cursor.getString(1)+ "\n");
-            Log.e("BUFFERCHECK", buffer.toString());
+            //Log.e("BUFFERCHECK", buffer.toString());
         }
     }
 
@@ -229,7 +235,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         Log.d("CREATION", "admin user: " + adminID);
         Log.d("CREATION", "current user: " + currentUser);
 
-        if (adminID.equals(currentUser)){
+       // if (adminID.equals(currentUser)){
             QBRestChatService.deleteDialog(chatDialog.getDialogId(), false)
                     .performAsync(new QBEntityCallback<Void>() {
                         @Override
@@ -248,11 +254,11 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
 
                         }
                     });
-            }
+          //  }
 
-            else{
+           /* else{
             Toast.makeText(getActivity(), "Not story admin", Toast.LENGTH_SHORT).show();
-        }
+        }*/
            /* else {
             if(chatDialog != null){
 

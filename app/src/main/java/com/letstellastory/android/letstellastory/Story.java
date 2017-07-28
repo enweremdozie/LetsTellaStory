@@ -61,7 +61,7 @@ import java.util.ArrayList;
 
 public class Story extends AppCompatActivity implements QBChatDialogMessageListener{
     //TextView pass = (TextView) findViewById(R.id.passStory);
-    public TextView pass, post;
+    TextView pass, post;
     DBHelper db;
     EditText storyED;
     String ActTitle, genre, story, user, password, dialogID;

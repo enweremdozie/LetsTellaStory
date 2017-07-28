@@ -24,7 +24,7 @@
     <ListView
         android:id="@+id/storyList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:divider="@android:color/transparent"
         android:stackFromBottom="false"
@@ -51,6 +51,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/what_happens_next"
             android:background="@layout/rounded_button"
+            android:paddingTop="7dp"
             android:maxLength="150"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -82,7 +83,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:weightSum="2"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="8dp">
 
       <TextView
           android:id="@+id/current_amount"
@@ -103,8 +105,7 @@
           android:textSize="12dp"
           android:visibility="visible"
           android:textColor="@android:color/black"
-          android:layout_alignParentRight="true"
-          android:layout_alignParentEnd="true"
+
           />
 
     </LinearLayout>
