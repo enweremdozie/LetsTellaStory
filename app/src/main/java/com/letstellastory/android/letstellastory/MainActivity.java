@@ -1,13 +1,16 @@
 package com.letstellastory.android.letstellastory;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     static final String AUTH_KEY = "NnE9q3LKjvKz6-e";
     static final String AUTH_SECRET = "hcWYgEvZmpcn5s8";
     static final String ACCOUNT_KEY = "UYy6wj-dzPJ4ePBZdMJM";
+    static final int REQUEST_CODE = 1000;
 
     Button btnLogin, btnSignUp;
     EditText edtUser, edtPassword;
@@ -66,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setAutojoinEnabled(true);
         QBChatService.setConfigurationBuilder(builder);
 
+        requestRunTimePermission();
         centerTitle();
         //getListItemData();
         initializeFramework();
@@ -131,6 +136,32 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(pushBroadcastReceiver,
                 new IntentFilter("new-push-event"));
 
+    }
+
+    private void requestRunTimePermission() {
+        if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+
+            requestPermissions(new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case REQUEST_CODE:
+            {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(getBaseContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                }
+                else
+                    Toast.makeText(getBaseContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+            break;
+        }
     }
 
     private void getListItemData() {

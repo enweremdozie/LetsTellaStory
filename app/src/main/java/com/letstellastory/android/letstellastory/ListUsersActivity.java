@@ -25,7 +25,6 @@ import com.quickblox.chat.QBRestChatService;
 import com.quickblox.chat.QBSystemMessagesManager;
 import com.quickblox.chat.model.QBChatDialog;
 import com.quickblox.chat.model.QBChatMessage;
-import com.quickblox.chat.model.QBDialogType;
 import com.quickblox.chat.request.QBDialogRequestBuilder;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.BaseServiceException;
@@ -78,7 +77,7 @@ public class ListUsersActivity extends AppCompatActivity {
         user = intent.getExtras().getString("user");
         password = intent.getExtras().getString("password");
 
-
+        Log.d("DIALOGID", "Dialog ID in LUA: " + dialogID);
         lstUsers = (ListView)findViewById(R.id.lstUsers);
         lstUsers.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
@@ -103,7 +102,7 @@ public class ListUsersActivity extends AppCompatActivity {
                     } else if (lstUsers.getCheckedItemPositions().size() > 1) {
                         Toast.makeText(ListUsersActivity.this, "Select only one friend", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(ListUsersActivity.this, "Please Select a friend", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ListUsersActivity.this, "Please make a selection", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -125,8 +124,9 @@ public class ListUsersActivity extends AppCompatActivity {
                                 .performAsync(new QBEntityCallback<QBChatDialog>() {
                                     @Override
                                     public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+                                        passStory(lstUsers.getCheckedItemPositions());
                                         Toast.makeText(ListUsersActivity.this, "PASS successful", Toast.LENGTH_SHORT).show();
-                                        finish();
+
                                     }
 
                                     @Override
@@ -156,7 +156,7 @@ public class ListUsersActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
                                         Toast.makeText(ListUsersActivity.this, "REMOVAL successful", Toast.LENGTH_SHORT).show();
-                                        finish();
+                                        //finish();
                                     }
 
                                     @Override
@@ -257,17 +257,11 @@ public class ListUsersActivity extends AppCompatActivity {
 
         }
 
-        QBChatDialog dialog = new QBChatDialog();
-        //dialog.setName(Common.createChatDialogName(occupantIdsList));
-        dialog.setType(QBDialogType.GROUP);
-        //dialog.setOccupantsIds(occupantIdsList);
-
-        QBRestChatService.createChatDialog(dialog).performAsync(new QBEntityCallback<QBChatDialog>() {
+        QBRestChatService.getChatDialogById(dialogID).performAsync(new QBEntityCallback<QBChatDialog>() {
             @Override
             public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
-                mDialog.dismiss();
                 Toast.makeText(getBaseContext(),"Pass successful", Toast.LENGTH_SHORT).show();
-
+                mDialog.dismiss();
                 QBSystemMessagesManager qbSystemMessagesManager = QBChatService.getInstance().getSystemMessagesManager();
                 QBChatMessage qbChatMessage = new QBChatMessage();
                 qbChatMessage.setBody((qbChatDialog.getDialogId()));
@@ -281,10 +275,6 @@ public class ListUsersActivity extends AppCompatActivity {
                     }
                 }
 
-
-
-
-                finish();
             }
 
             @Override
@@ -292,12 +282,15 @@ public class ListUsersActivity extends AppCompatActivity {
                 Log.e("ERROR", e.getMessage());
             }
         });
+
+        finish();
     }
 
     //Right here for adding users
     private void retrieveAllUsers() {
 
         QBUsers.getUsers(null).performAsync(new QBEntityCallback<ArrayList<QBUser>>() {
+                    //Log.d("CREATION", "this is the users fileID " + user.getFileId());
 
             @Override
             public void onSuccess(ArrayList<QBUser> qbUsers, Bundle bundle) {

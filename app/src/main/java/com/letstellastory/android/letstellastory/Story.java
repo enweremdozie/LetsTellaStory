@@ -58,7 +58,6 @@ import org.jivesoftware.smackx.muc.DiscussionHistory;
 import java.util.ArrayList;
 
 
-
 public class Story extends AppCompatActivity implements QBChatDialogMessageListener{
     //TextView pass = (TextView) findViewById(R.id.passStory);
     TextView pass, post;
@@ -259,8 +258,6 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                     addUser();
                 }
             });
-
-
 
 
         initStoryDialogs();

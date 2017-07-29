@@ -249,10 +249,7 @@ public class theStories extends AppCompatActivity {
         }
     }
 
-    public void finishFunc(){
 
-        finish();
-    }
 }
 
 
