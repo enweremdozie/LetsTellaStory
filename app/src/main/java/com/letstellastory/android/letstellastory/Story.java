@@ -96,9 +96,9 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     }
 
     @Override
-    protected void onStart() {
-
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
+        createSessionForStory();
     }
 
     @Override

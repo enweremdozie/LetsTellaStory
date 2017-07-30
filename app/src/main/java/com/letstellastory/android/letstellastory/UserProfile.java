@@ -58,6 +58,12 @@ public class UserProfile extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        createSessionForStory();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
