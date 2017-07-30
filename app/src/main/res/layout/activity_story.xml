@@ -43,7 +43,9 @@
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/postStory"
         android:layout_toStartOf="@+id/postStory"
-        android:visibility="visible">
+        android:visibility="visible"
+        android:paddingLeft="5dp"
+        android:paddingBottom="5dp">
 
         <EditText
             android:id="@+id/storyEdit"
@@ -52,7 +54,8 @@
             android:hint="@string/what_happens_next"
             android:background="@layout/rounded_button"
             android:paddingTop="7dp"
-            android:maxLength="150"/>
+            android:maxLength="150"
+            android:paddingLeft="5dp"/>
     </android.support.design.widget.TextInputLayout>
 
 
@@ -91,7 +94,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:text="0"
-          android:textSize="12dp"
+          android:textSize="12sp"
           android:layout_weight="1"
           android:visibility="visible"
           android:textColor="@android:color/black" />
@@ -102,7 +105,7 @@
           android:layout_height="wrap_content"
           android:text="/150"
           android:layout_weight="1"
-          android:textSize="12dp"
+          android:textSize="12sp"
           android:visibility="visible"
           android:textColor="@android:color/black"
 
@@ -136,7 +139,8 @@
         android:clickable="true"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:paddingBottom="5dp"/>
 
     <TextView
         android:id="@+id/passStory"
@@ -150,7 +154,8 @@
         android:visibility="invisible"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:paddingBottom="5dp"/>
 
 
     <!--android:layout_alignParentStart="true"-->

@@ -2,6 +2,7 @@ package com.letstellastory.android.letstellastory;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -42,6 +44,7 @@ public class ListUsersActivity extends AppCompatActivity {
     ListView lstUsers;
     Button btnPass;
     Story story = new Story();
+    int hasclicked;
     //public boolean clicked = false;
 
 
@@ -79,7 +82,9 @@ public class ListUsersActivity extends AppCompatActivity {
 
         Log.d("DIALOGID", "Dialog ID in LUA: " + dialogID);
         lstUsers = (ListView)findViewById(R.id.lstUsers);
-        lstUsers.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        //lstUsers.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        //lstUsers.setClickable(true);
+        hasclicked = listviewclicked();
 
         btnPass = (Button)findViewById(R.id.btn_pass_story);
 
@@ -95,13 +100,12 @@ public class ListUsersActivity extends AppCompatActivity {
                 if(mode == null) {
                     int countChoice = lstUsers.getCount();
 
-                    if (lstUsers.getCheckedItemPositions().size() == 1) {
-                        passStory(lstUsers.getCheckedItemPositions());
+                    if (hasclicked >= 0) {
+                        passStory(hasclicked);
                         //loadListAvailableUser();                      stopped here
+                    }
 
-                    } else if (lstUsers.getCheckedItemPositions().size() > 1) {
-                        Toast.makeText(ListUsersActivity.this, "Select only one friend", Toast.LENGTH_SHORT).show();
-                    } else {
+                    else {
                         Toast.makeText(ListUsersActivity.this, "Please make a selection", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -111,20 +115,21 @@ public class ListUsersActivity extends AppCompatActivity {
                         QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
 
                         int cntChoice = lstUsers.getCount();
-                        SparseBooleanArray checkItemPositions = lstUsers.getCheckedItemPositions();
-                        for(int i = 0; i < cntChoice; i++){
-                            if(checkItemPositions.get(i))
-                            {
-                                QBUser user = (QBUser)lstUsers.getItemAtPosition(i);
+                        //SparseBooleanArray checkItemPositions = lstUsers.getCheckedItemPositions();
+                        //for(int i = 0; i < cntChoice; i++){
+                            //if(checkItemPositions.get(i))
+                            //{
+                                QBUser user = (QBUser)lstUsers.getItemAtPosition(hasclicked);
                                 requestBuilder.addUsers(user);
-                            }
-                        }
+                           // }
+                       // }
 
                         QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
                                 .performAsync(new QBEntityCallback<QBChatDialog>() {
                                     @Override
                                     public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
-                                        passStory(lstUsers.getCheckedItemPositions());
+                                        //passStory(hasclicked);
+                                        sendToRecepient();
                                         Toast.makeText(ListUsersActivity.this, "PASS successful", Toast.LENGTH_SHORT).show();
 
                                     }
@@ -224,7 +229,6 @@ public class ListUsersActivity extends AppCompatActivity {
                             lstUsers.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
                             userAdd = listUsers;
-
                             // QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
                             // requestBuilder.addUsers(userAdd.get(0));
                         }
@@ -238,52 +242,21 @@ public class ListUsersActivity extends AppCompatActivity {
                 });
     }
 
-    private void passStory(SparseBooleanArray checkedItemPositions) {
+    private void passStory(int checkedItemPositions) {
 
-        final ProgressDialog mDialog = new ProgressDialog(ListUsersActivity.this);
-        mDialog.setMessage("Please wait...");
-        mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();
 
         int countChoice = lstUsers.getCount();
         //ArrayList<Integer> occupantIdsList = new ArrayList<>();
 
         for(int i = 0; i < countChoice; i++){
-            if(checkedItemPositions.get(i)){
+            if(checkedItemPositions >= 0){
                 QBUser user = (QBUser) lstUsers.getItemAtPosition(i);
                 //occupantIdsList.add(user.getId());
 
             }
-
         }
 
-        QBRestChatService.getChatDialogById(dialogID).performAsync(new QBEntityCallback<QBChatDialog>() {
-            @Override
-            public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
-                Toast.makeText(getBaseContext(),"Pass successful", Toast.LENGTH_SHORT).show();
-                mDialog.dismiss();
-                QBSystemMessagesManager qbSystemMessagesManager = QBChatService.getInstance().getSystemMessagesManager();
-                QBChatMessage qbChatMessage = new QBChatMessage();
-                qbChatMessage.setBody((qbChatDialog.getDialogId()));
 
-                for(int i = 0; i < qbChatDialog.getOccupants().size(); i++) {
-                    qbChatMessage.setRecipientId(qbChatDialog.getOccupants().get(i));
-                    try {
-                        qbSystemMessagesManager.sendSystemMessage(qbChatMessage);
-                    } catch (SmackException.NotConnectedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-
-            @Override
-            public void onError(QBResponseException e) {
-                Log.e("ERROR", e.getMessage());
-            }
-        });
-
-        finish();
     }
 
     //Right here for adding users
@@ -377,5 +350,68 @@ public class ListUsersActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public int listviewclicked(){
+        final int[] pos = new int[1];
+        lstUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,
+                                    int position, long id) {
+                for (int i = 0; i < lstUsers.getChildCount(); i++) {
+                    if(position == i ){
+                        pos[0] = position;
+                        lstUsers.getChildAt(i).setBackgroundColor(Color.LTGRAY);
+                    }
+                    else{
+                        lstUsers.getChildAt(i).setBackgroundColor(Color.WHITE);
+                    }
+                }
+                Log.d("LISTVIEWSEL", "listview selected position: " + position);
+
+            }
+        });
+                return pos[0];
+    }
+
+    public void sendToRecepient(){
+
+        final ProgressDialog mDialog = new ProgressDialog(ListUsersActivity.this);
+        mDialog.setMessage("Please wait...");
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
+
+        QBRestChatService.getChatDialogById(dialogID).performAsync(new QBEntityCallback<QBChatDialog>() {
+            @Override
+            public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+                //Toast.makeText(getBaseContext(),"Pass successful", Toast.LENGTH_SHORT).show();
+                mDialog.dismiss();
+                QBSystemMessagesManager qbSystemMessagesManager = QBChatService.getInstance().getSystemMessagesManager();
+                QBChatMessage qbChatMessage = new QBChatMessage();
+                qbChatMessage.setBody(qbChatDialog.getDialogId());
+
+                for(int i = 0; i < qbChatDialog.getOccupants().size(); i++) {
+                    qbChatMessage.setRecipientId(qbChatDialog.getOccupants().get(i));
+
+                    //Log.d("RECEPIENT", "the recepient: " + qbChatDialog.getOccupants().get(i));
+
+                    try {
+                        qbSystemMessagesManager.sendSystemMessage(qbChatMessage);
+                    } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+                Log.e("ERROR", e.getMessage());
+            }
+        });
+
+        finish();
+
     }
 }
