@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         createSessionForStory();
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -75,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         QBChatService.ConfigurationBuilder builder = new QBChatService.ConfigurationBuilder();
         builder.setAutojoinEnabled(true);
         QBChatService.setConfigurationBuilder(builder);
+
+        
 
         requestRunTimePermission();
         centerTitle();
@@ -117,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra("user", user);
                         intent.putExtra("password", password);
                         startActivity(intent);
-                        finish();
+                        //finish();
                     }
 
                     @Override
@@ -286,5 +290,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        DBHelper helper = new DBHelper(MainActivity.this);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = helper.getMyStoriesInformations(db);
+        try {
+            // get data from cursor
+        } catch (Exception e) {
+            // exception handling
+        } finally {
+            if(cursor != null){
+                cursor.close();
+            }
+        }
+    }
 
 }

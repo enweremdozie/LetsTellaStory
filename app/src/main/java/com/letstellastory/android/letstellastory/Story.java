@@ -93,6 +93,19 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         super.onStop();
         qbChatDialog.removeMessageListrener(this);
 
+        DBHelper helper = new DBHelper(Story.this);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = helper.getMyStoriesInformations(db);
+        try {
+            // get data from cursor
+        } catch (Exception e) {
+            // exception handling
+        } finally {
+            if(cursor != null){
+                cursor.close();
+            }
+        }
+
     }
 
     @Override

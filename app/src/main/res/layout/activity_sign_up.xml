@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.letstellastory.android.letstellastory.SignUpActivity">
+    tools:context="com.letstellastory.android.letstellastory.SignUpActivity"
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
