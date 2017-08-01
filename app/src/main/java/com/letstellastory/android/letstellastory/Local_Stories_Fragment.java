@@ -111,22 +111,5 @@ public class Local_Stories_Fragment extends Fragment {
     }
 
 
-    @Override
-    public void onStop() {
-        super.onStop();
 
-
-            DBHelper helper = new DBHelper(getActivity().getBaseContext());
-            SQLiteDatabase db = helper.getReadableDatabase();
-            Cursor cursor = helper.getMyStoriesInformations(db);
-            try {
-                // get data from cursor
-            } catch (Exception e) {
-                // exception handling
-            } finally {
-                if(cursor != null){
-                    cursor.close();
-                }
-            }
-    }
 }

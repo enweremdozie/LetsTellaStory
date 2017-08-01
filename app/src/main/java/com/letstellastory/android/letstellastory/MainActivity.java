@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     DBHelper helper;
     SQLiteDatabase sqLiteDatabase;
     String id, user, password;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     protected void onRestart() {
@@ -58,12 +59,24 @@ public class MainActivity extends AppCompatActivity {
         createSessionForStory();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.w("MainActivity", "onPause");
+        //LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+    }
 
 
     @Override
     protected void onResume() {
         super.onResume();
         createSessionForStory();
+
+       /* Log.w("MainActivity", "onResume");
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(GCMRegistrationIntentService.REGISTRATION_SUCCESS));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(GCMRegistrationIntentService.REGISTRATION_ERROR));*/
     }
 
     @Override
@@ -78,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
         builder.setAutojoinEnabled(true);
         QBChatService.setConfigurationBuilder(builder);
 
-        
+        QBSettings.getInstance().setAutoCreateSession(true);
+
 
         requestRunTimePermission();
         centerTitle();
@@ -88,66 +102,104 @@ public class MainActivity extends AppCompatActivity {
         btnLogin = (Button) findViewById(R.id.main_btnLogin);
         btnSignUp = (Button) findViewById(R.id.main_btnSignUp);
 
-        edtPassword = (EditText)findViewById(R.id.main_editPassword);
-        edtUser = (EditText)findViewById(R.id.main_editLogin);
+        edtPassword = (EditText) findViewById(R.id.main_editPassword);
+        edtUser = (EditText) findViewById(R.id.main_editLogin);
         getListItemData();
-        btnSignUp.setOnClickListener(new View.OnClickListener(){
 
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,SignUpActivity.class));
-            }
-        });
-
-        btnLogin.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                final String user = edtUser.getText().toString();
-                final String password = edtPassword.getText().toString();
-
-                QBUser qbUser = new QBUser(user,password);
-                QBUsers.signIn(qbUser).performAsync(new QBEntityCallback<QBUser>() {
-                    @Override
-                    public void onSuccess(QBUser qbUser, Bundle bundle) {
-                        Toast.makeText(getBaseContext(),"Login successful", Toast.LENGTH_SHORT).show();
-
-
-                        /*Intent passInfo = new Intent (MainActivity.this, Story.class);
-                        passInfo.putExtra("user", user);
-                        passInfo.putExtra("password", password);*/
-
-                        Intent intent = new Intent (MainActivity.this, theStories.class);
-                        intent.putExtra("user", user);
-                        intent.putExtra("password", password);
-                        startActivity(intent);
-                        //finish();
-                    }
-
-                    @Override
-                    public void onError(QBResponseException e) {
-                        Toast.makeText(getBaseContext(),"" +e.getMessage(), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-            }
-        });
-
-        QBSettings.getInstance().setEnablePushNotification(true);
-         BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
+        BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String message = intent.getStringExtra("message");
                 String from = intent.getStringExtra("from");
-                Log.i("CREATION", "Receiving message: " + message + ", from " + from);
+                Log.i("PUSHNOT", "Receiving message: " + message + ", from " + from);
             }
         };
 
         LocalBroadcastManager.getInstance(this).registerReceiver(pushBroadcastReceiver,
                 new IntentFilter("new-push-event"));
 
-    }
+        /*mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //Check type of intent filter
+                if(intent.getAction().endsWith(GCMRegistrationIntentService.REGISTRATION_SUCCESS)){
+                    String token = intent.getStringExtra("token");
+                    Toast.makeText(getApplicationContext(), "GCM token: " + token, Toast.LENGTH_LONG).show();
+                }
+                else if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_ERROR)){
+                    //Registration error
+                    Toast.makeText(getApplicationContext(), "GCM registration error!!!", Toast.LENGTH_LONG).show();
+                }
+                else{
 
+                }
+            }
+        };
+
+
+        //check status of google play services in device
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+        if(ConnectionResult.SUCCESS != resultCode){
+            if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)){
+                Toast.makeText(getApplicationContext(), "Google Play Service is not installed/enabled on this device", Toast.LENGTH_LONG).show();
+                //so notification
+                GooglePlayServicesUtil.showErrorNotification(resultCode, getApplicationContext());
+            }
+            else{
+                Toast.makeText(getApplicationContext(), "This device does not support Google Play Service!", Toast.LENGTH_LONG).show();
+            }
+        }
+        else {
+            Intent intent1 = new Intent(this, GCMRegistrationIntentService.class);
+            startService(intent1);
+        }*/
+
+
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SignUpActivity.class));
+            }
+        });
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                final String user = edtUser.getText().toString();
+                final String password = edtPassword.getText().toString();
+
+                QBUser qbUser = new QBUser(user, password);
+
+                QBUsers.signIn(qbUser).performAsync(new QBEntityCallback<QBUser>() {
+                    @Override
+                    public void onSuccess(QBUser qbUser, Bundle bundle) {
+                        Toast.makeText(getBaseContext(), "Login successful", Toast.LENGTH_SHORT).show();
+
+
+                        /*Intent passInfo = new Intent (MainActivity.this, Story.class);
+                        passInfo.putExtra("user", user);
+                        passInfo.putExtra("password", password);*/
+
+                        Intent intent = new Intent(MainActivity.this, theStories.class);
+                        intent.putExtra("user", user);
+                        intent.putExtra("password", password);
+
+                        startActivity(intent);
+                        //finish();
+                    }
+
+                    @Override
+                    public void onError(QBResponseException e) {
+                        Toast.makeText(getBaseContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+        });
+
+    }
     private void requestRunTimePermission() {
         if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){

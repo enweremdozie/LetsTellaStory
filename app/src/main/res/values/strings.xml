@@ -12,4 +12,5 @@
     <string name="what_happens_next">What happens next</string>
     <item name="visible" type="id" />
     <item name="masked" type="id" />
+
 </resources>

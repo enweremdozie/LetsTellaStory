@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "215605351012",
+    "project_id": "firebase-lets-tell-a-story"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:215605351012:android:1f7add256f9ce579",
+        "android_client_info": {
+          "package_name": "com.letstellastory.android.letstellastory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "215605351012-4cu81don12v4t2535gm6re87l0pf8aaa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOZx5w93mcp2YsTiCuP6Cj7-E0XI0nuJM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

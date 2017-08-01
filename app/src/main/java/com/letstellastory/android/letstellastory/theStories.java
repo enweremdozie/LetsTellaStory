@@ -39,6 +39,7 @@ public class theStories extends AppCompatActivity {
     static String user;
     static String password;
 
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -49,7 +50,10 @@ public class theStories extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         createSessionForStory();
+
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +62,8 @@ public class theStories extends AppCompatActivity {
 
         setTitle("STORIES");
         centerTitle();
-        Log.d("THESTORY", "we entered theStories");
+
+
         // Find the view pager that will allow the user to swipe between fragments
         ViewPager viewPager = (ViewPager) findViewById(R.id.story_viewpager);
 
@@ -80,6 +85,9 @@ public class theStories extends AppCompatActivity {
         //Toast.makeText(this, "user: " + user, Toast.LENGTH_SHORT).show();
         DBHelper mystories = new DBHelper(theStories.this);
             mystories.insertData_my_stories(user, password);
+
+
+
 
     }
 

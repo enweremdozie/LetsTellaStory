@@ -46,6 +46,7 @@ public class ListUsersActivity extends AppCompatActivity {
     Story story = new Story();
     int hasclicked;
     //public boolean clicked = false;
+    boolean passstate = false;
 
 
     String mode = "";
@@ -54,6 +55,7 @@ public class ListUsersActivity extends AppCompatActivity {
     List<QBUser> userAdd = new ArrayList<>();
     TextView passedButton;
     String user, password;
+    QBUser qbuser = new QBUser();
 
     @Override
     protected void onRestart() {
@@ -93,24 +95,26 @@ public class ListUsersActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 addPassedToDB(dialogID);
+                //passStory(hasclicked);
                 //passedButton.setVisibility(View.GONE);
                 //story.isPassed();
                 //passedButton.setVisibility(View.GONE);
                 //story.pass.setVisibility(View.GONE);
-                if(mode == null) {
+               /* if(mode == null) {
                     int countChoice = lstUsers.getCount();
 
                     if (hasclicked >= 0) {
                         passStory(hasclicked);
                         //loadListAvailableUser();                      stopped here
-                    }
+                    }*/
 
-                    else {
-                        Toast.makeText(ListUsersActivity.this, "Please make a selection", Toast.LENGTH_SHORT).show();
-                    }
-                }
+                    /*else {
+                        Toast.makeText(ListUsersActivity.this, "Please make a selection", Toast.LENGTH_SHORT).show();*/
+                   // }
+                //}
 
-                else if(mode.equals(Common.UPDATE_ADD_MODE) && qbChatDialog != null){
+                 if(mode.equals(Common.UPDATE_ADD_MODE) && qbChatDialog != null && passstate){
+
                     if(userAdd.size() > 0){
                         QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
 
@@ -119,8 +123,8 @@ public class ListUsersActivity extends AppCompatActivity {
                         //for(int i = 0; i < cntChoice; i++){
                             //if(checkItemPositions.get(i))
                             //{
-                                QBUser user = (QBUser)lstUsers.getItemAtPosition(hasclicked);
-                                requestBuilder.addUsers(user);
+                                qbuser = (QBUser)lstUsers.getItemAtPosition(hasclicked);
+                                requestBuilder.addUsers(qbuser);
                            // }
                        // }
 
@@ -129,9 +133,9 @@ public class ListUsersActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
                                         //passStory(hasclicked);
-                                        sendToRecepient();
-                                        Toast.makeText(ListUsersActivity.this, "PASS successful", Toast.LENGTH_SHORT).show();
 
+                                        Toast.makeText(ListUsersActivity.this, "PASS successful", Toast.LENGTH_SHORT).show();
+                                        sendToRecepient();
                                     }
 
                                     @Override
@@ -171,6 +175,10 @@ public class ListUsersActivity extends AppCompatActivity {
                                 });
                     }
                 }
+
+                 else {
+                     Toast.makeText(ListUsersActivity.this, "Please make a selection", Toast.LENGTH_SHORT).show();
+                      }
             }
         });
 
@@ -359,6 +367,7 @@ public class ListUsersActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                                     int position, long id) {
+                passstate = true;
                 for (int i = 0; i < lstUsers.getChildCount(); i++) {
                     if(position == i ){
                         pos[0] = position;
@@ -391,17 +400,18 @@ public class ListUsersActivity extends AppCompatActivity {
                 QBChatMessage qbChatMessage = new QBChatMessage();
                 qbChatMessage.setBody(qbChatDialog.getDialogId());
 
-                for(int i = 0; i < qbChatDialog.getOccupants().size(); i++) {
-                    qbChatMessage.setRecipientId(qbChatDialog.getOccupants().get(i));
+                //for(int i = 0; i < qbChatDialog.getOccupants().size(); i++) {
+                    qbChatMessage.setRecipientId(qbuser.getId());
 
-                    //Log.d("RECEPIENT", "the recepient: " + qbChatDialog.getOccupants().get(i));
+                    Log.d("RECEPIENT", "the recepient: " + qbuser.getId());
 
                     try {
                         qbSystemMessagesManager.sendSystemMessage(qbChatMessage);
-                    } catch (SmackException.NotConnectedException e) {
+                    }
+                    catch (SmackException.NotConnectedException e) {
                         e.printStackTrace();
                     }
-                }
+                //}
 
             }
 

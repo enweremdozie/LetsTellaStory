@@ -2,13 +2,17 @@ package com.letstellastory.android.letstellastory;
 
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +40,7 @@ import com.letstellastory.android.letstellastory.adapter.StoryMessageAdapter;
 import com.quickblox.auth.QBAuth;
 import com.quickblox.auth.session.BaseService;
 import com.quickblox.auth.session.QBSession;
+import com.quickblox.auth.session.QBSettings;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.chat.QBIncomingMessagesManager;
 import com.quickblox.chat.QBRestChatService;
@@ -78,6 +83,8 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     TextInputLayout textInputLayout;
     TextView textCount;
     TextView textMax;
+
+    QBUser qbuser = new QBUser();
     //ListUsersActivity list = new ListUsersActivity();
 
 
@@ -112,12 +119,42 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     protected void onResume() {
         super.onResume();
         createSessionForStory();
+        initStoryDialogs();
+
+        retrieveStories();
+
+        /*QBUsers.signIn(qbuser).performAsync( new QBEntityCallback<QBUser>() {
+            @Override
+            public void onSuccess(QBUser user, Bundle args) {
+                // success
+            }
+
+            @Override
+            public void onError(QBResponseException error) {
+                // error
+            }
+        });*/
+
+
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+        /*QBUsers.signIn(qbuser).performAsync( new QBEntityCallback<QBUser>() {
+            @Override
+            public void onSuccess(QBUser user, Bundle args) {
+                // success
+            }
 
+            @Override
+            public void onError(QBResponseException error) {
+                // error
+            }
+        });*/
+        //initStoryDialogs();
+
+        //retrieveStories();
         createSessionForStory();
         DBHelper helper = new DBHelper(Story.this);
         SQLiteDatabase db = helper.getReadableDatabase();
@@ -185,7 +222,9 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         position = intent.getExtras().getInt("position");
         dialogID = intent.getExtras().getString("dialogID");
 
-        Log.d("CREATION", "position in Story " + position);
+        qbuser = new QBUser(user, password);
+
+        //Log.d("CREATION", "position in Story " + position);
         setTitle(ActTitle);
         centerTitle();
         //AddData();
@@ -242,7 +281,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                                     .performAsync(new QBEntityCallback<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid, Bundle bundle) {
-                                            retrieveStories();
+                                            //retrieveStories();
                                             isEditMode = false;
                                             updateDialog.dismiss();
 
@@ -260,7 +299,26 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                         Toast.makeText(Story.this, "\"What happens next\" cannot be empty", Toast.LENGTH_LONG).show();
                     }
 
-                }
+                    //push notification
+
+                    QBSettings.getInstance().setEnablePushNotification(true);
+                    BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
+                        @Override
+                        public void onReceive(Context context, Intent intent) {
+                            String message = intent.getStringExtra("message");
+                            String from = intent.getStringExtra("from");
+                            Log.i("CREATION", "Receiving message: " + message + ", from " + from);
+                        }
+                    };
+
+                    LocalBroadcastManager.getInstance(getBaseContext()).registerReceiver(pushBroadcastReceiver,
+                            new IntentFilter("new-push-event"));
+
+
+
+
+
+            }
             });
 
 
@@ -273,7 +331,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             });
 
 
-        initStoryDialogs();
+       // initStoryDialogs();
 
         retrieveStories();
         //loadChatDialogs();
@@ -358,7 +416,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
                 @Override
                 public void onError(QBResponseException e) {
-                Log.d("ERROR", ""+e.getMessage());
+                Log.e("ERROR", ""+e.getMessage());
                 }
             });
 
@@ -369,6 +427,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             public void processMessage(String s, QBChatMessage qbChatMessage, Integer integer) {
                 QBStoryMessageHolder.getInstance().putStory(qbChatMessage.getDialogId(),qbChatMessage);
                 ArrayList<QBChatMessage> messages = QBStoryMessageHolder.getInstance().getStoryMessageByDialogId(qbChatMessage.getDialogId());
+                Log.e("ERRORIN", messages.get(0).toString());
                 adapter = new StoryMessageAdapter(getBaseContext(), messages);
                 lstStoryMessages.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
@@ -376,7 +435,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
             @Override
             public void processError(String s, QBChatException e, QBChatMessage qbChatMessage, Integer integer) {
-                Log.e("ERROR", e.getMessage());
+                Log.e("ERRORIN", "ERROR IN LOADING MESSAGE");
             }
         });
     }
