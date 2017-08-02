@@ -423,5 +423,36 @@ public class ListUsersActivity extends AppCompatActivity {
 
         finish();
 
+        //pushnot();
     }
+
+    /*private void pushnot() {
+        StringifyArrayList<Integer> userIds = new StringifyArrayList<Integer>();
+        userIds.add(53779);
+        userIds.add(960);
+
+
+        QBEvent event = new QBEvent();
+        event.setUserIds(userIds);
+        event.setEnvironment(QBEnvironment.DEVELOPMENT);
+        event.setNotificationType(QBNotificationType.PUSH);
+        event.setPushType(QBPushType.GCM);
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put("data.message", "Hello");
+        data.put("data.type", "welcome message");
+        event.setMessage(data);
+
+        QBPushNotifications.createEvent(event).performAsync( new QBEntityCallback<QBEvent>() {
+            @Override
+            public void onSuccess(QBEvent qbEvent, Bundle args) {
+                // sent
+            }
+
+            @Override
+            public void onError(QBResponseException errors) {
+
+            }
+        });
+
+    }*/
 }

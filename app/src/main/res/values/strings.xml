@@ -9,6 +9,7 @@
     <string name="post">POST</string>
     <string name="hello_world">genre</string>
     <string name="pass">PASS</string>
+    <string name="sender_id">215605351012</string>
     <string name="what_happens_next">What happens next</string>
     <item name="visible" type="id" />
     <item name="masked" type="id" />

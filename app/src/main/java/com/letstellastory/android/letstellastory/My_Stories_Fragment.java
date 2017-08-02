@@ -445,7 +445,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
-                //Log.d("CHECKLISTENER", "1");
+                Log.d("LISTENER", "1");
                 qbUser.setId(qbSession.getUserId());
                 currentUser = qbSession.getUserId();
                 try {
@@ -453,17 +453,14 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
                 } catch (BaseServiceException e) {
                     e.printStackTrace();
                 }
-                    //Log.d("CHECKLISTENER", "2");
-
-                QBSystemMessagesManager qbSystemMessagesManager = QBChatService.getInstance().getSystemMessagesManager();
-                qbSystemMessagesManager.addSystemMessageListener(My_Stories_Fragment.this);
-
+                    Log.d("LISTENER", "2");
                 QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
                     @Override
                     public void onSuccess(Object o, Bundle bundle) {
                         //mDialog.dismiss();
-                        //Log.d("CHECKLISTENER", "3");
-
+                        Log.d("LISTENER", "3");
+                        QBSystemMessagesManager qbSystemMessagesManager = QBChatService.getInstance().getSystemMessagesManager();
+                        qbSystemMessagesManager.addSystemMessageListener(My_Stories_Fragment.this);
 
                         /*QBIncomingMessagesManager qbIncomingMessagesManager = QBChatService.getInstance().getIncomingMessagesManager();
                         qbIncomingMessagesManager.addDialogMessageListener(My_Stories_Fragment.this);*/

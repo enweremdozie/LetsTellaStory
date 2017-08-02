@@ -1,10 +1,19 @@
 package com.letstellastory.android.letstellastory;
 
 import android.app.DialogFragment;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
@@ -76,6 +85,11 @@ public class theStories extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.story_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
+        Intent intent1  = new Intent(this, theStories.class);
+        intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        int requestCode = 0;//my request code
+        final PendingIntent pendingIntent = PendingIntent.getActivity(this, requestCode, intent1, PendingIntent.FLAG_ONE_SHOT);
+
         Intent intent = getIntent();
         story = intent.getExtras().getString("title");
         genre = intent.getExtras().getString("genre");
@@ -87,6 +101,32 @@ public class theStories extends AppCompatActivity {
             mystories.insertData_my_stories(user, password);
 
 
+
+        BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String message = intent.getStringExtra("message");
+                String from = intent.getStringExtra("from");
+                Log.i("PUSHNOT", "Receiving message: " + message + ", from " + from);
+
+
+                Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                //Build notification
+
+                NotificationCompat.Builder noBuilder = new NotificationCompat.Builder(getBaseContext())
+                        .setSmallIcon(R.mipmap.letstellastory_icon)
+                        .setContentTitle("New Story from " + from)
+                        .setContentText(message)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent);
+
+                NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.notify(0,noBuilder.build());//0 = ID of notification
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(pushBroadcastReceiver,
+                new IntentFilter("new-push-event"));
 
 
     }

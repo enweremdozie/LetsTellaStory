@@ -4,7 +4,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.google.gms:google-services:3.1.0'
+
     }
 }
 
@@ -14,12 +15,20 @@ allprojects {
         maven{
             url "https://github.com/QuickBlox/quickblox-android-sdk-releases/raw/master/"
         }
+
         maven{
             url "https://jitpack.io"
         }
 
+        maven{
+        url "https://maven.google.com"
+        }
     }
 }
+
+
+
+
 
 task clean(type: Delete) {
     delete rootProject.buildDir

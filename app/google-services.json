@@ -7,6 +7,8 @@
     {
       "client_info": {
         "mobilesdk_app_id": "1:215605351012:android:1f7add256f9ce579",
+        "client_id": "com.letstellastory.android.letstellastory",
+        "client_type": 1,
         "android_client_info": {
           "package_name": "com.letstellastory.android.letstellastory"
         }

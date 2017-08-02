@@ -1,17 +1,13 @@
 package com.letstellastory.android.letstellastory;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
@@ -32,10 +28,13 @@ import com.quickblox.chat.QBChatService;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.BaseServiceException;
 import com.quickblox.core.exception.QBResponseException;
+import com.quickblox.messages.services.QBPushManager;
 import com.quickblox.users.QBUsers;
 import com.quickblox.users.model.QBUser;
 
 import java.util.ArrayList;
+
+//import com.quickblox.messages.services.QBPushManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
     DBHelper helper;
     SQLiteDatabase sqLiteDatabase;
     String id, user, password;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
+
+    //
+    //private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     protected void onRestart() {
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.w("MainActivity", "onPause");
+        //Log.w("MainActivity", "onPause");
         //LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
     }
 
@@ -84,29 +85,42 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         //helper.onCreate(sqLiteDatabase);
+        QBSettings.getInstance().setAccountKey(ACCOUNT_KEY);
+        QBSettings.getInstance().init(getApplicationContext(), APP_ID,AUTH_KEY,AUTH_SECRET );
+
+        /*QBSubscription qbSubscription = new QBSubscription();
+        qbSubscription.setNotificationChannel(QBNotificationChannel.GCM);
+        String androidID = com.quickblox.core.helper.Utils.generateDeviceId(getBaseContext());
+        qbSubscription.setDeviceUdid(androidID);
+        qbSubscription.setRegistrationID("30816491");
+        qbSubscription.setEnvironment(QBEnvironment.DEVELOPMENT);*/
+
+        QBPushManager.getInstance().addListener(new QBPushManager.QBSubscribeListener() {
+            @Override
+            public void onSubscriptionCreated() {
+                Log.d("PUSHNOT", "onSubscriptionCreated");
+            }
+
+            @Override
+            public void onSubscriptionError(final Exception e, int resultCode) {
+                Log.d("PUSHNOT", "onSubscriptionError" + e);
+                if (resultCode >= 0) {
+                    Log.d("PUSHNOT", "Google play service exception" + resultCode);
+                }
+                Log.d("PUSHNOT", "onSubscriptionError " + e.getMessage());
+            }
+
+            @Override
+            public void onSubscriptionDeleted(boolean b) {
+
+            }
+        });
 
 
-        QBChatService.ConfigurationBuilder builder = new QBChatService.ConfigurationBuilder();
-        builder.setAutojoinEnabled(true);
-        QBChatService.setConfigurationBuilder(builder);
 
-        QBSettings.getInstance().setAutoCreateSession(true);
-
-
-        requestRunTimePermission();
-        centerTitle();
-        //getListItemData();
-        initializeFramework();
-
-        btnLogin = (Button) findViewById(R.id.main_btnLogin);
-        btnSignUp = (Button) findViewById(R.id.main_btnSignUp);
-
-        edtPassword = (EditText) findViewById(R.id.main_editPassword);
-        edtUser = (EditText) findViewById(R.id.main_editLogin);
-        getListItemData();
-
-        BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
+        /*BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String message = intent.getStringExtra("message");
@@ -116,7 +130,41 @@ public class MainActivity extends AppCompatActivity {
         };
 
         LocalBroadcastManager.getInstance(this).registerReceiver(pushBroadcastReceiver,
-                new IntentFilter("new-push-event"));
+                new IntentFilter("new-push-event"));*/
+
+
+        QBSettings.getInstance().setAutoCreateSession(true);
+
+
+        centerTitle();
+
+        Log.d("PUSHNOT", "push not status: " + QBSettings.getInstance().isEnablePushNotification());
+
+        //QBSettings.getInstance().setEnablePushNotification(true);
+        QBChatService.ConfigurationBuilder builder = new QBChatService.ConfigurationBuilder();
+        builder.setAutojoinEnabled(true);
+        QBChatService.setConfigurationBuilder(builder);
+
+
+
+        QBSettings.getInstance().setEnablePushNotification(true);
+        requestRunTimePermission();
+        //getListItemData();
+        //initializeFramework();
+
+        btnLogin = (Button) findViewById(R.id.main_btnLogin);
+        btnSignUp = (Button) findViewById(R.id.main_btnSignUp);
+
+        edtPassword = (EditText) findViewById(R.id.main_editPassword);
+        edtUser = (EditText) findViewById(R.id.main_editLogin);
+        getListItemData();
+
+
+
+
+
+
+
 
         /*mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -199,6 +247,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        createSessionForStory();
+
     }
     private void requestRunTimePermission() {
         if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
@@ -261,10 +311,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initializeFramework() {
+    /*private void initializeFramework() {
         QBSettings.getInstance().init(getApplicationContext(),APP_ID,AUTH_KEY,AUTH_SECRET);
         QBSettings.getInstance().setAccountKey(ACCOUNT_KEY);
-    }
+    }*/
 
     private void centerTitle() {
         ArrayList<View> textViews = new ArrayList<>();

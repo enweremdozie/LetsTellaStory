@@ -331,10 +331,10 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             });
 
 
-       // initStoryDialogs();
+        initStoryDialogs();
 
         retrieveStories();
-        //loadChatDialogs();
+
 
     }
 
