@@ -31,13 +31,21 @@ import com.quickblox.chat.request.QBDialogRequestBuilder;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.BaseServiceException;
 import com.quickblox.core.exception.QBResponseException;
+import com.quickblox.core.helper.StringifyArrayList;
+import com.quickblox.messages.QBPushNotifications;
+import com.quickblox.messages.model.QBEnvironment;
+import com.quickblox.messages.model.QBEvent;
+import com.quickblox.messages.model.QBNotificationType;
+import com.quickblox.messages.model.QBPushType;
 import com.quickblox.users.QBUsers;
 import com.quickblox.users.model.QBUser;
 
 import org.jivesoftware.smack.SmackException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
 
 public class ListUsersActivity extends AppCompatActivity {
 
@@ -50,7 +58,7 @@ public class ListUsersActivity extends AppCompatActivity {
 
 
     String mode = "";
-    String dialogID;
+    String dialogID, storyEdit;
     QBChatDialog qbChatDialog;
     List<QBUser> userAdd = new ArrayList<>();
     TextView passedButton;
@@ -81,6 +89,7 @@ public class ListUsersActivity extends AppCompatActivity {
         dialogID = intent.getExtras().getString("dialogID");
         user = intent.getExtras().getString("user");
         password = intent.getExtras().getString("password");
+        storyEdit = intent.getExtras().getString("storyEdit");
 
         Log.d("DIALOGID", "Dialog ID in LUA: " + dialogID);
         lstUsers = (ListView)findViewById(R.id.lstUsers);
@@ -132,7 +141,6 @@ public class ListUsersActivity extends AppCompatActivity {
                                 .performAsync(new QBEntityCallback<QBChatDialog>() {
                                     @Override
                                     public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
-                                        //passStory(hasclicked);
 
                                         Toast.makeText(ListUsersActivity.this, "PASS successful", Toast.LENGTH_SHORT).show();
                                         sendToRecepient();
@@ -421,9 +429,55 @@ public class ListUsersActivity extends AppCompatActivity {
             }
         });
 
-        finish();
+        sendPushNotification();
 
+        //finish();
         //pushnot();
+    }
+
+    private void sendPushNotification() {
+        StringifyArrayList<Integer> userIds = new StringifyArrayList<Integer>();
+        List<Integer> occupantsId = qbChatDialog.getOccupants();
+        List<QBUser> usersinGroup = QBUsersHolder.getInstance().getUserByIds(occupantsId);
+
+       /* if(userAdd.size() > 0){
+            QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
+            int cntChoice = lstUsers.getCount();
+            SparseBooleanArray checkItemPositions = lstUsers.getCheckedItemPositions();*/
+
+            for(int i = 0; i < usersinGroup.size() - 1; i++){
+                userIds.add(usersinGroup.get(i).getId());
+                Log.d("PUSHNOT", userIds.get(i).toString());
+            }
+
+            userIds.add(qbuser.getId());
+        QBEvent event = new QBEvent();
+        event.setUserIds(userIds);
+        event.setEnvironment(QBEnvironment.DEVELOPMENT);
+        event.setNotificationType(QBNotificationType.PUSH);
+        event.setPushType(QBPushType.GCM);
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("data.message", storyEdit);
+        //data.put("data.from", user);
+        data.put("data.type", "push notification");
+        //
+
+        event.setMessage(data);
+        //event.setName(user);
+
+        QBPushNotifications.createEvent(event).performAsync(new QBEntityCallback<QBEvent>() {
+            @Override
+            public void onSuccess(QBEvent qbEvent, Bundle args) {
+                // sent
+            }
+
+            @Override
+            public void onError(QBResponseException errors) {
+
+            }
+        });
+
+        finish();
     }
 
     /*private void pushnot() {

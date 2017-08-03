@@ -2,17 +2,13 @@ package com.letstellastory.android.letstellastory;
 
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -68,7 +64,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     TextView pass, post;
     DBHelper db;
     EditText storyED;
-    String ActTitle, genre, story, user, password, dialogID;
+    String ActTitle, genre, story, user, password, dialogID, storyEdit;
     long storyTime;
     StoryMessageAdapter adapter;
     int position, passed;
@@ -83,6 +79,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     TextInputLayout textInputLayout;
     TextView textCount;
     TextView textMax;
+
 
     QBUser qbuser = new QBUser();
     //ListUsersActivity list = new ListUsersActivity();
@@ -248,7 +245,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                 @Override
                 public void onClick(View v) {
 
-
+                storyEdit = storyED.getText().toString();
                 addPostedToDB(dialogID);
                     if (storyED.getText() != null && storyED.getText().toString().trim().length() > 0) {
                         post.setVisibility(View.INVISIBLE);
@@ -302,7 +299,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                     //push notification
 
                     QBSettings.getInstance().setEnablePushNotification(true);
-                    BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
+                   /* BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
                         @Override
                         public void onReceive(Context context, Intent intent) {
                             String message = intent.getStringExtra("message");
@@ -312,7 +309,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                     };
 
                     LocalBroadcastManager.getInstance(getBaseContext()).registerReceiver(pushBroadcastReceiver,
-                            new IntentFilter("new-push-event"));
+                            new IntentFilter("new-push-event"));*/
 
 
 
@@ -355,6 +352,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         intent.putExtra("dialogID", dialogID);
         intent.putExtra("user", user);
         intent.putExtra("password", password);
+        intent.putExtra("storyEdit", storyEdit);
         //Log.d("CREATION", "position in Story " + pos);
         intent.putExtra("position", position);
         startActivity(intent);

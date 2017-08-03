@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -85,17 +86,17 @@ public class theStories extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.story_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
-        Intent intent1  = new Intent(this, theStories.class);
+        Intent intent1  = new Intent(this, MainActivity.class);
         intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         int requestCode = 0;//my request code
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, requestCode, intent1, PendingIntent.FLAG_ONE_SHOT);
 
         Intent intent = getIntent();
-        story = intent.getExtras().getString("title");
+        /*story = intent.getExtras().getString("title");
         genre = intent.getExtras().getString("genre");
 
         user = intent.getExtras().getString("user");
-        password = intent.getExtras().getString("password");
+        password = intent.getExtras().getString("password");*/
         //Toast.makeText(this, "user: " + user, Toast.LENGTH_SHORT).show();
         DBHelper mystories = new DBHelper(theStories.this);
             mystories.insertData_my_stories(user, password);
@@ -107,18 +108,26 @@ public class theStories extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 String message = intent.getStringExtra("message");
                 String from = intent.getStringExtra("from");
+                /*intent.putExtra("user", user);
+                intent.putExtra("password", password);
+                intent.putExtra("title", story);
+                intent.putExtra("genre", genre);*/
                 Log.i("PUSHNOT", "Receiving message: " + message + ", from " + from);
 
 
                 Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 //Build notification
+                long[] pattern = {500,500,500,500,500,500,500,500,500};
 
                 NotificationCompat.Builder noBuilder = new NotificationCompat.Builder(getBaseContext())
                         .setSmallIcon(R.mipmap.letstellastory_icon)
-                        .setContentTitle("New Story from " + from)
+                        .setContentTitle("See what happened next")
                         .setContentText(message)
                         .setAutoCancel(true)
-                        .setContentIntent(pendingIntent);
+                        .setContentIntent(pendingIntent)
+                        .setSound(sound)
+                        .setLights(Color.WHITE, 500, 500)
+                        .setVibrate(pattern);
 
                 NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.notify(0,noBuilder.build());//0 = ID of notification
@@ -129,6 +138,12 @@ public class theStories extends AppCompatActivity {
                 new IntentFilter("new-push-event"));
 
 
+        Intent intent2 = getIntent();
+        story = intent2.getExtras().getString("title");
+        genre = intent2.getExtras().getString("genre");
+
+        user = intent2.getExtras().getString("user");
+        password = intent2.getExtras().getString("password");
     }
 
 

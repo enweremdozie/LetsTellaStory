@@ -160,49 +160,6 @@ public class MainActivity extends AppCompatActivity {
         getListItemData();
 
 
-
-
-
-
-
-
-        /*mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //Check type of intent filter
-                if(intent.getAction().endsWith(GCMRegistrationIntentService.REGISTRATION_SUCCESS)){
-                    String token = intent.getStringExtra("token");
-                    Toast.makeText(getApplicationContext(), "GCM token: " + token, Toast.LENGTH_LONG).show();
-                }
-                else if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_ERROR)){
-                    //Registration error
-                    Toast.makeText(getApplicationContext(), "GCM registration error!!!", Toast.LENGTH_LONG).show();
-                }
-                else{
-
-                }
-            }
-        };
-
-
-        //check status of google play services in device
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-        if(ConnectionResult.SUCCESS != resultCode){
-            if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)){
-                Toast.makeText(getApplicationContext(), "Google Play Service is not installed/enabled on this device", Toast.LENGTH_LONG).show();
-                //so notification
-                GooglePlayServicesUtil.showErrorNotification(resultCode, getApplicationContext());
-            }
-            else{
-                Toast.makeText(getApplicationContext(), "This device does not support Google Play Service!", Toast.LENGTH_LONG).show();
-            }
-        }
-        else {
-            Intent intent1 = new Intent(this, GCMRegistrationIntentService.class);
-            startService(intent1);
-        }*/
-
-
         btnSignUp.setOnClickListener(new View.OnClickListener() {
 
             @Override

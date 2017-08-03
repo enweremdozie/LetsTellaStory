@@ -57,13 +57,15 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".SignUpActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".ChatDialogsActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ListUsersActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".UserProfile"
             android:screenOrientation="portrait"></activity>
 
         <meta-data android:name="com.quickblox.messages.TYPE" android:value="GCM" />
-        <meta-data android:name="com.quickblox.messages.SENDER_ID" android:value="@string/sender_id" />
+        <meta-data android:name="com.quickblox.messages.SENDER_ID" android:value="Chalgs" />
         <meta-data android:name="com.quickblox.messages.QB_ENVIRONMENT" android:value="DEVELOPMENT" />
 
 
