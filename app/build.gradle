@@ -36,6 +36,17 @@ dependencies {
     // Single target that includes all FirebaseUI libraries above
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    //сompile "com.quickblox:quickblox-android-sdk-customobjects:3.3.4"
+    //compile "com.google.android.gms:play-services-gcm:11.0.4"
+    //compile "com.android.support:support-core-utils:26.0.0"
+    //compile "com.google.android.gms:play-services:11.8.4"
+    //compile 'com.google.android.gms:play-services-gcm:11.0.2'
+    compile 'com.quickblox:quickblox-android-sdk-content:3.3.4'
+    compile("com.quickblox:quickblox-android-sdk-chat:2.5.1@aar") {
+        transitive = true
+    }
+
+
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -45,24 +56,11 @@ dependencies {
     compile 'com.quickblox:quickblox-android-sdk-messages:3.3.4'
     compile 'com.quickblox:quickblox-android-sdk-content:3.3.4'
     compile 'com.quickblox:quickblox-android-sdk-chat:3.3.4'
-    //сompile "com.quickblox:quickblox-android-sdk-customobjects:3.3.4"
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
-    //compile "com.google.android.gms:play-services-gcm:11.0.4"
-    compile "com.google.android.gms:play-services-gcm:11.0.4"
-    //compile "com.android.support:support-core-utils:26.0.0"
-    //compile "com.google.android.gms:play-services:11.8.4"
-    //compile 'com.google.android.gms:play-services-gcm:11.0.2'
+    compile 'com.google.android.gms:play-services-gcm:11.0.4'
     compile 'com.google.firebase:firebase-messaging:11.0.4'
     compile 'com.google.firebase:firebase-core:11.0.4'
-    testCompile 'junit:junit:4.12'
-    compile 'com.quickblox:quickblox-android-sdk-content:3.3.4'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile("com.quickblox:quickblox-android-sdk-chat:2.6.1")
-    compile "com.quickblox:quickblox-android-sdk-core:2.5.1@aar"
-    compile("com.quickblox:quickblox-android-sdk-chat:2.5.1@aar") {
-        transitive=true
-    }
-
-
+    testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -4,8 +4,6 @@ import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -45,11 +43,18 @@ import com.quickblox.chat.listeners.QBChatDialogMessageListener;
 import com.quickblox.chat.model.QBChatDialog;
 import com.quickblox.chat.model.QBChatMessage;
 import com.quickblox.chat.model.QBDialogType;
+import com.quickblox.chat.request.QBDialogRequestBuilder;
 import com.quickblox.chat.request.QBMessageGetBuilder;
 import com.quickblox.chat.request.QBMessageUpdateBuilder;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.BaseServiceException;
 import com.quickblox.core.exception.QBResponseException;
+import com.quickblox.core.helper.StringifyArrayList;
+import com.quickblox.messages.QBPushNotifications;
+import com.quickblox.messages.model.QBEnvironment;
+import com.quickblox.messages.model.QBEvent;
+import com.quickblox.messages.model.QBNotificationType;
+import com.quickblox.messages.model.QBPushType;
 import com.quickblox.users.QBUsers;
 import com.quickblox.users.model.QBUser;
 
@@ -57,17 +62,19 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class Story extends AppCompatActivity implements QBChatDialogMessageListener{
     //TextView pass = (TextView) findViewById(R.id.passStory);
     TextView pass, post;
-    DBHelper db;
+    //DBHelper db;
     EditText storyED;
-    String ActTitle, genre, story, user, password, dialogID, storyEdit;
+    String ActTitle, genre, story, user, password, dialogID, storyEdit, nameText, genreText, whoIsNext, currentUser;
     long storyTime;
     StoryMessageAdapter adapter;
-    int position, passed;
+    int position, passed, namepos, genrepos;
     int contextMenuIndexClicked = -1;
     boolean isEditMode = false;
     QBChatMessage editMessage;
@@ -79,12 +86,21 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     TextInputLayout textInputLayout;
     TextView textCount;
     TextView textMax;
+    Integer userID;
+    String whoIsNextUserID;
+    public static boolean canPassState = true;
 
 
     QBUser qbuser = new QBUser();
     //ListUsersActivity list = new ListUsersActivity();
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        retrieveStories();
+
+    }
 
     @Override
     protected void onDestroy() {
@@ -96,48 +112,29 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     protected void onStop() {
         super.onStop();
         qbChatDialog.removeMessageListrener(this);
-
-        DBHelper helper = new DBHelper(Story.this);
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = helper.getMyStoriesInformations(db);
-        try {
-            // get data from cursor
-        } catch (Exception e) {
-            // exception handling
-        } finally {
-            if(cursor != null){
-                cursor.close();
-            }
-        }
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        createSessionForStory();
-        initStoryDialogs();
 
-        retrieveStories();
 
-        /*QBUsers.signIn(qbuser).performAsync( new QBEntityCallback<QBUser>() {
-            @Override
-            public void onSuccess(QBUser user, Bundle args) {
-                // success
-            }
+        if(canPassState == false) {
 
-            @Override
-            public void onError(QBResponseException error) {
-                // error
-            }
-        });*/
-
+            //canPassState = false;
+            pass.setVisibility(View.GONE);
+            post.setVisibility(View.GONE);
+            textInputLayout.setVisibility(View.GONE);
+            textCount.setVisibility(View.GONE);
+            textMax.setVisibility(View.GONE);
+        }
 
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+        //createSessionForStory();
         /*QBUsers.signIn(qbuser).performAsync( new QBEntityCallback<QBUser>() {
             @Override
             public void onSuccess(QBUser user, Bundle args) {
@@ -152,8 +149,8 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         //initStoryDialogs();
 
         //retrieveStories();
-        createSessionForStory();
-        DBHelper helper = new DBHelper(Story.this);
+        //createSessionForStory();
+        /*DBHelper helper = new DBHelper(Story.this);
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = helper.getPassedStoryInfo(db);
         boolean state = false;
@@ -183,7 +180,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             textCount.setVisibility(View.GONE);
             textMax.setVisibility(View.GONE);
 
-        }
+        }*/
     }
 
     @Override
@@ -204,6 +201,10 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         textMax = (TextView) findViewById(R.id.textMax);
         textInputLayout = (TextInputLayout) findViewById(R.id.editLayout);
         registerForContextMenu(lstStoryMessages);
+        canPassState = true;
+
+
+
 
         storyED.addTextChangedListener(mTextEditorWatcher);
         //show = (TextView) findViewById(R.id.showAll);
@@ -218,15 +219,16 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         haspassed = intent.getExtras().getBoolean("haspassed");
         position = intent.getExtras().getInt("position");
         dialogID = intent.getExtras().getString("dialogID");
-
-        qbuser = new QBUser(user, password);
+        currentUser = intent.getExtras().getString("currentUser");
+        Log.d("CURRENTUSER1" , "current user in story" + currentUser);
+                qbuser = new QBUser(user, password);
 
         //Log.d("CREATION", "position in Story " + position);
         setTitle(ActTitle);
         centerTitle();
         //AddData();
         //createSessionForStory();
-        if(hasposted == true){
+        /*if(hasposted == true){
             post.setVisibility(View.INVISIBLE);
             pass.setVisibility(View.VISIBLE);
         }
@@ -237,22 +239,38 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             textInputLayout.setVisibility(View.GONE);
             textCount.setVisibility(View.GONE);
             textMax.setVisibility(View.GONE);
-        }
+        }*/
 
 
+            /*if(userID != whoIsNextUserID) {
+                pass.setVisibility(View.GONE);
+                post.setVisibility(View.GONE);
+                textInputLayout.setVisibility(View.GONE);
+                textCount.setVisibility(View.GONE);
+                textMax.setVisibility(View.GONE);
+            }
+
+            else if(userID == whoIsNextUserID){
+                pass.setVisibility(View.GONE);
+                post.setVisibility(View.VISIBLE);
+                textInputLayout.setVisibility(View.VISIBLE);
+                textCount.setVisibility(View.VISIBLE);
+                textMax.setVisibility(View.VISIBLE);
+            }*/
 
             post.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d("ENTERSHERE", "enters once");
 
+                    changeDialogName();
+
+                    Log.d("CHANGEPOST", "QB dialog id " + qbChatDialog.getDialogId());
                 storyEdit = storyED.getText().toString();
-                addPostedToDB(dialogID);
+                //addPostedToDB(dialogID);
                     if (storyED.getText() != null && storyED.getText().toString().trim().length() > 0) {
-                        post.setVisibility(View.INVISIBLE);
-                        pass.setVisibility(View.VISIBLE);
-                        Toast.makeText(Story.this, "posting", Toast.LENGTH_SHORT).show();
 
-                        if (!isEditMode) {
+                        /*if (!isEditMode) {
                             QBChatMessage storyMessage = new QBChatMessage();
                             storyMessage.setBody(storyED.getText().toString());
                             storyMessage.setSenderId(QBChatService.getInstance().getUser().getId());
@@ -260,27 +278,54 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
                             try {
                                 qbChatDialog.sendMessage(storyMessage);
-                            } catch (SmackException.NotConnectedException e) {
+                            }
+                            catch (SmackException.NotConnectedException e) {
                                 e.printStackTrace();
                             }
 
                             storyED.setText("");
                             storyED.setFocusable(true);
-                        } else {
-                            final ProgressDialog updateDialog = new ProgressDialog(Story.this);
+                        }
+
+                        else {*/
+                            //if (!isEditMode) {
+                            QBChatMessage storyMessage = new QBChatMessage();
+                            storyMessage.setBody(storyED.getText().toString());
+                            storyMessage.setSenderId(QBChatService.getInstance().getUser().getId());
+                            storyMessage.setSaveToHistory(true);
+
+                            try {
+                                qbChatDialog.sendMessage(storyMessage);
+                            }
+                            catch (SmackException.NotConnectedException e) {
+                                e.printStackTrace();
+                            }
+
+                            storyED.setText("");
+                            storyED.setFocusable(true);
+
+                            /*final ProgressDialog updateDialog = new ProgressDialog(Story.this);
                             updateDialog.setMessage("Please wait...");
-                            updateDialog.show();
+                            updateDialog.show();*/
 
                             QBMessageUpdateBuilder messageUpdateBuilder = new QBMessageUpdateBuilder();
                             messageUpdateBuilder.updateText(storyED.getText().toString()).markDelivered().markRead();
 
-                            QBRestChatService.updateMessage(editMessage.getId(), qbChatDialog.getDialogId(), messageUpdateBuilder)
+
+                            QBRestChatService.updateMessage(storyMessage.getId(), qbChatDialog.getDialogId(), messageUpdateBuilder)
                                     .performAsync(new QBEntityCallback<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid, Bundle bundle) {
-                                            //retrieveStories();
-                                            isEditMode = false;
-                                            updateDialog.dismiss();
+                                            pass.setVisibility(View.VISIBLE);
+                                            post.setVisibility(View.INVISIBLE);
+                                            textInputLayout.setVisibility(View.INVISIBLE);
+                                            textCount.setVisibility(View.INVISIBLE);
+                                            textMax.setVisibility(View.INVISIBLE);
+                                            Toast.makeText(Story.this, "posting", Toast.LENGTH_SHORT).show();
+
+                                            retrieveStories();
+                                            //isEditMode = false;
+                                            //updateDialog.dismiss();
 
                                             storyED.setText("");
                                             storyED.setFocusable(true);
@@ -291,8 +336,10 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                                             Toast.makeText(getBaseContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
-                        }
-                    } else {
+                       // }
+                    }
+
+                    else {
                         Toast.makeText(Story.this, "\"What happens next\" cannot be empty", Toast.LENGTH_LONG).show();
                     }
 
@@ -322,17 +369,44 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             pass.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //addPassedToDB();
-                    addUser();
+
+                    if(canPassState == false){
+                        Toast.makeText(Story.this, "sorry it is not your turn", Toast.LENGTH_LONG).show();
+
+                    }
+
+                    else {
+                        addUser();
+                    }
                 }
             });
 
 
+
+        createSessionForStory();
         initStoryDialogs();
+       // retrieveStories();
 
-        retrieveStories();
 
+    }
 
+    private void changeDialogName() {
+        qbChatDialog.setName(nameText + "-" + genreText + "*" + user);
+        QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
+        QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
+                .performAsync(new QBEntityCallback<QBChatDialog>() {
+                    @Override
+                    public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+                        Log.d("DIALOGNAME", "Dialog name was changed");
+                    }
+
+                    @Override
+                    public void onError(QBResponseException e) {
+
+                    }
+                });
+
+        sendPushNotification();
     }
 
     /*private void addPassedToDB() {
@@ -390,6 +464,41 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         qbChatDialog = (QBChatDialog)getIntent().getSerializableExtra(Common.DIALOG_EXTRA);
         qbChatDialog.initForChat(QBChatService.getInstance());
 
+        namepos = qbChatDialog.getName().toString().lastIndexOf("-");
+        genrepos = qbChatDialog.getName().toString().lastIndexOf("*");
+        nameText = qbChatDialog.getName().substring(0, namepos);
+        genreText = qbChatDialog.getName().substring(namepos + 1, genrepos);
+        whoIsNext = qbChatDialog.getName().substring(genrepos + 1, qbChatDialog.getName().length());
+        //whoIsNextUserID = Integer.valueOf(whoIsNext).toString();
+
+        //userID = Integer.valueOf(currentUser);
+
+        Log.d("USERID2", "dialog ID: " + whoIsNextUserID);
+
+            if(whoIsNext.equals(user)){
+                pass.setVisibility(View.VISIBLE);
+                post.setVisibility(View.INVISIBLE);
+                textInputLayout.setVisibility(View.INVISIBLE);
+                textCount.setVisibility(View.INVISIBLE);
+                textMax.setVisibility(View.INVISIBLE);
+            }
+
+        else if(!currentUser.equals(whoIsNext)) {
+            pass.setVisibility(View.GONE);
+            post.setVisibility(View.GONE);
+            textInputLayout.setVisibility(View.GONE);
+            textCount.setVisibility(View.GONE);
+            textMax.setVisibility(View.GONE);
+        }
+
+        else if(currentUser.equals(whoIsNext)){
+            pass.setVisibility(View.GONE);
+            post.setVisibility(View.VISIBLE);
+            textInputLayout.setVisibility(View.VISIBLE);
+            textCount.setVisibility(View.VISIBLE);
+            textMax.setVisibility(View.VISIBLE);
+        }
+
         QBIncomingMessagesManager incomingMessage = QBChatService.getInstance().getIncomingMessagesManager();
         incomingMessage.addDialogMessageListener(new QBChatDialogMessageListener() {
             @Override
@@ -436,6 +545,11 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                 Log.e("ERRORIN", "ERROR IN LOADING MESSAGE");
             }
         });
+
+        Log.d("USERID1", "userID is " + userID);
+        Log.d("USERID1", "who is next is " + whoIsNextUserID);
+
+
     }
 
 
@@ -458,6 +572,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             intent.putExtra("user", user);
             intent.putExtra("password", password);
             startActivity(intent);
+            finish();
         }
 
         else if(item.getItemId() == R.id.profile){
@@ -549,7 +664,12 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                 infoMessage();
                 break;
             case R.id.chat_message_delete_message:
-                deleteMessage();
+
+                    deleteMessage();
+                /*}
+
+                else
+                    Toast.makeText(this, "Only the story creator can delete", Toast.LENGTH_LONG).show();*/
                 break;
         }
         return true;
@@ -587,6 +707,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         QBRestChatService.deleteMessage(editMessage.getId(), false).performAsync(new QBEntityCallback<Void>() {
             @Override
             public void onSuccess(Void aVoid, Bundle bundle) {
+                //qbChatDialog.getUserId()
                 retrieveStories();
                 deleteDialog.dismiss();
             }
@@ -663,6 +784,10 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
                 qbUser.setId(qbSession.getUserId());
+                Log.d("USERID1", "userID session " + qbSession.getUserId());
+
+                //userID = qbUser.getId();
+                //Log.d("USERID1", "userID init " + userID);
                 try {
                     qbUser.setPassword(BaseService.getBaseService().getToken());
                 } catch (BaseServiceException e) {
@@ -687,6 +812,10 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
             }
         });
+        /*qbChatDialog = (QBChatDialog)getIntent().getSerializableExtra(Common.DIALOG_EXTRA);
+        qbChatDialog.initForChat(QBChatService.getInstance());*/
+
+
     }
 
     private final TextWatcher mTextEditorWatcher = new TextWatcher() {
@@ -708,6 +837,83 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         }
     };
 
+
+
+    private void checkDialogName() {
+        //qbChatDialog.setName(name + "-" + genre + "*" + qbuser.getId().toString());
+        QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
+        QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
+                .performAsync(new QBEntityCallback<QBChatDialog>() {
+                    @Override
+                    public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+                        //Log.d("DIALOGNAME", "Dialog name was changed");
+                        //finish();
+                    }
+
+                    @Override
+                    public void onError(QBResponseException e) {
+
+                    }
+                });
+
+    }
+
+
+    private void sendPushNotification() {
+        StringifyArrayList<Integer> userIds = new StringifyArrayList<Integer>();
+        List<Integer> occupantsId = qbChatDialog.getOccupants();
+        List<QBUser> usersinGroup = QBUsersHolder.getInstance().getUserByIds(occupantsId);
+
+        /*for (int i = 0; i < occupantsId.size(); i++) {
+
+                //userIds.add(usersinGroup.get(i).getId());
+                Log.d("OCCUPANTSID", "occupants id: " + occupantsId.get(i).toString());
+
+        }*/
+
+        for (int i = 0; i < usersinGroup.size(); i++) {
+
+            if (!usersinGroup.get(i).getId().equals(Integer.valueOf(currentUser))) {
+                userIds.add(usersinGroup.get(i).getId());
+                //Log.d("PUSHNOT1", userIds.get(i).toString());
+            }
+        }
+
+
+        //userIds.add(qbuser.getId());
+        if (usersinGroup.size() > 1) {
+            QBEvent event = new QBEvent();
+            event.setUserIds(userIds);
+            event.setEnvironment(QBEnvironment.DEVELOPMENT);
+            event.setNotificationType(QBNotificationType.PUSH);
+            event.setPushType(QBPushType.GCM);
+            HashMap<String, Object> data = new HashMap<String, Object>();
+            data.put("data.message", user + ": " + storyED.getText());
+            //data.put("data.from", user);
+
+            data.put("data.type", "push notification");
+            //
+
+            event.setMessage(data);
+            //event.setName(user);
+
+            QBPushNotifications.createEvent(event).performAsync(new QBEntityCallback<QBEvent>() {
+                @Override
+                public void onSuccess(QBEvent qbEvent, Bundle args) {
+                    // sent
+                }
+
+                @Override
+                public void onError(QBResponseException errors) {
+
+                }
+            });
+
+            //changeDialogName();
+
+        }
+
+    }
 
 }
 

@@ -3,81 +3,88 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.letstellastory.android.letstellastory">
 
-    <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="26"/>
+    <uses-sdk
+        android:minSdkVersion="23"
+        android:targetSdkVersion="26" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="com.quickblox.sample.messages.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
-    <!--permission android:name="com.quickblox.sample.pushnotifications.permission.C2D_MESSAGE"
-    android:protectionLevel="signature"/-->
-
-
-
-
+    <!--
+    permission android:name="com.quickblox.sample.pushnotifications.permission.C2D_MESSAGE"
+    android:protectionLevel="signature"/
+    -->
     <application
         android:allowBackup="false"
         android:icon="@mipmap/letstellastory_icon"
         android:label="@string/app_name"
+        android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:resizeableActivity="false"
         tools:ignore="GoogleAppIndexingWarning">
-
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
-
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".StartAStory"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Story"
-            android:screenOrientation="portrait" >
-            </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".Story_Grid"
             android:screenOrientation="portrait" />
         <activity
             android:name=".theStories"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".SignUpActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ChatDialogsActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ListUsersActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UserProfile"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SignUpActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ChatDialogsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ListUsersActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UserProfile"
+            android:screenOrientation="portrait" />
 
-        <meta-data android:name="com.quickblox.messages.TYPE" android:value="GCM" />
-        <meta-data android:name="com.quickblox.messages.SENDER_ID" android:value="Chalgs" />
-        <meta-data android:name="com.quickblox.messages.QB_ENVIRONMENT" android:value="DEVELOPMENT" />
+        <meta-data
+            android:name="com.quickblox.messages.TYPE"
+            android:value="GCM" />
+        <meta-data
+            android:name="com.quickblox.messages.SENDER_ID"
+            android:value="@string/sender_id" />
+        <meta-data
+            android:name="com.quickblox.messages.QB_ENVIRONMENT"
+            android:value="DEVELOPMENT" />
 
-
-
-        <!--meta-data
+        <!--
+        meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_stat_ic_notification" />
         < Set color used with incoming notification messages. This is used when no color is set for the incoming
              notification message. See README(https://goo.gl/6BKBk7) for more. >
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorAccent" /-->
+            android:resource="@color/colorAccent" /
+        -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
@@ -89,7 +96,6 @@
                 <category android:name="com.letstellastory.android.letstellastory" />
             </intent-filter>
         </receiver>
-
 
         <service
             android:name="com.quickblox.messages.services.gcm.QBGcmPushListenerService"
@@ -106,6 +112,7 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".ForgotPassword"></activity>
     </application>
 
 </manifest>

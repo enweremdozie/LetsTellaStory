@@ -46,27 +46,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Created by dozie on 2017-08-03.
+ */
 
-public class ListUsersActivity extends AppCompatActivity {
-
+public class ListUserActivityBeforeChanges extends AppCompatActivity {
     ListView lstUsers;
     Button btnPass;
     Story story = new Story();
-    int hasclicked, namepos, genrepos;
+    int hasclicked;
     //public boolean clicked = false;
     boolean passstate = false;
-    QBUser currentUser;
 
 
     String mode = "";
-    String dialogID, storyEdit, whoIsNext;
+    String dialogID, storyEdit;
     QBChatDialog qbChatDialog;
     List<QBUser> userAdd = new ArrayList<>();
     TextView passedButton;
-    String user, password, name, genre;
+    String user, password;
     QBUser qbuser = new QBUser();
-    boolean userInStory;
-    int posClicked;
 
     @Override
     protected void onRestart() {
@@ -87,14 +86,6 @@ public class ListUsersActivity extends AppCompatActivity {
         mode = getIntent().getStringExtra(Common.UPDATE_MODE);
         qbChatDialog = (QBChatDialog) getIntent().getSerializableExtra(Common.UPDATE_DIALOG_EXTRA);
 
-        namepos = qbChatDialog.getName().toString().lastIndexOf("-");
-        genrepos = qbChatDialog.getName().toString().lastIndexOf("*");
-        name = qbChatDialog.getName().substring(0, namepos);
-        genre = qbChatDialog.getName().substring(namepos + 1, genrepos);
-        whoIsNext = qbChatDialog.getName().substring(genrepos + 1, qbChatDialog.getName().length());
-
-        Log.d("WHOISNEXT", "who is next in LUA: " + whoIsNext);
-
 
         Intent intent = getIntent();
         dialogID = intent.getExtras().getString("dialogID");
@@ -106,12 +97,7 @@ public class ListUsersActivity extends AppCompatActivity {
         lstUsers = (ListView) findViewById(R.id.lstUsers);
         //lstUsers.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         //lstUsers.setClickable(true);
-        //hasclicked = listviewclicked();
-
-
-        listviewclicked();
-
-        qbuser = (QBUser) lstUsers.getItemAtPosition(posClicked);//user being passed to
+        hasclicked = listviewclicked();
 
         btnPass = (Button) findViewById(R.id.btn_pass_story);
 
@@ -119,101 +105,93 @@ public class ListUsersActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                //addPassedToDB(dialogID);
-                qbuser = (QBUser) lstUsers.getItemAtPosition(posClicked);//user being passed to
+                addPassedToDB(dialogID);
+                //passStory(hasclicked);
+                //passedButton.setVisibility(View.GONE);
+                //story.isPassed();
+                //passedButton.setVisibility(View.GONE);
+                //story.pass.setVisibility(View.GONE);
+               /* if(mode == null) {
+                    int countChoice = lstUsers.getCount();
 
-                /*if(!whoIsNext.equals("1")){
-                    Toast.makeText(story, "sorry it is not your turn", Toast.LENGTH_SHORT).show();
-                }
-                else */
+                    if (hasclicked >= 0) {
+                        passStory(hasclicked);
+                        //loadListAvailableUser();                      stopped here
+                    }*/
 
+                    /*else {
+                        Toast.makeText(ListUserActivityBeforeChanges.this, "Please make a selection", Toast.LENGTH_SHORT).show();*/
+                // }
+                //}
 
+                if (mode.equals(Common.UPDATE_ADD_MODE) && qbChatDialog != null && passstate) {
 
-                if (userInStory == true) {
-                    sendPushNotification();
-                }
+                    if (userAdd.size() > 0) {
+                        QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
 
-                else if (userInStory == false) {
-                    //hasclicked = listviewclicked();
+                        int cntChoice = lstUsers.getCount();
+                        //SparseBooleanArray checkItemPositions = lstUsers.getCheckedItemPositions();
+                        //for(int i = 0; i < cntChoice; i++){
+                        //if(checkItemPositions.get(i))
+                        //{
+                        qbuser = (QBUser) lstUsers.getItemAtPosition(hasclicked);
+                        requestBuilder.addUsers(qbuser);
+                        // }
+                        // }
 
-                    if (mode.equals(Common.UPDATE_ADD_MODE) && qbChatDialog != null && passstate) {
+                        QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
+                                .performAsync(new QBEntityCallback<QBChatDialog>() {
+                                    @Override
+                                    public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
 
-                        if (userAdd.size() > 0) {
-                            QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
+                                        Toast.makeText(ListUserActivityBeforeChanges.this, "PASS successful", Toast.LENGTH_SHORT).show();
+                                        sendToRecepient();
+                                    }
 
-                            int cntChoice = lstUsers.getCount();
-                            //SparseBooleanArray checkItemPositions = lstUsers.getCheckedItemPositions();
-                            //for(int i = 0; i < cntChoice; i++){
-                            //if(checkItemPositions.get(i))
-                            //{
+                                    @Override
+                                    public void onError(QBResponseException e) {
 
+                                    }
+                                });
+                    }
+                } else if (mode.equals(Common.UPDATE_REMOVE_MODE) && qbChatDialog != null) {
+                    if (userAdd.size() > 0) {
+                        QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
+                        int cntChoice = lstUsers.getCount();
+                        SparseBooleanArray checkItemPositions = lstUsers.getCheckedItemPositions();
 
-                            requestBuilder.addUsers(qbuser);
-                            Log.d("PASSEDTO", "being passed to: " + qbuser.getLogin());
-                            Log.d("PASSEDTO", "hasclicked position: " + hasclicked);
-
-                            // }
-                            // }
-
-                            QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
-                                    .performAsync(new QBEntityCallback<QBChatDialog>() {
-                                        @Override
-                                        public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
-
-                                            Toast.makeText(ListUsersActivity.this, "PASS successful", Toast.LENGTH_SHORT).show();
-                                            sendToRecepient();
-                                        }
-
-                                        @Override
-                                        public void onError(QBResponseException e) {
-
-                                        }
-                                    });
-                        }
-                    } else if (mode.equals(Common.UPDATE_REMOVE_MODE) && qbChatDialog != null) {
-                        if (userAdd.size() > 0) {
-                            QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
-                            int cntChoice = lstUsers.getCount();
-                            SparseBooleanArray checkItemPositions = lstUsers.getCheckedItemPositions();
-
-                            for (int i = 0; i < cntChoice; i++) {
-                                if (checkItemPositions.get(i)) {
-                                    QBUser user = (QBUser) lstUsers.getItemAtPosition(i);
-                                    requestBuilder.removeUsers(user);
-                                }
+                        for (int i = 0; i < cntChoice; i++) {
+                            if (checkItemPositions.get(i)) {
+                                QBUser user = (QBUser) lstUsers.getItemAtPosition(i);
+                                requestBuilder.removeUsers(user);
                             }
-
-                            QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
-                                    .performAsync(new QBEntityCallback<QBChatDialog>() {
-                                        @Override
-                                        public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
-                                            Toast.makeText(ListUsersActivity.this, "REMOVAL successful", Toast.LENGTH_SHORT).show();
-                                            //finish();
-                                        }
-
-                                        @Override
-                                        public void onError(QBResponseException e) {
-
-                                        }
-                                    });
                         }
-                    }
 
-                    else {
-                        Toast.makeText(ListUsersActivity.this, "Please make a selection", Toast.LENGTH_SHORT).show();
-                    }
+                        QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
+                                .performAsync(new QBEntityCallback<QBChatDialog>() {
+                                    @Override
+                                    public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+                                        Toast.makeText(ListUserActivityBeforeChanges.this, "REMOVAL successful", Toast.LENGTH_SHORT).show();
+                                        //finish();
+                                    }
 
+                                    @Override
+                                    public void onError(QBResponseException e) {
+
+                                    }
+                                });
+                    }
+                } else {
+                    Toast.makeText(ListUserActivityBeforeChanges.this, "Please make a selection", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
         if (mode == null && qbChatDialog == null) {
-            //retrieveAllUsers();
+            retrieveAllUsers();
         } else {
             if (mode.equals(Common.UPDATE_ADD_MODE)) {
-                retrieveAllUsers();
-
-                //loadListAvailableUser();
+                loadListAvailableUser();
             } else if (mode.equals(Common.UPDATE_REMOVE_MODE)) {
                 loadListUserInGroup();
             }
@@ -239,7 +217,7 @@ public class ListUsersActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(QBResponseException e) {
-                        Toast.makeText(ListUsersActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ListUserActivityBeforeChanges.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -268,7 +246,7 @@ public class ListUsersActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(QBResponseException e) {
-                        Toast.makeText(ListUsersActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ListUserActivityBeforeChanges.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -305,21 +283,14 @@ public class ListUsersActivity extends AppCompatActivity {
                 ArrayList<QBUser> qbUserWithoutCurrent = new ArrayList<QBUser>();
 
                 for (QBUser user : qbUsers) {
-                    if (!user.getLogin().equals(QBChatService.getInstance().getUser().getLogin()))
-                        qbUserWithoutCurrent.add(user);
+                    if (!user.getLogin().equals(QBChatService.getInstance().getUser().getLogin())) ;
+                    qbUserWithoutCurrent.add(user);
                     Log.d("CREATION", "this is the user " + user.toString());
-                }
-
-                for (int i = 0; i < qbUserWithoutCurrent.size(); i++) {
-                    if (qbUserWithoutCurrent.get(i) == currentUser) {
-                        qbUserWithoutCurrent.remove(i);
-                    }
                 }
 
                 ListUsersAdapter adapter = new ListUsersAdapter(getBaseContext(), qbUserWithoutCurrent);
                 lstUsers.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
-                userAdd = qbUserWithoutCurrent;
             }
 
             @Override
@@ -330,7 +301,7 @@ public class ListUsersActivity extends AppCompatActivity {
     }
 
     private void addPassedToDB(String dialogID) {
-        DBHelper helper = new DBHelper(ListUsersActivity.this);
+        DBHelper helper = new DBHelper(ListUserActivityBeforeChanges.this);
         helper.insertPassedStory(dialogID);
 
     }
@@ -340,7 +311,6 @@ public class ListUsersActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             onBackPressed();
-            finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -366,7 +336,6 @@ public class ListUsersActivity extends AppCompatActivity {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
                 qbUser.setId(qbSession.getUserId());
-                currentUser = qbUser;
                 try {
                     qbUser.setPassword(BaseService.getBaseService().getToken());
                 } catch (BaseServiceException e) {
@@ -393,9 +362,8 @@ public class ListUsersActivity extends AppCompatActivity {
         });
     }
 
-    public void listviewclicked() {
+    public int listviewclicked() {
         final int[] pos = new int[1];
-        final boolean[] check = {false};
         lstUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -404,31 +372,22 @@ public class ListUsersActivity extends AppCompatActivity {
                 passstate = true;
                 for (int i = 0; i < lstUsers.getChildCount(); i++) {
                     if (position == i) {
-                        //check[0] = true;
-                        posClicked = position;
-                        userInStory = isInStory();
+                        pos[0] = position;
                         lstUsers.getChildAt(i).setBackgroundColor(Color.LTGRAY);
-                    }
-
-                    else {
-                        check[0] = false;
+                    } else {
                         lstUsers.getChildAt(i).setBackgroundColor(Color.WHITE);
                     }
                 }
-
-
-                Log.d("ISINSTORY", "user in story " + userInStory);
-                Log.d("PASSEDTO", "listview selected position: " + position);
-                Log.d("PASSEDTO", "listview passed position: " + posClicked);
+                Log.d("LISTVIEWSEL", "listview selected position: " + position);
 
             }
         });
-        //return pos[0];
+        return pos[0];
     }
 
     public void sendToRecepient() {
 
-        final ProgressDialog mDialog = new ProgressDialog(ListUsersActivity.this);
+        final ProgressDialog mDialog = new ProgressDialog(ListUserActivityBeforeChanges.this);
         mDialog.setMessage("Please wait...");
         mDialog.setCanceledOnTouchOutside(false);
         mDialog.show();
@@ -469,28 +428,28 @@ public class ListUsersActivity extends AppCompatActivity {
     }
 
     private void sendPushNotification() {
-        StringifyArrayList<Integer> userId = new StringifyArrayList<Integer>();
-        //List<Integer> occupantsId = qbChatDialog.getOccupants();
-        //List<QBUser> usersinGroup = QBUsersHolder.getInstance().getUserByIds(occupantsId);
+        StringifyArrayList<Integer> userIds = new StringifyArrayList<Integer>();
+        List<Integer> occupantsId = qbChatDialog.getOccupants();
+        List<QBUser> usersinGroup = QBUsersHolder.getInstance().getUserByIds(occupantsId);
 
        /* if(userAdd.size() > 0){
             QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
             int cntChoice = lstUsers.getCount();
             SparseBooleanArray checkItemPositions = lstUsers.getCheckedItemPositions();*/
 
-        /*for (int i = 0; i < 5; i++) {
-            //userIds.add(usersinGroup.get(i).getId());
-            Log.d("PUSHNOT", userId.get(i).toString());
-        }*/
+        for (int i = 0; i < usersinGroup.size() - 1; i++) {
+            userIds.add(usersinGroup.get(i).getId());
+            Log.d("PUSHNOT", userIds.get(i).toString());
+        }
 
-        userId.add(qbuser.getId());
+        userIds.add(qbuser.getId());
         QBEvent event = new QBEvent();
-        event.setUserIds(userId);
+        event.setUserIds(userIds);
         event.setEnvironment(QBEnvironment.DEVELOPMENT);
         event.setNotificationType(QBNotificationType.PUSH);
         event.setPushType(QBPushType.GCM);
         HashMap<String, Object> data = new HashMap<String, Object>();
-        data.put("data.message", "A story has been passed to you");
+        data.put("data.message", storyEdit);
         //data.put("data.from", user);
         data.put("data.type", "push notification");
         //
@@ -510,76 +469,36 @@ public class ListUsersActivity extends AppCompatActivity {
             }
         });
 
-        changeDialogName();
-
+        finish();
     }
-
-    private void changeDialogName() {
-        qbChatDialog.setName(name + "-" + genre + "*" + qbuser.getId().toString());
-        QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
-        QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
-                .performAsync(new QBEntityCallback<QBChatDialog>() {
-                    @Override
-                    public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
-                        Log.d("DIALOGNAME", "Dialog name was changed");
-
-                        //Intent intent = new Intent(ListUsersActivity.this, Story.class);
-                        //startActivity(intent);
-                        Story story = new Story();
-                        story.canPassState = false;
-                        finish();
-                    }
-
-                    @Override
-                    public void onError(QBResponseException e) {
-
-                    }
-                });
-
-
-        mode = getIntent().getStringExtra(Common.UPDATE_MODE);
-        qbChatDialog = (QBChatDialog) getIntent().getSerializableExtra(Common.UPDATE_DIALOG_EXTRA);
-
-        namepos = qbChatDialog.getName().toString().lastIndexOf("-");
-        genrepos = qbChatDialog.getName().toString().lastIndexOf("*");
-        name = qbChatDialog.getName().substring(0, namepos);
-        genre = qbChatDialog.getName().substring(namepos + 1, genrepos);
-        whoIsNext = qbChatDialog.getName().substring(genrepos + 1, qbChatDialog.getName().length());
-
-        Log.d("WHOISNEXT", "who is next in LUA on click: " + whoIsNext);
-
-    }
-
-    public boolean isInStory() {
-        boolean state = false;
-        List<Integer> occupants;
-
-        //occupants = qbChatDialog.getOccupants();
-        qbuser = (QBUser) lstUsers.getItemAtPosition(posClicked);//user being passed to
-
-        List<Integer> occupantsId = qbChatDialog.getOccupants();
-        List<QBUser> listUserAlreadyInGroup = QBUsersHolder.getInstance().getUserByIds(occupantsId);
-        ArrayList<QBUser> users = new ArrayList<QBUser>();
-        users.addAll(listUserAlreadyInGroup);
-
-        for (int i = 0; i < users.size(); i++) {
-            Log.d("CHECKID", "any qbuserID " + users.get(i).getId().toString());
-        }
-
-
-        Log.d("CHECKID", "qbuserID " + qbuser.getId().toString());
-
-
-        for (int i = 0; i < users.size(); i++) {
-            if (state == false) {
-                if (qbuser.getId().equals(users.get(i).getId())) {
-                    state = true;
-                } else {
-                    state = false;
-                }
-            }
-        }
-        return state;
-    }
-
 }
+
+    /*private void pushnot() {
+        StringifyArrayList<Integer> userIds = new StringifyArrayList<Integer>();
+        userIds.add(53779);
+        userIds.add(960);
+
+
+        QBEvent event = new QBEvent();
+        event.setUserIds(userIds);
+        event.setEnvironment(QBEnvironment.DEVELOPMENT);
+        event.setNotificationType(QBNotificationType.PUSH);
+        event.setPushType(QBPushType.GCM);
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put("data.message", "Hello");
+        data.put("data.type", "welcome message");
+        event.setMessage(data);
+
+        QBPushNotifications.createEvent(event).performAsync( new QBEntityCallback<QBEvent>() {
+            @Override
+            public void onSuccess(QBEvent qbEvent, Bundle args) {
+                // sent
+            }
+
+            @Override
+            public void onError(QBResponseException errors) {
+
+            }
+        });
+
+    }*/

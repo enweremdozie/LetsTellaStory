@@ -46,7 +46,8 @@ public class StartAStory extends AppCompatActivity {
     CheckBox pass;
     String passState;
     TextView show;
-    String user, password;
+    String user, password, currentUser;
+    Integer userID;
 
     @Override
     protected void onRestart() {
@@ -74,6 +75,9 @@ public class StartAStory extends AppCompatActivity {
         Intent intent = getIntent();
         user = intent.getExtras().getString("user");
         password = intent.getExtras().getString("password");
+        currentUser = intent.getExtras().getString("currentUser");
+        Log.d("CURRENTUSER1", "current user in SAS: " + currentUser);
+
 
         setTitle("START A STORY");
         centerTitle();
@@ -117,12 +121,12 @@ public class StartAStory extends AppCompatActivity {
                                            // "Pass a start: " + passState);
 
 
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
 
 
                             ArrayList<Integer> occupantIdsList = new ArrayList<Integer>();
-                            QBChatDialog mdialog = DialogUtils.buildDialog(storyName.getText().toString() + "-" + genreDisplay.getText().toString(), QBDialogType.GROUP, occupantIdsList);
+                            QBChatDialog mdialog = DialogUtils.buildDialog(storyName.getText().toString() + "-" + genreDisplay.getText().toString() + "*" + userID.toString() , QBDialogType.GROUP, occupantIdsList);
 
                             QBRestChatService.createChatDialog(mdialog).performAsync(new QBEntityCallback<QBChatDialog>() {
                                 @Override
@@ -143,6 +147,9 @@ public class StartAStory extends AppCompatActivity {
                             intent.putExtra("genre", genreDisplay.getText());
                             intent.putExtra("user", user);
                             intent.putExtra("password", password);
+                                    intent.putExtra("currentUser", currentUser);
+
+
                             Log.d("LOADSTORY", "password in Start a story: " + password);
                             startActivity(intent);
                             finish();
@@ -240,6 +247,7 @@ public class StartAStory extends AppCompatActivity {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
                 qbUser.setId(qbSession.getUserId());
+                userID = qbUser.getId();
                 try {
                     qbUser.setPassword(BaseService.getBaseService().getToken());
                 } catch (BaseServiceException e) {

@@ -48,7 +48,7 @@ public class theStories extends AppCompatActivity {
     Invited_Stories_Fragment isFrag;
     static String user;
     static String password;
-
+    String currentUser;
 
     @Override
     protected void onRestart() {
@@ -86,10 +86,7 @@ public class theStories extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.story_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
-        Intent intent1  = new Intent(this, MainActivity.class);
-        intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        int requestCode = 0;//my request code
-        final PendingIntent pendingIntent = PendingIntent.getActivity(this, requestCode, intent1, PendingIntent.FLAG_ONE_SHOT);
+
 
         Intent intent = getIntent();
         /*story = intent.getExtras().getString("title");
@@ -101,49 +98,21 @@ public class theStories extends AppCompatActivity {
         DBHelper mystories = new DBHelper(theStories.this);
             mystories.insertData_my_stories(user, password);
 
-
-
-        BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String message = intent.getStringExtra("message");
-                String from = intent.getStringExtra("from");
-                /*intent.putExtra("user", user);
-                intent.putExtra("password", password);
-                intent.putExtra("title", story);
-                intent.putExtra("genre", genre);*/
-                Log.i("PUSHNOT", "Receiving message: " + message + ", from " + from);
-
-
-                Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                //Build notification
-                long[] pattern = {500,500,500,500,500,500,500,500,500};
-
-                NotificationCompat.Builder noBuilder = new NotificationCompat.Builder(getBaseContext())
-                        .setSmallIcon(R.mipmap.letstellastory_icon)
-                        .setContentTitle("See what happened next")
-                        .setContentText(message)
-                        .setAutoCancel(true)
-                        .setContentIntent(pendingIntent)
-                        .setSound(sound)
-                        .setLights(Color.WHITE, 500, 500)
-                        .setVibrate(pattern);
-
-                NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.notify(0,noBuilder.build());//0 = ID of notification
-            }
-        };
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(pushBroadcastReceiver,
-                new IntentFilter("new-push-event"));
-
-
         Intent intent2 = getIntent();
         story = intent2.getExtras().getString("title");
         genre = intent2.getExtras().getString("genre");
-
+        currentUser = intent2.getExtras().getString("currentUser");
         user = intent2.getExtras().getString("user");
         password = intent2.getExtras().getString("password");
+
+        Log.d("CURRENTUSER1", "current user in TS: " + currentUser);
+
+
+        receivePush();
+
+
+
+
     }
 
 
@@ -187,6 +156,7 @@ public class theStories extends AppCompatActivity {
             args.putString("password", password);
             args.putString("story", story);
             args.putString("genre", genre);
+             args.putString("currentUser", currentUser);
 
             DialogFragment dialog = new CreateDialogFragment();
             dialog.setArguments(args);
@@ -319,6 +289,49 @@ public class theStories extends AppCompatActivity {
     }
 
 
+
+    public void receivePush(){
+        Intent intent1  = new Intent(this, MainActivity.class);
+        intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        int requestCode = 0;//my request code
+        final PendingIntent pendingIntent = PendingIntent.getActivity(this, requestCode, intent1, PendingIntent.FLAG_ONE_SHOT);
+
+
+        BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String message = intent.getStringExtra("message");
+                String from = intent.getStringExtra("from");
+                /*intent.putExtra("user", user);
+                intent.putExtra("password", password);
+                intent.putExtra("title", story);
+                intent.putExtra("genre", genre);*/
+                Log.i("PUSHNOT", "Receiving message: " + message + ", from " + from);
+
+
+                Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                //Build notification
+                long[] pattern = {250,250,250,250};
+
+                NotificationCompat.Builder noBuilder = new NotificationCompat.Builder(getBaseContext())
+                        .setSmallIcon(R.mipmap.letstellastory_icon)
+                        .setContentTitle("New story")
+                        .setContentText(message)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setSound(sound)
+                        .setLights(Color.WHITE, 500, 500)
+                        .setVibrate(pattern);
+
+                NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.notify(0,noBuilder.build());//0 = ID of notification
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(pushBroadcastReceiver,
+                new IntentFilter("new-push-event"));
+
+    }
 }
 
 

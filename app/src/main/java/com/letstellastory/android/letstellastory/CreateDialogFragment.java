@@ -13,7 +13,7 @@ import android.util.Log;
  */
 
 public class CreateDialogFragment extends DialogFragment {
-        String user,password,story,genre;
+        String user,password,story,genre,currentUser;
 
 
         @Override
@@ -23,14 +23,17 @@ public class CreateDialogFragment extends DialogFragment {
             password = mArgs.getString("password");
             story = mArgs.getString("story");
             genre = mArgs.getString("genre");
+            currentUser = mArgs.getString("currentUser");
+            Log.d("CURRENTUSER", "current user in Dialog: " + currentUser);
 
-            Log.d("CREATION", "in DialogFrag password is " + password);
+           // Log.d("CREATION", "in DialogFrag password is " + password);
                 // Use the Builder class for convenient dialog construction
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Start a story");
                 builder.setMessage("Start your story with a paragraph, pass it on and watch your paragraph become hundreds of pages." +
-                        " As the creator of a story you have the ability to \n-Keep track of what is added to your story \n-Delete any paragraph that you do not want in your story" +
-                         "\n-End the story(coming soon)");
+                        " As the creator of a story you have the ability to \n-Keep track of what is added to your story" + "\n-End the story(coming soon)" +
+                                "\nCreating a story gives every writer in your story including you the ability to delete any paragraph they do not want in your story on each writers end"
+                         );
 
 
                 builder.setPositiveButton("GO", new DialogInterface.OnClickListener() {
@@ -43,6 +46,7 @@ public class CreateDialogFragment extends DialogFragment {
                         intent.putExtra("genre", genre);
                         intent.putExtra("user", user);
                         intent.putExtra("password", password);
+                        intent.putExtra("currentUser", currentUser);
                         startActivity(intent);
                         // You don't have to do anything here if you just want it dismissed when clicked
                     }

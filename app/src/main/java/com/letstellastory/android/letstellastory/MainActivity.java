@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.letstellastory.android.letstellastory.Holder.QBUsersHolder;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     DBHelper helper;
     SQLiteDatabase sqLiteDatabase;
     String id, user, password;
+    TextView forgotPass;
 
     //
     //private BroadcastReceiver mRegistrationBroadcastReceiver;
@@ -89,13 +91,14 @@ public class MainActivity extends AppCompatActivity {
         //helper.onCreate(sqLiteDatabase);
         QBSettings.getInstance().setAccountKey(ACCOUNT_KEY);
         QBSettings.getInstance().init(getApplicationContext(), APP_ID,AUTH_KEY,AUTH_SECRET );
+        forgotPass = (TextView) findViewById(R.id.forgot_password);
 
-        /*QBSubscription qbSubscription = new QBSubscription();
-        qbSubscription.setNotificationChannel(QBNotificationChannel.GCM);
-        String androidID = com.quickblox.core.helper.Utils.generateDeviceId(getBaseContext());
-        qbSubscription.setDeviceUdid(androidID);
-        qbSubscription.setRegistrationID("30816491");
-        qbSubscription.setEnvironment(QBEnvironment.DEVELOPMENT);*/
+       forgotPass.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               resetPassword();
+           }
+       });
 
         QBPushManager.getInstance().addListener(new QBPushManager.QBSubscribeListener() {
             @Override
@@ -181,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(QBUser qbUser, Bundle bundle) {
                         Toast.makeText(getBaseContext(), "Login successful", Toast.LENGTH_SHORT).show();
-
+                        //Log.d("QBUSER", qbUser.getId().toString());
 
                         /*Intent passInfo = new Intent (MainActivity.this, Story.class);
                         passInfo.putExtra("user", user);
@@ -190,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, theStories.class);
                         intent.putExtra("user", user);
                         intent.putExtra("password", password);
-
+                        intent.putExtra("currentUser", qbUser.getId().toString());
                         startActivity(intent);
                         //finish();
                     }
@@ -282,7 +285,9 @@ public class MainActivity extends AppCompatActivity {
             AppCompatTextView appCompatTextView = null;
             if(textViews.size() == 1) {
                 appCompatTextView = (AppCompatTextView) textViews.get(0);
-            } else {
+            }
+
+            else {
                 for(View v : textViews) {
                     if(v.getParent() instanceof Toolbar) {
                         appCompatTextView = (AppCompatTextView) v;
@@ -368,4 +373,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+    public void resetPassword(){
+        Intent intent = new Intent(this, ForgotPassword.class);
+        startActivity(intent);
+    }
 }

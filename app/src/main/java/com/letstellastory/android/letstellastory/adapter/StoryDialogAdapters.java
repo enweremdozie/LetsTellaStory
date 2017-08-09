@@ -87,11 +87,13 @@ public class StoryDialogAdapters extends BaseAdapter{
 
                 String name,dialstory,dialgenre;
                 int pos;
+                int whoIsNext;
                 if(position == index) {
                     name = qbChatDialogs.get(position).getName();
                     pos = name.lastIndexOf("-");
+                    whoIsNext = name.lastIndexOf("*");
                     dialstory = name.substring(0, pos);
-                    dialgenre = name.substring((pos + 1), (name.length()));
+                    dialgenre = name.substring((pos + 1), (whoIsNext));
                     storyShow.setText(dialstory);
                     genreShow.setText(dialgenre);
                     index++;

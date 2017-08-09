@@ -67,6 +67,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
 
     }
 
+
     @Override
     public void onStop() {
         super.onStop();
@@ -140,6 +141,8 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
                 intent.putExtra("genre", genreShow.getText());
                 intent.putExtra("user", user);
                 intent.putExtra("password", password);
+                intent.putExtra("currentUser", currentUser.toString());
+
                 getActivity().startActivity(intent);
                 //getAll();
             }
@@ -382,13 +385,17 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
 
     private void loadStoryDialogs() {
 
+        /*final ProgressDialog updateDialog = new ProgressDialog(getActivity().getBaseContext());
+        updateDialog.setMessage("Loading stories...");
+        updateDialog.show();*/
+
         QBRequestGetBuilder requestBuilder = new QBRequestGetBuilder();
         requestBuilder.setLimit(100);
 
         QBRestChatService.getChatDialogs(null, requestBuilder).performAsync(new QBEntityCallback<ArrayList<QBChatDialog>>() {
             @Override
             public void onSuccess(final ArrayList<QBChatDialog> qbChatDialogs, Bundle bundle) {
-
+                //updateDialog.dismiss();
                 QBChatDialogHolder.getInstance().putDialogs(qbChatDialogs);
 
                 Set<String> setIds = new HashSet<String>();
@@ -445,7 +452,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
-                Log.d("LISTENER", "1");
+                Log.d("LISTENER1", "1");
                 qbUser.setId(qbSession.getUserId());
                 currentUser = qbSession.getUserId();
                 try {
@@ -453,12 +460,15 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
                 } catch (BaseServiceException e) {
                     e.printStackTrace();
                 }
-                    Log.d("LISTENER", "2");
+                    Log.d("LISTENER1", "2");
+
+                //QBSystemMessagesManager qbSystemMessagesManager = QBChatService.getInstance().getSystemMessagesManager();
+                //qbSystemMessagesManager.addSystemMessageListener(My_Stories_Fragment.this);
                 QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
                     @Override
                     public void onSuccess(Object o, Bundle bundle) {
                         //mDialog.dismiss();
-                        Log.d("LISTENER", "3");
+                        Log.d("LISTENER1", "3");
                         QBSystemMessagesManager qbSystemMessagesManager = QBChatService.getInstance().getSystemMessagesManager();
                         qbSystemMessagesManager.addSystemMessageListener(My_Stories_Fragment.this);
 
