@@ -117,7 +117,9 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     @Override
     protected void onResume() {
         super.onResume();
-
+        /*retrieveStories();
+        //createSessionForStory();
+        initStoryDialogs();*/
 
         if(canPassState == false) {
 
@@ -192,6 +194,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+
         //Log.d("CREATION" , "DIALOG ID in story: " + qbChatDialog.getDialogId());
         lstStoryMessages = (ListView) findViewById(R.id.storyList);
         post = (TextView) findViewById(R.id.postStory);
@@ -221,8 +224,9 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         dialogID = intent.getExtras().getString("dialogID");
         currentUser = intent.getExtras().getString("currentUser");
         Log.d("CURRENTUSER1" , "current user in story" + currentUser);
-                qbuser = new QBUser(user, password);
+        qbuser = new QBUser(user, password);
 
+        //createSessionForStory();
         //Log.d("CREATION", "position in Story " + position);
         setTitle(ActTitle);
         centerTitle();
@@ -257,18 +261,22 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                 textCount.setVisibility(View.VISIBLE);
                 textMax.setVisibility(View.VISIBLE);
             }*/
+        //createSessionForStory();
+        initStoryDialogs();
+            retrieveStories();
 
+        storyED.setFocusable(true);
             post.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("ENTERSHERE", "enters once");
+                    //Log.d("ENTERSHERE", "enters once");
 
-                    changeDialogName();
 
-                    Log.d("CHANGEPOST", "QB dialog id " + qbChatDialog.getDialogId());
+
+                    //Log.d("CHANGEPOST", "QB dialog id " + qbChatDialog.getDialogId());
                 storyEdit = storyED.getText().toString();
                 //addPostedToDB(dialogID);
-                    if (storyED.getText() != null && storyED.getText().toString().trim().length() > 0) {
+                    if (!storyEdit.equals(null) && storyED.getText().toString().trim().length() > 0) {
 
                         /*if (!isEditMode) {
                             QBChatMessage storyMessage = new QBChatMessage();
@@ -290,7 +298,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                         else {*/
                             //if (!isEditMode) {
                             QBChatMessage storyMessage = new QBChatMessage();
-                            storyMessage.setBody(storyED.getText().toString());
+                            storyMessage.setBody(storyEdit);
                             storyMessage.setSenderId(QBChatService.getInstance().getUser().getId());
                             storyMessage.setSaveToHistory(true);
 
@@ -301,21 +309,23 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                                 e.printStackTrace();
                             }
 
-                            storyED.setText("");
-                            storyED.setFocusable(true);
+                            /*storyED.setText("");
+                            storyED.setFocusable(true);*/
 
                             /*final ProgressDialog updateDialog = new ProgressDialog(Story.this);
                             updateDialog.setMessage("Please wait...");
                             updateDialog.show();*/
 
                             QBMessageUpdateBuilder messageUpdateBuilder = new QBMessageUpdateBuilder();
-                            messageUpdateBuilder.updateText(storyED.getText().toString()).markDelivered().markRead();
+                            messageUpdateBuilder.updateText(storyEdit).markDelivered().markRead();
 
+                        Log.d("MESSAGEERROR", storyMessage.getId() + "   " + qbChatDialog.getDialogId());
 
                             QBRestChatService.updateMessage(storyMessage.getId(), qbChatDialog.getDialogId(), messageUpdateBuilder)
                                     .performAsync(new QBEntityCallback<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid, Bundle bundle) {
+                                            changeDialogName();
                                             pass.setVisibility(View.VISIBLE);
                                             post.setVisibility(View.INVISIBLE);
                                             textInputLayout.setVisibility(View.INVISIBLE);
@@ -324,11 +334,14 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                                             Toast.makeText(Story.this, "posting", Toast.LENGTH_SHORT).show();
 
                                             retrieveStories();
+                                            initStoryDialogs();
+
+
                                             //isEditMode = false;
                                             //updateDialog.dismiss();
 
                                             storyED.setText("");
-                                            storyED.setFocusable(true);
+                                            storyED.setFocusable(false);
                                         }
 
                                         @Override
@@ -383,9 +396,8 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
 
 
-        createSessionForStory();
-        initStoryDialogs();
-       // retrieveStories();
+
+
 
 
     }
@@ -534,7 +546,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             public void processMessage(String s, QBChatMessage qbChatMessage, Integer integer) {
                 QBStoryMessageHolder.getInstance().putStory(qbChatMessage.getDialogId(),qbChatMessage);
                 ArrayList<QBChatMessage> messages = QBStoryMessageHolder.getInstance().getStoryMessageByDialogId(qbChatMessage.getDialogId());
-                Log.e("ERRORIN", messages.get(0).toString());
+                //Log.e("ERRORIN", messages.get(0).toString());
                 adapter = new StoryMessageAdapter(getBaseContext(), messages);
                 lstStoryMessages.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
@@ -546,8 +558,8 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             }
         });
 
-        Log.d("USERID1", "userID is " + userID);
-        Log.d("USERID1", "who is next is " + whoIsNextUserID);
+        //Log.d("USERID1", "userID is " + userID);
+        //Log.d("USERID1", "who is next is " + whoIsNextUserID);
 
 
     }
@@ -562,6 +574,11 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -575,7 +592,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             finish();
         }
 
-        else if(item.getItemId() == R.id.profile){
+        if(item.getItemId() == R.id.profile){
             showUserProfile();
         }
 

@@ -1,6 +1,7 @@
 package com.letstellastory.android.letstellastory;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
@@ -47,8 +49,8 @@ import java.util.ArrayList;
 public class UserProfile extends AppCompatActivity {
 
     EditText edtPassword, edtOldPassword, edtFullName, edtEmail, edtPhone;
-    Button btnUpdate, btnCancel;
-    String user, password;
+    Button btnUpdate, btnCancel, deleteAccount;
+    String user, password, currentUser;
     ImageView user_avatar;
 
     @Override
@@ -76,6 +78,7 @@ public class UserProfile extends AppCompatActivity {
         user = intent.getExtras().getString("user");
         password = intent.getExtras().getString("password");
         user_avatar = (ImageView) findViewById(R.id.user_avatar);
+        currentUser = intent.getExtras().getString("currentUser");
 
         initViews();
 
@@ -83,7 +86,7 @@ public class UserProfile extends AppCompatActivity {
 
         centerTitle();
 
-        setTitle("MY PROFILE");
+        setTitle("EDIT MY PROFILE");
 
         user_avatar.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -144,6 +147,42 @@ public class UserProfile extends AppCompatActivity {
             }
         });
 
+        //Log.d("CURRRENTUSER", "user in user profile " + currentUser);
+        deleteAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(UserProfile.this);
+                builder.setTitle("Delete account");
+                builder.setMessage("Are you sure you want to delete your account");
+
+
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        QBUsers.deleteUser(Integer.parseInt(currentUser));
+
+                        /*QBUsers.deleteUser(Integer.valueOf(currentUser), new QBEntityCallback<QBUser>() {
+                            @Override
+                            public void onSuccess(QBUser qbUser, Bundle bundle) {
+
+                            }
+
+                            @Override
+                            public void onError(QBResponseException e) {
+
+                            }
+                        });*/
+
+                        Intent intent = new Intent(UserProfile.this, MainActivity.class);
+                        startActivity(intent);
+                        // You don't have to do anything here if you just want it dismissed when clicked
+                    }
+                });
+                builder.show();
+
+
+            }
+        });
     }
 
     private void loadUserProfile() {
@@ -271,6 +310,7 @@ public class UserProfile extends AppCompatActivity {
     private void initViews() {
         btnCancel = (Button) findViewById(R.id.update_user_btn_cancel);
         btnUpdate = (Button) findViewById(R.id.update_user_btn_update);
+        deleteAccount = (Button) findViewById(R.id.delete_account);
 
         edtEmail = (EditText) findViewById(R.id.update_edt_email);
         edtPhone = (EditText) findViewById(R.id.update_edt_phone);

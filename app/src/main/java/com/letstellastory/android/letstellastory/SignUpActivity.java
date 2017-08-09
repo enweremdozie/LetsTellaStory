@@ -1,12 +1,16 @@
 package com.letstellastory.android.letstellastory;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,6 +21,8 @@ import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.QBResponseException;
 import com.quickblox.users.QBUsers;
 import com.quickblox.users.model.QBUser;
+
+import java.util.ArrayList;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -33,7 +39,9 @@ public class SignUpActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         registerSession();
-        setTitle("Reset your password");
+        setTitle("SIGN UP");
+        centerTitle();
+
 
 
         btnSignup = (Button) findViewById(R.id.signup_btnSignUp);
@@ -62,6 +70,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                 qbUser.setFullName(edtFullName.getText().toString());
                 qbUser.setEmail(email);
+
 
 
 
@@ -104,5 +113,36 @@ public class SignUpActivity extends AppCompatActivity {
                 Log.e("ERROR", e.getMessage());
             }
         });
+    }
+
+    private void centerTitle() {
+        ArrayList<View> textViews = new ArrayList<>();
+
+        getWindow().getDecorView().findViewsWithText(textViews, getTitle(), View.FIND_VIEWS_WITH_TEXT);
+
+        if(textViews.size() > 0) {
+            AppCompatTextView appCompatTextView = null;
+            if(textViews.size() == 1) {
+                appCompatTextView = (AppCompatTextView) textViews.get(0);
+            }
+
+            else {
+                for(View v : textViews) {
+                    if(v.getParent() instanceof Toolbar) {
+                        appCompatTextView = (AppCompatTextView) v;
+                        break;
+                    }
+                }
+            }
+
+            if(appCompatTextView != null) {
+                ViewGroup.LayoutParams params = appCompatTextView.getLayoutParams();
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                appCompatTextView.setLayoutParams(params);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    appCompatTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                }
+            }
+        }
     }
 }

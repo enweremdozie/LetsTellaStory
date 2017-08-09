@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra("password", password);
                         intent.putExtra("currentUser", qbUser.getId().toString());
                         startActivity(intent);
-                        //finish();
+                        finish();
                     }
 
                     @Override

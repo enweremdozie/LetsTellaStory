@@ -207,6 +207,7 @@ public class theStories extends AppCompatActivity {
 
     private void showUserProfile() {
         Intent intent = new Intent(theStories.this, UserProfile.class);
+        intent.putExtra("currentUser", currentUser);
         intent.putExtra("user", user);
         intent.putExtra("password", password);
         startActivity(intent);
@@ -288,7 +289,11 @@ public class theStories extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 
     public void receivePush(){
         Intent intent1  = new Intent(this, MainActivity.class);
