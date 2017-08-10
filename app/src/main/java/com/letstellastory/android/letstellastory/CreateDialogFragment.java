@@ -31,7 +31,7 @@ public class CreateDialogFragment extends DialogFragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Start a story");
                 builder.setMessage("Start your story with a paragraph, pass it on and watch your paragraph become hundreds of pages." +
-                        " As the creator of a story you have the ability to \n-Keep track of what is added to your story" + "\n-End the story(coming soon)" +
+                        " As the creator of a story you have the ability to \n-Keep track of what is added to your story" + "\n-End the story." +
                                 "\nCreating a story gives every writer in your story including you the ability to delete any paragraph they do not want in your story on each writers end"
                          );
 

@@ -67,10 +67,10 @@ public class ListUsersActivity extends AppCompatActivity {
     QBChatDialog qbChatDialog;
     List<QBUser> userAdd = new ArrayList<>();
     TextView passedButton;
-    String user, password, name, genre;
+    String user, password, name, genre, nameText, genreText, storyText, storyActText;
     QBUser qbuser = new QBUser();
     boolean userInStory;
-    int posClicked;
+    int posClicked, storyLength, storyActLength;
 
     @Override
     protected void onRestart() {
@@ -96,9 +96,13 @@ public class ListUsersActivity extends AppCompatActivity {
 
         namepos = qbChatDialog.getName().toString().lastIndexOf("-");
         genrepos = qbChatDialog.getName().toString().lastIndexOf("*");
-        name = qbChatDialog.getName().substring(0, namepos);
-        genre = qbChatDialog.getName().substring(namepos + 1, genrepos);
-        whoIsNext = qbChatDialog.getName().substring(genrepos + 1, qbChatDialog.getName().length());
+        storyLength = qbChatDialog.getName().toString().lastIndexOf("&");
+        storyActLength = qbChatDialog.getName().toString().lastIndexOf("#");
+        nameText = qbChatDialog.getName().substring(0, namepos);
+        genreText = qbChatDialog.getName().substring(namepos + 1, genrepos);
+        whoIsNext = qbChatDialog.getName().substring(genrepos + 1, storyLength);
+        storyText = qbChatDialog.getName().substring(storyLength + 1, storyActLength);
+        storyActText = qbChatDialog.getName().substring(storyActLength + 1, qbChatDialog.getName().length());
 
         Log.d("WHOISNEXT", "who is next in LUA: " + whoIsNext);
 
@@ -522,7 +526,10 @@ public class ListUsersActivity extends AppCompatActivity {
     }
 
     private void changeDialogName() {
-        qbChatDialog.setName(name + "-" + genre + "*" + qbuser.getId().toString());
+
+        qbChatDialog.setName(nameText + "-" + genreText + "*" + qbuser.getId().toString() + "&" + storyText + "#" + storyActText);
+
+        //qbChatDialog.setName(name + "-" + genre + "*" + qbuser.getId().toString());
         QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
         QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
                 .performAsync(new QBEntityCallback<QBChatDialog>() {
@@ -549,11 +556,16 @@ public class ListUsersActivity extends AppCompatActivity {
 
         namepos = qbChatDialog.getName().toString().lastIndexOf("-");
         genrepos = qbChatDialog.getName().toString().lastIndexOf("*");
-        name = qbChatDialog.getName().substring(0, namepos);
-        genre = qbChatDialog.getName().substring(namepos + 1, genrepos);
-        whoIsNext = qbChatDialog.getName().substring(genrepos + 1, qbChatDialog.getName().length());
+        storyLength = qbChatDialog.getName().toString().lastIndexOf("&");
+        storyActLength = qbChatDialog.getName().toString().lastIndexOf("#");
+        nameText = qbChatDialog.getName().substring(0, namepos);
+        genreText = qbChatDialog.getName().substring(namepos + 1, genrepos);
+        whoIsNext = qbChatDialog.getName().substring(genrepos + 1, storyLength);
+        storyText = qbChatDialog.getName().substring(storyLength + 1, storyActLength);
+        storyActText = qbChatDialog.getName().substring(storyActLength + 1, qbChatDialog.getName().length());
 
-        Log.d("WHOISNEXT", "who is next in LUA on click: " + whoIsNext);
+
+        //Log.d("WHOISNEXT", "who is next in LUA on click: " + whoIsNext);
 
     }
 

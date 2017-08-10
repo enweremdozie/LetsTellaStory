@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                 QBUsers.signIn(qbUser).performAsync(new QBEntityCallback<QBUser>() {
                     @Override
                     public void onSuccess(QBUser qbUser, Bundle bundle) {
-                        Toast.makeText(getBaseContext(), "Login successful", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "Loading stories", Toast.LENGTH_SHORT).show();
                         //Log.d("QBUSER", qbUser.getId().toString());
 
                         /*Intent passInfo = new Intent (MainActivity.this, Story.class);

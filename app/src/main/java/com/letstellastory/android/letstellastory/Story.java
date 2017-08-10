@@ -71,10 +71,11 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     TextView pass, post;
     //DBHelper db;
     EditText storyED;
-    String ActTitle, genre, story, user, password, dialogID, storyEdit, nameText, genreText, whoIsNext, currentUser;
+    String ActTitle, genre, story, user, password, dialogID, storyEdit, nameText, genreText, whoIsNext, currentUser, storyText, storyActText;
     long storyTime;
     StoryMessageAdapter adapter;
-    int position, passed, namepos, genrepos;
+    int position, passed, namepos, genrepos, storyLength, storyActLength, userStoryLength, wordsLeft;
+    long pagesLeft;
     int contextMenuIndexClicked = -1;
     boolean isEditMode = false;
     QBChatMessage editMessage;
@@ -89,6 +90,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     Integer userID;
     String whoIsNextUserID;
     public static boolean canPassState = true;
+
 
 
     QBUser qbuser = new QBUser();
@@ -275,6 +277,8 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
                     //Log.d("CHANGEPOST", "QB dialog id " + qbChatDialog.getDialogId());
                 storyEdit = storyED.getText().toString();
+                    userStoryLength = spaceCount(storyEdit);//storyEdit.length() - storyEdit.replaceAll(" ", "").length();
+
                 //addPostedToDB(dialogID);
                     if (!storyEdit.equals(null) && storyED.getText().toString().trim().length() > 0) {
 
@@ -394,22 +398,28 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                 }
             });
 
-
-
-
-
-
-
     }
 
     private void changeDialogName() {
-        qbChatDialog.setName(nameText + "-" + genreText + "*" + user);
+        StringBuilder sb = new StringBuilder();
+        sb.append("");
+        sb.append(Integer.parseInt(storyActText) + userStoryLength);
+        storyActText = sb.toString();
+
+
+
+        qbChatDialog.setName(nameText + "-" + genreText + "*" + user + "&" + storyText + "#" + storyActText);
+
+        wordsLeft = Integer.parseInt(storyText) - Integer.parseInt(storyActText) + userStoryLength;
+        pagesLeft = Math.round(wordsLeft/500);
+
         QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
         QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
                 .performAsync(new QBEntityCallback<QBChatDialog>() {
                     @Override
                     public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
                         Log.d("DIALOGNAME", "Dialog name was changed");
+                        //userStoryLength = spaceCount(); //storyEdit.length() - storyEdit.replaceAll(" ", "").length();
                     }
 
                     @Override
@@ -451,7 +461,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
     private void retrieveStories() {
         QBMessageGetBuilder messageGetBuilder = new QBMessageGetBuilder();
-        messageGetBuilder.setLimit(700);
+        messageGetBuilder.setLimit(1000);
 
         if(qbChatDialog != null){
             QBRestChatService.getDialogMessages(qbChatDialog, messageGetBuilder).performAsync(new QBEntityCallback<ArrayList<QBChatMessage>>() {
@@ -478,16 +488,50 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
         namepos = qbChatDialog.getName().toString().lastIndexOf("-");
         genrepos = qbChatDialog.getName().toString().lastIndexOf("*");
+        storyLength = qbChatDialog.getName().toString().lastIndexOf("&");
+        storyActLength = qbChatDialog.getName().toString().lastIndexOf("#");
         nameText = qbChatDialog.getName().substring(0, namepos);
         genreText = qbChatDialog.getName().substring(namepos + 1, genrepos);
-        whoIsNext = qbChatDialog.getName().substring(genrepos + 1, qbChatDialog.getName().length());
+        whoIsNext = qbChatDialog.getName().substring(genrepos + 1, storyLength);
+        storyText = qbChatDialog.getName().substring(storyLength + 1, storyActLength);
+        storyActText = qbChatDialog.getName().substring(storyActLength + 1, qbChatDialog.getName().length());
+
+        Log.d("STORYTEXT", "Story: " + storyText + " StoryAct: " + storyActText);
+
+        //wordsLeft = Integer.parseInt(storyText) - Integer.parseInt(storyActText);
         //whoIsNextUserID = Integer.valueOf(whoIsNext).toString();
+        int storyAct = Integer.parseInt(storyActText);
+        int storyFull = Integer.parseInt(storyText);
+        wordsLeft = storyFull - storyAct;
+        double roundedupPagesLeft = wordsLeft / 500;
+        pagesLeft = Math.round(roundedupPagesLeft);
 
-        //userID = Integer.valueOf(currentUser);
+        Log.d("STORYTEXT", "StoryAct: " + storyAct + " " + storyFull);
 
-        Log.d("USERID2", "dialog ID: " + whoIsNextUserID);
+        if(storyAct >= storyFull){
+            pass.setVisibility(View.GONE);
+            post.setVisibility(View.GONE);
+            textInputLayout.setVisibility(View.GONE);
+            textCount.setVisibility(View.GONE);
+            textMax.setVisibility(View.GONE);
 
-            if(whoIsNext.equals(user)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(Story.this);
+            builder.setTitle("About story");
+            builder.setMessage("This story has ended");
+
+
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                    // You don't have to do anything here if you just want it dismissed when clicked
+                }
+            });
+            builder.show();
+        }
+
+
+
+            else if(whoIsNext.equals(user)){
                 pass.setVisibility(View.VISIBLE);
                 post.setVisibility(View.INVISIBLE);
                 textInputLayout.setVisibility(View.INVISIBLE);
@@ -564,7 +608,17 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        if (Integer.parseInt(currentUser) != qbChatDialog.getUserId()) {
+            menu.getItem(4).setVisible(false);
+        }
 
+        if(Integer.parseInt(storyActText) >= Integer.parseInt(storyText)){
+            menu.getItem(4).setEnabled(false);
+        }
+        return true;
+    }
 
 
     @Override
@@ -612,15 +666,99 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
         }
 
-        /*else if(item.getItemId() == R.id.my_stories){
-            Intent intent = new Intent(Story.this,theStories.class);
-            startActivity(intent);
-        }*/
+        else if(item.getItemId() == R.id.about){
+          openStoryDialog();
+        }
+
+        else if(item.getItemId() == R.id.endStory){
+            endTheStory();
+        }
+
+
         else if(item.getItemId() == R.id.menu_sign_out){
             logOut();
         }
+
+
         return super.onOptionsItemSelected(item);
     }
+
+    private void endTheStory() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Story.this);
+        builder.setTitle(nameText);
+        builder.setMessage("Are you sure you want to end this story");
+        // "Pass a start: " + passState);
+
+
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                qbChatDialog.setName(nameText + "-" + genreText + "*" + user + "&" + storyText + "#" + (Integer.parseInt(storyText)));
+
+                QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
+                QBRestChatService.updateGroupChatDialog(qbChatDialog, requestBuilder)
+                        .performAsync(new QBEntityCallback<QBChatDialog>() {
+                            @Override
+                            public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
+                                Log.d("DIALOGEND", "Dialog ended");
+                                Toast.makeText(Story.this, "Story ended successfully", Toast.LENGTH_SHORT).show();
+
+                                //userStoryLength = spaceCount(); //storyEdit.length() - storyEdit.replaceAll(" ", "").length();
+                            }
+
+                            @Override
+                            public void onError(QBResponseException e) {
+
+                            }
+                        });
+
+            }
+        });
+
+        builder.show();
+
+    }
+
+    private void openStoryDialog() {
+        //String creator = getCreator();
+        AlertDialog.Builder builder = new AlertDialog.Builder(Story.this);
+        builder.setTitle(nameText);
+        builder.setMessage("Genre:  " + genreText + "\n" +
+                "Pages left:  " + pagesLeft + "\n" +
+                "Words left:  " + wordsLeft);//
+        // "Pass a start: " + passState);
+
+
+
+        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+
+        builder.show();
+
+    }
+
+   /* private String getCreator() {
+        String creator;
+        final String creator = "";
+        int create = qbChatDialog.getUserId();
+        QBUsers.getUser(create, new QBEntityCallback<QBUser>() {
+            @Override
+            public void onSuccess(QBUser user, Bundle bundle) {
+
+                creator.equals(user.getLogin());
+            }
+
+            @Override
+            public void onError(QBResponseException e) {
+                Log.e("ERROR", e.getMessage());
+            }
+        });
+
+                return creator;
+    }*/
 
     private void showUserProfile() {
         Intent intent = new Intent(Story.this, UserProfile.class);
@@ -932,5 +1070,19 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
     }
 
+
+    public int spaceCount(String word){
+        String data[];
+        int k=0;
+        data=word.split("");
+        for(int i=0;i<data.length;i++){
+            if(data[i].equals(" ")){
+                k++;
+            }
+
+        }
+
+        return k + 1;
+    }
 }
 

@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
@@ -47,6 +48,7 @@ public class StartAStory extends AppCompatActivity {
     String passState;
     TextView show;
     String user, password, currentUser;
+    String lenOfStory = "";
     Integer userID;
 
     @Override
@@ -82,6 +84,37 @@ public class StartAStory extends AppCompatActivity {
         setTitle("START A STORY");
         centerTitle();
 
+        length.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                View radioButton = length.findViewById(i);
+                int index = radioGroup.indexOfChild(radioButton);
+                Log.d("STORYLENGTH", "this is the length:" + index);
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("");
+
+
+                switch(index){
+                    case 0:
+                        sb.append("25000");
+                        lenOfStory = sb.toString();
+                        break;
+
+                    case 1:
+                        sb.append("50000");
+                        lenOfStory = sb.toString();
+                        break;
+
+                    case 2:
+                        sb.append("100000");
+                        lenOfStory = sb.toString();
+                        break;
+                }
+                //Log.d("STORYLENGTH", "this is the length:" + lenOfStory);
+            }
+        });
+
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,12 +136,8 @@ public class StartAStory extends AppCompatActivity {
 
                 genreDisplay = (RadioButton) findViewById(selectedId);
                 storyLength = (RadioButton) findViewById(lengthId);
-                /*if(pass.isChecked()){
-                    passState = "yes";
-                }
-                else{
-                    passState = "no";
-                }*/
+
+
 
                 if(et.length() > 0) {
 
@@ -121,12 +150,15 @@ public class StartAStory extends AppCompatActivity {
                                            // "Pass a start: " + passState);
 
 
+
                             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
 
 
-                            ArrayList<Integer> occupantIdsList = new ArrayList<Integer>();
-                            QBChatDialog mdialog = DialogUtils.buildDialog(storyName.getText().toString() + "-" + genreDisplay.getText().toString() + "*" + userID.toString() , QBDialogType.GROUP, occupantIdsList);
+                                    Log.d("STORYLENGTH", "this is the length:" + lenOfStory);
+
+                                    ArrayList<Integer> occupantIdsList = new ArrayList<Integer>();
+                            QBChatDialog mdialog = DialogUtils.buildDialog(storyName.getText().toString() + "-" + genreDisplay.getText().toString() + "*" + userID.toString() + "&" + lenOfStory + "#" + "0", QBDialogType.GROUP, occupantIdsList);
 
                             QBRestChatService.createChatDialog(mdialog).performAsync(new QBEntityCallback<QBChatDialog>() {
                                 @Override

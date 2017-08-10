@@ -19,17 +19,26 @@
         android:icon="@drawable/menu"
         tools:ignore="AppCompatResource" />
 
-    <!--item
-        android:id="@+id/my_stories"
-        android:title="My stories"
-        android:orderInCategory="100"
-        android:showAsAction="always"
-        android:icon="@drawable/menu"
-        tools:ignore="AppCompatResource" /-->
 
     <item
         android:id="@+id/profile"
         android:title="Edit my profile"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/menu"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/about"
+        android:title="About story"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/menu"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/endStory"
+        android:title="End story"
         android:orderInCategory="100"
         android:showAsAction="always"
         android:icon="@drawable/menu"
