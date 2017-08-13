@@ -22,18 +22,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Story name"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:paddingLeft="10dp"
-        android:paddingTop="15dp"/>
+        android:paddingTop="5dp"/>
 
     <EditText
         android:id="@+id/storyName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="15dp"
         android:maxLength="40"
-       android:layout_marginRight="10dp"/>
+        android:layout_marginRight="10dp"/>
 
     <TextView
         android:id="@+id/genreName"
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:text="Genre"
         android:paddingLeft="10dp"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:layout_alignBottom="@+id/storyName"/>
 
     <RadioGroup
@@ -50,13 +50,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="10dp"
-        android:paddingBottom="20dp">
+        android:paddingBottom="15dp">
         <RadioButton
             android:id="@+id/Drama"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Drama"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:paddingRight="10dp"
             android:checked="true"/>
         <RadioButton
@@ -64,14 +64,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Horror"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:paddingRight="10dp"/>
         <RadioButton
             android:id="@+id/Romance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Romance"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:paddingRight="10dp"/>
     </RadioGroup>
 
@@ -80,22 +80,22 @@
         android:layout_height="wrap_content"
         android:text="Story length"
         android:paddingLeft="10dp"
-        android:textSize="20dp"/>
+        android:textSize="20sp"/>
 
     <RadioGroup
         android:id="@+id/length"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:paddingLeft="10dp"
-        android:paddingBottom="20dp">
+        android:paddingBottom="15dp">
 
         <RadioButton
             android:id="@+id/Short"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="50 Pages"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:paddingRight="10dp"
             android:checked="true"/>
         <RadioButton
@@ -103,14 +103,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="100 Pages"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:paddingRight="10dp"/>
         <RadioButton
             android:id="@+id/Long"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="200 Pages"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:paddingRight="10dp"/>
     </RadioGroup>
 
@@ -137,11 +137,49 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:weightSum="2"
+        android:padding="10dp"
+        android:imeOptions="actionSend|flagNoEnterAction">
+
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:text="cancel"
+            android:textSize="15sp"
+            android:textColor="#FAFAFA"
+            android:background="@layout/rounded_button"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
+
+        <Button
+            android:id="@+id/ok"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:text="ok"
+            android:textSize="15sp"
+            android:textColor="#FAFAFA"
+            android:background="@layout/rounded_button"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
+
+
+
+         </LinearLayout>
+
+    <!--LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="2"
         android:paddingTop="40dp"
         android:gravity="bottom"
-        android:padding="10dp">
-
-
+        android:padding="10dp"
+        android:windowSoftInputMode="stateVisible|adjustResize">
 
 
         <Button
@@ -172,8 +210,9 @@
 
 
 
-         </LinearLayout>
+    </LinearLayout-->
 
-    </LinearLayout>
+
+</LinearLayout>
 
 </RelativeLayout>

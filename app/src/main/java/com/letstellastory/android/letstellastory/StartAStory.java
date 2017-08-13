@@ -48,7 +48,7 @@ public class StartAStory extends AppCompatActivity {
     String passState;
     TextView show;
     String user, password, currentUser;
-    String lenOfStory = "";
+    String lenOfStory = "25000";
     Integer userID;
 
     @Override
@@ -81,6 +81,7 @@ public class StartAStory extends AppCompatActivity {
         Log.d("CURRENTUSER1", "current user in SAS: " + currentUser);
 
 
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setTitle("START A STORY");
         centerTitle();
 
@@ -111,7 +112,7 @@ public class StartAStory extends AppCompatActivity {
                         lenOfStory = sb.toString();
                         break;
                 }
-                //Log.d("STORYLENGTH", "this is the length:" + lenOfStory);
+                Log.d("STORYLENGTH", "this is the length:" + lenOfStory);
             }
         });
 
@@ -144,9 +145,9 @@ public class StartAStory extends AppCompatActivity {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(StartAStory.this);
                     builder.setTitle("Story snippet");
-                    builder.setMessage("Story name: " + et + "\n" +
-                                        "Genre: " + genreDisplay.getText().toString() + "\n" +
-                                          "Story length: " + storyLength.getText().toString());// + "\n" +
+                    builder.setMessage("Story name:    " + et + "\n" +
+                                        "Genre:    "  + genreDisplay.getText().toString() + "\n" +
+                                          "Story length:    " + storyLength.getText().toString());// + "\n" +
                                            // "Pass a start: " + passState);
 
 

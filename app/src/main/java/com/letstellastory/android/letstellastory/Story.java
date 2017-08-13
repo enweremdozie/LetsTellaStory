@@ -72,6 +72,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     //DBHelper db;
     EditText storyED;
     String ActTitle, genre, story, user, password, dialogID, storyEdit, nameText, genreText, whoIsNext, currentUser, storyText, storyActText;
+    String genreFormat;
     long storyTime;
     StoryMessageAdapter adapter;
     int position, passed, namepos, genrepos, storyLength, storyActLength, userStoryLength, wordsLeft;
@@ -138,53 +139,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     @Override
     protected void onRestart() {
         super.onRestart();
-        //createSessionForStory();
-        /*QBUsers.signIn(qbuser).performAsync( new QBEntityCallback<QBUser>() {
-            @Override
-            public void onSuccess(QBUser user, Bundle args) {
-                // success
-            }
 
-            @Override
-            public void onError(QBResponseException error) {
-                // error
-            }
-        });*/
-        //initStoryDialogs();
-
-        //retrieveStories();
-        //createSessionForStory();
-        /*DBHelper helper = new DBHelper(Story.this);
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = helper.getPassedStoryInfo(db);
-        boolean state = false;
-        String dialog;
-        if(cursor.getCount() == 0){
-            state = false;
-        }
-
-        else if (cursor.getCount() > 0){
-            while(cursor.moveToNext() && state != true){
-                dialog = cursor.getString(1);
-
-                if(dialogID.equals(dialog)){
-                    state = true;
-                }
-
-                else{
-                    state = false;
-                }
-            }
-        }
-
-        if(state == true){
-            pass.setVisibility(View.GONE);
-            post.setVisibility(View.GONE);
-            textInputLayout.setVisibility(View.GONE);
-            textCount.setVisibility(View.GONE);
-            textMax.setVisibility(View.GONE);
-
-        }*/
     }
 
     @Override
@@ -232,6 +187,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         //Log.d("CREATION", "position in Story " + position);
         setTitle(ActTitle);
         centerTitle();
+
         //AddData();
         //createSessionForStory();
         /*if(hasposted == true){
@@ -350,7 +306,9 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
                                         @Override
                                         public void onError(QBResponseException e) {
-                                            Toast.makeText(getBaseContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(Story.this, "User error, please log out and log back in", Toast.LENGTH_LONG).show();
+
+                                            //Toast.makeText(getBaseContext(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
                        // }
@@ -456,9 +414,6 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     }
 
 
-
-
-
     private void retrieveStories() {
         QBMessageGetBuilder messageGetBuilder = new QBMessageGetBuilder();
         messageGetBuilder.setLimit(1000);
@@ -497,7 +452,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         storyActText = qbChatDialog.getName().substring(storyActLength + 1, qbChatDialog.getName().length());
 
         Log.d("STORYTEXT", "Story: " + storyText + " StoryAct: " + storyActText);
-
+        //genreFormat = String.format("%s %20s", genreText);
         //wordsLeft = Integer.parseInt(storyText) - Integer.parseInt(storyActText);
         //whoIsNextUserID = Integer.valueOf(whoIsNext).toString();
         int storyAct = Integer.parseInt(storyActText);
@@ -663,7 +618,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         }
 
         else if(item.getItemId() == R.id.join){
-
+            nostories();
         }
 
         else if(item.getItemId() == R.id.about){
@@ -701,6 +656,11 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                             @Override
                             public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
                                 Log.d("DIALOGEND", "Dialog ended");
+                                pass.setVisibility(View.GONE);
+                                post.setVisibility(View.GONE);
+                                textInputLayout.setVisibility(View.GONE);
+                                textCount.setVisibility(View.GONE);
+                                textMax.setVisibility(View.GONE);
                                 Toast.makeText(Story.this, "Story ended successfully", Toast.LENGTH_SHORT).show();
 
                                 //userStoryLength = spaceCount(); //storyEdit.length() - storyEdit.replaceAll(" ", "").length();
@@ -715,6 +675,13 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             }
         });
 
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                // You don't have to do anything here if you just want it dismissed when clicked
+            }
+        });
+
         builder.show();
 
     }
@@ -723,9 +690,9 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         //String creator = getCreator();
         AlertDialog.Builder builder = new AlertDialog.Builder(Story.this);
         builder.setTitle(nameText);
-        builder.setMessage("Genre:  " + genreText + "\n" +
-                "Pages left:  " + pagesLeft + "\n" +
-                "Words left:  " + wordsLeft);//
+        builder.setMessage("Genre:     " + genreText + "\n" +
+                "Pages left:     "  + pagesLeft + "\n" +
+                "Words left:     "  + wordsLeft);
         // "Pass a start: " + passState);
 
 
@@ -740,25 +707,6 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
     }
 
-   /* private String getCreator() {
-        String creator;
-        final String creator = "";
-        int create = qbChatDialog.getUserId();
-        QBUsers.getUser(create, new QBEntityCallback<QBUser>() {
-            @Override
-            public void onSuccess(QBUser user, Bundle bundle) {
-
-                creator.equals(user.getLogin());
-            }
-
-            @Override
-            public void onError(QBResponseException e) {
-                Log.e("ERROR", e.getMessage());
-            }
-        });
-
-                return creator;
-    }*/
 
     private void showUserProfile() {
         Intent intent = new Intent(Story.this, UserProfile.class);
@@ -785,7 +733,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                 QBChatService.getInstance().logout(new QBEntityCallback<Void>() {
                     @Override
                     public void onSuccess(Void aVoid, Bundle bundle) {
-                        Toast.makeText(Story.this, "Logged out", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Story.this, "Signed out", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(Story.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
@@ -843,7 +791,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         builder.setMessage("Username: " + QBUsersHolder.getInstance().getUserById(userMsg.getSenderId()).getLogin());
 
 
-        builder.setPositiveButton("DONE", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
             }
         });
@@ -1084,5 +1032,21 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
 
         return k + 1;
     }
+
+    public void nostories(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(Story.this);
+        builder.setTitle("No local stories");
+        builder.setMessage("As there are not enough people signed up to \"Lets tell a story\" there are currently no local stories to join but please feel free to start your own story, sorry for the inconvenience.");
+
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                // You don't have to do anything here if you just want it dismissed when clicked
+            }
+        });
+        builder.show();
+    }
+
 }
 

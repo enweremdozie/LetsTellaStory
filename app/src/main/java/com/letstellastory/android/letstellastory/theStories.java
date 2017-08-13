@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
@@ -86,7 +88,25 @@ public class theStories extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.story_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+            if(position == 1){
+                //Toast.makeText(theStories.this, "Enters local frag", Toast.LENGTH_SHORT).show();
+                nostories();
+            }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         Intent intent = getIntent();
         /*story = intent.getExtras().getString("title");
@@ -97,6 +117,7 @@ public class theStories extends AppCompatActivity {
         //Toast.makeText(this, "user: " + user, Toast.LENGTH_SHORT).show();
         DBHelper mystories = new DBHelper(theStories.this);
             mystories.insertData_my_stories(user, password);
+
 
         Intent intent2 = getIntent();
         story = intent2.getExtras().getString("title");
@@ -184,7 +205,7 @@ public class theStories extends AppCompatActivity {
                 QBChatService.getInstance().logout(new QBEntityCallback<Void>() {
                     @Override
                     public void onSuccess(Void aVoid, Bundle bundle) {
-                        Toast.makeText(theStories.this, "Logged out", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(theStories.this, "Signed out", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(theStories.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
@@ -295,6 +316,12 @@ public class theStories extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.getItem(1).setVisible(false);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     public void receivePush(){
         Intent intent1  = new Intent(this, MainActivity.class);
         intent1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -336,6 +363,21 @@ public class theStories extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(pushBroadcastReceiver,
                 new IntentFilter("new-push-event"));
 
+    }
+
+    public void nostories(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(theStories.this);
+        builder.setTitle("No local stories");
+        builder.setMessage("As there are not enough people signed up to \"Lets tell a story\" there are currently no local stories to join but please feel free to start your own story, sorry for the inconvenience.");
+
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                // You don't have to do anything here if you just want it dismissed when clicked
+            }
+        });
+        builder.show();
     }
 }
 

@@ -464,6 +464,8 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
 
                 //QBSystemMessagesManager qbSystemMessagesManager = QBChatService.getInstance().getSystemMessagesManager();
                 //qbSystemMessagesManager.addSystemMessageListener(My_Stories_Fragment.this);
+
+
                 QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
                     @Override
                     public void onSuccess(Object o, Bundle bundle) {

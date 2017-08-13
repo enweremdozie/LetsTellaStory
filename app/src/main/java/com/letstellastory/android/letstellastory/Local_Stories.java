@@ -15,5 +15,10 @@ public class Local_Stories extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, new Local_Stories_Fragment())
                 .commit();
+
+
     }
+
+
+
 }

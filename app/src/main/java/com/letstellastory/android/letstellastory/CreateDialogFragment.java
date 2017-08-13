@@ -48,6 +48,7 @@ public class CreateDialogFragment extends DialogFragment {
                         intent.putExtra("password", password);
                         intent.putExtra("currentUser", currentUser);
                         startActivity(intent);
+                        //getActivity().finish();
                         // You don't have to do anything here if you just want it dismissed when clicked
                     }
                 });
