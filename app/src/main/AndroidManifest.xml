@@ -57,9 +57,6 @@
             android:name=".SignUpActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ChatDialogsActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ListUsersActivity"
             android:screenOrientation="portrait" />
         <activity
