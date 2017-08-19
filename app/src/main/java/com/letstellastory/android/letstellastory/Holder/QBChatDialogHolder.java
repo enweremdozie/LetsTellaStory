@@ -61,6 +61,24 @@ public class QBChatDialogHolder {
         return qbChat;
     }
 
+    public  ArrayList<QBChatDialog> getAllGroupChatDialogs(){
+        ArrayList<QBChatDialog> qbChat = new ArrayList<>();
+        for(String key:qbChatDialogHashMap.keySet())
+            if(qbChatDialogHashMap.get(key).getType().toString().equals("GROUP")) {
+                qbChat.add(qbChatDialogHashMap.get(key));
+            }
+        return qbChat;
+    }
+
+    public  ArrayList<QBChatDialog> getAllLocalGroupChatDialogs(){
+        ArrayList<QBChatDialog> qbChat = new ArrayList<>();
+        for(String key:qbChatDialogHashMap.keySet())
+            if(qbChatDialogHashMap.get(key).getType().toString().equals("PUBLIC_GROUP")) {
+                qbChat.add(qbChatDialogHashMap.get(key));
+            }
+        return qbChat;
+    }
+
     public void removeDialog(String id){
         qbChatDialogHashMap.remove(id);
     }

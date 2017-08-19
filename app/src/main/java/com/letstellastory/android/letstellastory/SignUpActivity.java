@@ -78,7 +78,6 @@ public class SignUpActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(QBUser qbUser, Bundle bundle) {
                         Toast.makeText(SignUpActivity.this, "Please confirm your registration in your email inbox or junk", Toast.LENGTH_LONG).show();
-                        //Toast.makeText(getBaseContext(),"Sign Up successful", Toast.LENGTH_SHORT).show();
                         finish();
                     }
 

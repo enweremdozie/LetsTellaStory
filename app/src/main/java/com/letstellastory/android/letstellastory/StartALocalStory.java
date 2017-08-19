@@ -30,7 +30,7 @@ import com.quickblox.users.model.QBUser;
 
 import java.util.ArrayList;
 
-public class StartAStory extends AppCompatActivity {
+public class StartALocalStory extends AppCompatActivity {
     TextView cancel;
     TextView okay;
     EditText storyName;
@@ -76,7 +76,7 @@ public class StartAStory extends AppCompatActivity {
         Log.d("CURRENTUSER1", "current user in SAS: " + currentUser);
 
 
-        setTitle("START A STORY");
+        setTitle("START A LOCAL STORY");
         centerTitle();
 
         length.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -138,23 +138,23 @@ public class StartAStory extends AppCompatActivity {
                 if(et.length() > 0) {
 
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(StartAStory.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(StartALocalStory.this);
                     builder.setTitle("Story snippet");
                     builder.setMessage("Story name:    " + et + "\n" +
-                                        "Genre:    "  + genreDisplay.getText().toString() + "\n" +
-                                          "Story length:    " + storyLength.getText().toString());// + "\n" +
-                                           // "Pass a start: " + passState);
+                            "Genre:    "  + genreDisplay.getText().toString() + "\n" +
+                            "Story length:    " + storyLength.getText().toString());// + "\n" +
+                    // "Pass a start: " + passState);
 
 
 
-                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
 
 
-                                    Log.d("STORYLENGTH", "story name: " + et);
+                            Log.d("STORYLENGTH", "this is the length:" + lenOfStory);
 
-                                    ArrayList<Integer> occupantIdsList = new ArrayList<Integer>();
-                            QBChatDialog mdialog = DialogUtils.buildDialog(et + "-" + genreDisplay.getText().toString() + "*" + userID.toString() + "&" + lenOfStory + "#" + "0", QBDialogType.GROUP, occupantIdsList);
+                            ArrayList<Integer> occupantIdsList = new ArrayList<Integer>();
+                            QBChatDialog mdialog = DialogUtils.buildDialog(storyName.getText().toString() + "-" + genreDisplay.getText().toString() + "*" + userID.toString() + "&" + lenOfStory + "#" + "0", QBDialogType.PUBLIC_GROUP, occupantIdsList);
 
                             QBRestChatService.createChatDialog(mdialog).performAsync(new QBEntityCallback<QBChatDialog>() {
                                 @Override
@@ -175,7 +175,7 @@ public class StartAStory extends AppCompatActivity {
                             intent.putExtra("genre", genreDisplay.getText());
                             intent.putExtra("user", user);
                             intent.putExtra("password", password);
-                                    intent.putExtra("currentUser", currentUser);
+                            intent.putExtra("currentUser", currentUser);
 
 
                             Log.d("LOADSTORY", "password in Start a story: " + password);
@@ -188,7 +188,6 @@ public class StartAStory extends AppCompatActivity {
                     builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
 
-                            // You don't have to do anything here if you just want it dismissed when clicked
                         }
                     });
                     builder.show();
@@ -197,7 +196,7 @@ public class StartAStory extends AppCompatActivity {
 
                 else{
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(StartAStory.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(StartALocalStory.this);
                     builder.setTitle("");
                     builder.setMessage("Please name your story");
 
@@ -252,11 +251,11 @@ public class StartAStory extends AppCompatActivity {
     private void createSessionForStory(){
 
         final QBUser qbUser = new QBUser(user, password);
+
         QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
                 userID = qbUser.getId();
-
             }
 
             @Override
@@ -264,6 +263,7 @@ public class StartAStory extends AppCompatActivity {
 
             }
         });
+
 
     }
 }

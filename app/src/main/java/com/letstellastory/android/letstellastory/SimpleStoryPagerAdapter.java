@@ -45,10 +45,7 @@ public class SimpleStoryPagerAdapter extends FragmentPagerAdapter {
                 frag = 0;
                 activity.setFragPos(position);
                 return "MY STORIES";
-            /*case 1:
-                frag = 1;
-                activity.setFragPos(position);
-                return "INVITED STORIES";*/
+
             case 1:
                 frag = 1;
                 activity.setFragPos(position);
@@ -57,5 +54,7 @@ public class SimpleStoryPagerAdapter extends FragmentPagerAdapter {
 
         return null;
     }
+
+
 
 }

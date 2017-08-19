@@ -35,24 +35,4 @@ public class SimpleFragmentPagerAdaptor extends FragmentPagerAdapter {
         return 3;
     }
 
-   /* @Override
-    public CharSequence getPageTitle(int position) {
-        switch (position) {
-            case 0:
-                frag = 0;
-                mActivity.setFragPos(position);
-                return "DRAMA";
-            case 1:
-               frag = 1;
-                mActivity.setFragPos(position);
-                return "HORROR";
-            case 2:
-                frag = 2;
-                mActivity.setFragPos(position);
-                return "ROMANCE";
-        }
-
-        return null;
-    }*/
-
 }

@@ -21,7 +21,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,13 +29,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.letstellastory.android.letstellastory.Holder.QBUsersHolder;
 import com.quickblox.auth.QBAuth;
-import com.quickblox.auth.session.BaseService;
 import com.quickblox.auth.session.QBSession;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.core.QBEntityCallback;
-import com.quickblox.core.exception.BaseServiceException;
 import com.quickblox.core.exception.QBResponseException;
 import com.quickblox.users.QBUsers;
 import com.quickblox.users.model.QBUser;
@@ -45,6 +41,7 @@ import java.util.ArrayList;
 
 public class theStories extends AppCompatActivity {
     int fragPos;
+    int whichFrag = 0;
     TextView back;
     static String story, genre;
     Invited_Stories_Fragment isFrag;
@@ -61,11 +58,17 @@ public class theStories extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         createSessionForStory();
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+        logOut();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +77,11 @@ public class theStories extends AppCompatActivity {
 
         setTitle("STORIES");
         centerTitle();
+        createSessionForStory();
 
 
         // Find the view pager that will allow the user to swipe between fragments
-        ViewPager viewPager = (ViewPager) findViewById(R.id.story_viewpager);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.story_viewpager);
 
         // Create an adapter that knows which fragment should be shown on each page
         SimpleStoryPagerAdapter adapter = new SimpleStoryPagerAdapter(getSupportFragmentManager());
@@ -88,6 +92,25 @@ public class theStories extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.story_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
+
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -96,9 +119,13 @@ public class theStories extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-            if(position == 1){
-                //Toast.makeText(theStories.this, "Enters local frag", Toast.LENGTH_SHORT).show();
-                nostories();
+                if(position == 1){
+                whichFrag = 1;
+            }
+
+            else if(position == 0){
+                whichFrag = 0;
+
             }
             }
 
@@ -106,18 +133,13 @@ public class theStories extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
 
             }
+
         });
 
         Intent intent = getIntent();
-        /*story = intent.getExtras().getString("title");
-        genre = intent.getExtras().getString("genre");
 
-        user = intent.getExtras().getString("user");
-        password = intent.getExtras().getString("password");*/
-        //Toast.makeText(this, "user: " + user, Toast.LENGTH_SHORT).show();
         DBHelper mystories = new DBHelper(theStories.this);
-            mystories.insertData_my_stories(user, password);
-
+        mystories.insertData_my_stories(user, password);
 
         Intent intent2 = getIntent();
         story = intent2.getExtras().getString("title");
@@ -126,13 +148,7 @@ public class theStories extends AppCompatActivity {
         user = intent2.getExtras().getString("user");
         password = intent2.getExtras().getString("password");
 
-        Log.d("CURRENTUSER1", "current user in TS: " + currentUser);
-
-
         receivePush();
-
-
-
 
     }
 
@@ -146,7 +162,6 @@ public class theStories extends AppCompatActivity {
     }
 
     public void setFragPos(int newFrag){
-
         fragPos = newFrag;
     }
 
@@ -164,10 +179,6 @@ public class theStories extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         fragPos = getFragPos();
 
-       /* if (item.getItemId() == android.R.id.home) {
-            finish();
-        }*/
-
          if(item.getItemId() == R.id.profile){
             showUserProfile();
         }
@@ -178,18 +189,17 @@ public class theStories extends AppCompatActivity {
             args.putString("story", story);
             args.putString("genre", genre);
              args.putString("currentUser", currentUser);
-
             DialogFragment dialog = new CreateDialogFragment();
             dialog.setArguments(args);
             dialog.show(getFragmentManager(), "CreateDialogFragment.tag");
-
-             //finish();
-            //Toast.makeText(this, "start", Toast.LENGTH_LONG).show();
-            //Log.d("CREATION", "creating in drama");
         }
 
-        else if(item.getItemId() == R.id.join){
-
+        else if(item.getItemId() == R.id.start_local){
+             Intent intent = new Intent(theStories.this, StartALocalStory.class);
+             intent.putExtra("currentUser", currentUser);
+             intent.putExtra("user", user);
+             intent.putExtra("password", password);
+             startActivity(intent);
         }
 
         else if(item.getItemId() == R.id.menu_sign_out){
@@ -236,25 +246,16 @@ public class theStories extends AppCompatActivity {
 
     private void createSessionForStory(){
 
-        QBUsers.getUsers(null).performAsync(new QBEntityCallback<ArrayList<QBUser>>() {
-            @Override
-            public void onSuccess(ArrayList<QBUser> qbUsers, Bundle bundle) {
-                QBUsersHolder.getInstance().putUsers(qbUsers);
-            }
-
-            @Override
-            public void onError(QBResponseException e) {
-
-            }
-        });
-
-
         final QBUser qbUser = new QBUser(user, password);
-        //Log.d("CREATION", "in story fragment password is " + password);
+
         QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
-                qbUser.setId(qbSession.getUserId());
+                /*qbUser.setId(qbSession.getUserId());
+                Log.d("USERID1", "userID session " + qbSession.getUserId());
+
+                //userID = qbUser.getId();
+                //Log.d("USERID1", "userID init " + userID);
                 try {
                     qbUser.setPassword(BaseService.getBaseService().getToken());
                 } catch (BaseServiceException e) {
@@ -271,7 +272,7 @@ public class theStories extends AppCompatActivity {
                     public void onError(QBResponseException e) {
                         Log.e("ERROR",""+e.getMessage());
                     }
-                });
+                });*/
             }
 
             @Override
@@ -279,6 +280,7 @@ public class theStories extends AppCompatActivity {
 
             }
         });
+
     }
 
     private void centerTitle() {
@@ -313,12 +315,20 @@ public class theStories extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.getItem(1).setVisible(false);
+        menu.getItem(2).setVisible(false);
+
+        if(whichFrag == 1 &&  QBChatService.getInstance().getUser().getId().toString().equals("31009125")){
+            menu.getItem(1).setVisible(true);
+        }
+
+        else {
+            menu.getItem(1).setVisible(false);
+        }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -334,12 +344,6 @@ public class theStories extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 String message = intent.getStringExtra("message");
                 String from = intent.getStringExtra("from");
-                /*intent.putExtra("user", user);
-                intent.putExtra("password", password);
-                intent.putExtra("title", story);
-                intent.putExtra("genre", genre);*/
-                Log.i("PUSHNOT", "Receiving message: " + message + ", from " + from);
-
 
                 Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 //Build notification
@@ -368,7 +372,7 @@ public class theStories extends AppCompatActivity {
     public void nostories(){
         AlertDialog.Builder builder = new AlertDialog.Builder(theStories.this);
         builder.setTitle("No local stories");
-        builder.setMessage("As there are not enough people signed up to \"Lets tell a story\" there are currently no local stories to join but please feel free to start your own story, sorry for the inconvenience.");
+        builder.setMessage("As there are not enough people signed up to \"Lets tell a story\" there will be only one story join but please feel free to start your own story at any time, sorry for the inconvenience.");
 
 
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -379,6 +383,7 @@ public class theStories extends AppCompatActivity {
         });
         builder.show();
     }
+
 }
 
 

@@ -58,11 +58,6 @@ public class Invited_Stories_Fragment extends Fragment implements QBSystemMessag
         }
 
         gridview = (GridView)view.findViewById(R.id.gridview);
-        /*List<ItemObject> sList = getListItemData();
-        CustomAdapter customAdapter = new CustomAdapter(getActivity(), sList);
-        gridview.setAdapter(customAdapter);*/
-
-
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -90,10 +85,6 @@ public class Invited_Stories_Fragment extends Fragment implements QBSystemMessag
 
 
     private void createSessionForStory(){
-        /*final ProgressDialog mDialog = new ProgressDialog(getActivity());
-        mDialog.setMessage("Please wait...");
-        mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();*/
 
         String user = theStories.user;
         String password = theStories.password;
@@ -154,11 +145,6 @@ public class Invited_Stories_Fragment extends Fragment implements QBSystemMessag
             @Override
             public void onSuccess(ArrayList<QBChatDialog> qbChatDialogs, Bundle bundle) {
 
-
-                /*QBChatDialogHolder.getInstance().putDialogs(qbChatDialogs);
-                StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), qbChatDialogs);
-                gridview.setAdapter(adapter);
-                adapter.notifyDataSetChanged();*/
             }
 
             @Override

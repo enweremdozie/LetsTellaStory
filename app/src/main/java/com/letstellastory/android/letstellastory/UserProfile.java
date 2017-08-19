@@ -14,7 +14,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +25,11 @@ import android.widget.Toast;
 import com.letstellastory.android.letstellastory.Common.Common;
 import com.letstellastory.android.letstellastory.Holder.QBUsersHolder;
 import com.quickblox.auth.QBAuth;
-import com.quickblox.auth.session.BaseService;
 import com.quickblox.auth.session.QBSession;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.content.QBContent;
 import com.quickblox.content.model.QBFile;
 import com.quickblox.core.QBEntityCallback;
-import com.quickblox.core.exception.BaseServiceException;
 import com.quickblox.core.exception.QBResponseException;
 import com.quickblox.users.QBUsers;
 import com.quickblox.users.model.QBUser;
@@ -300,9 +297,16 @@ public class UserProfile extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
            onBackPressed();
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -322,42 +326,12 @@ public class UserProfile extends AppCompatActivity {
 
     private void createSessionForStory(){
 
-        QBUsers.getUsers(null).performAsync(new QBEntityCallback<ArrayList<QBUser>>() {
-            @Override
-            public void onSuccess(ArrayList<QBUser> qbUsers, Bundle bundle) {
-                QBUsersHolder.getInstance().putUsers(qbUsers);
-            }
-
-            @Override
-            public void onError(QBResponseException e) {
-
-            }
-        });
-
-
         final QBUser qbUser = new QBUser(user, password);
-        //Log.d("CREATION", "in story fragment password is " + password);
+
         QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
-                qbUser.setId(qbSession.getUserId());
-                try {
-                    qbUser.setPassword(BaseService.getBaseService().getToken());
-                } catch (BaseServiceException e) {
-                    e.printStackTrace();
-                }
 
-                QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
-                    @Override
-                    public void onSuccess(Object o, Bundle bundle) {
-                        //mDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onError(QBResponseException e) {
-                        Log.e("ERROR",""+e.getMessage());
-                    }
-                });
             }
 
             @Override
@@ -365,6 +339,7 @@ public class UserProfile extends AppCompatActivity {
 
             }
         });
+
     }
 
     private void centerTitle() {

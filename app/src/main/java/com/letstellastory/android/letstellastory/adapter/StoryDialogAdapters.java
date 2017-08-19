@@ -55,7 +55,7 @@ public class StoryDialogAdapters extends BaseAdapter{
 
         if(view == null){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.grid_view, null);
+            view = inflater.inflate(R.layout.local_stories_grid, null);
             TextView storyShow,genreShow;
             ImageView image_unread;
 

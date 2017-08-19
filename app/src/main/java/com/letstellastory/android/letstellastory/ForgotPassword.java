@@ -76,7 +76,6 @@ Button btnReset, btnCancel;
             onBackPressed();
         }
 
-
         return super.onOptionsItemSelected(item);
     }
 

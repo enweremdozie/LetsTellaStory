@@ -12,6 +12,14 @@
         android:icon="@drawable/menu"
         tools:ignore="AppCompatResource" />
 
+    <item
+        android:id="@+id/start_local"
+        android:title="Start a local story"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:icon="@drawable/menu"
+        tools:ignore="AppCompatResource" />
+
 
     <item
         android:id="@+id/join"

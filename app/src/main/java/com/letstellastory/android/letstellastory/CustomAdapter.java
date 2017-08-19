@@ -48,7 +48,6 @@ public class CustomAdapter extends BaseAdapter{
         if(convertView == null){
             listViewHolder = new ViewHolder();
             convertView = layoutinflater.inflate(R.layout.grid_view, parent, false);
-            //listViewHolder.screenShot = (ImageView)convertView.findViewById(R.id.screen_shot);
             listViewHolder.story = (TextView)convertView.findViewById(R.id.storyView);
             listViewHolder.genre = (TextView)convertView.findViewById(R.id.genreView);
 
@@ -57,7 +56,6 @@ public class CustomAdapter extends BaseAdapter{
         else{
             listViewHolder = (ViewHolder)convertView.getTag();
         }
-        //listViewHolder.screenShot.setImageResource(listStorage.get(position).getScreenShot());
         listViewHolder.story.setText(listStorage.get(position).getName());
         listViewHolder.genre.setText(listStorage.get(position).getGenre());
 

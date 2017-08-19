@@ -1,6 +1,7 @@
 package com.letstellastory.android.letstellastory;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
@@ -53,8 +55,6 @@ public class MainActivity extends AppCompatActivity {
     String id, user, password;
     TextView forgotPass;
 
-    //
-    //private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     protected void onRestart() {
@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        //Log.w("MainActivity", "onPause");
-        //LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
     }
 
 
@@ -74,12 +72,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         createSessionForStory();
-
-       /* Log.w("MainActivity", "onResume");
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(GCMRegistrationIntentService.REGISTRATION_SUCCESS));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(GCMRegistrationIntentService.REGISTRATION_ERROR));*/
     }
 
     @Override
@@ -87,6 +79,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        boolean firstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("firstRun", true);
+        if(firstRun){
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Welcome");
+            builder.setMessage("Thank you for being a part of \"Lets tell a story\", enjoy creating stories and being a part of the local stories with people around the world");// + "\n" +
+
+
+
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+}
+            });
+
+
+            builder.show();
+            getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                    .edit()
+                    .putBoolean("firstRun", false)
+                    .commit();
+        }
 
         //helper.onCreate(sqLiteDatabase);
         QBSettings.getInstance().setAccountKey(ACCOUNT_KEY);
@@ -123,27 +136,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        /*BroadcastReceiver pushBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String message = intent.getStringExtra("message");
-                String from = intent.getStringExtra("from");
-                Log.i("PUSHNOT", "Receiving message: " + message + ", from " + from);
-            }
-        };
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(pushBroadcastReceiver,
-                new IntentFilter("new-push-event"));*/
-
-
         QBSettings.getInstance().setAutoCreateSession(true);
 
 
         centerTitle();
 
-        Log.d("PUSHNOT", "push not status: " + QBSettings.getInstance().isEnablePushNotification());
 
-        //QBSettings.getInstance().setEnablePushNotification(true);
         QBChatService.ConfigurationBuilder builder = new QBChatService.ConfigurationBuilder();
         builder.setAutojoinEnabled(true);
         QBChatService.setConfigurationBuilder(builder);
@@ -152,8 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
         QBSettings.getInstance().setEnablePushNotification(true);
         requestRunTimePermission();
-        //getListItemData();
-        //initializeFramework();
+
 
         btnLogin = (Button) findViewById(R.id.main_btnLogin);
         btnSignUp = (Button) findViewById(R.id.main_btnSignUp);
@@ -183,19 +180,14 @@ public class MainActivity extends AppCompatActivity {
                 QBUsers.signIn(qbUser).performAsync(new QBEntityCallback<QBUser>() {
                     @Override
                     public void onSuccess(QBUser qbUser, Bundle bundle) {
-                        Toast.makeText(getBaseContext(), "Loading stories", Toast.LENGTH_SHORT).show();
-                        //Log.d("QBUSER", qbUser.getId().toString());
-
-                        /*Intent passInfo = new Intent (MainActivity.this, Story.class);
-                        passInfo.putExtra("user", user);
-                        passInfo.putExtra("password", password);*/
+                        //Toast.makeText(getBaseContext(), "Loading stories", Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(MainActivity.this, theStories.class);
                         intent.putExtra("user", user);
                         intent.putExtra("password", password);
                         intent.putExtra("currentUser", qbUser.getId().toString());
                         startActivity(intent);
-                        finish();
+                        //finish();
                     }
 
                     @Override
@@ -242,16 +234,12 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = helper.getMyStoriesInformations(db);
 
 
-        //user = cursor.getString(cursor.getColumnIndex(helper.COL_TITLE));
 
-        //Toast.makeText(this, "user" , Toast.LENGTH_SHORT).show();
-        /*edtUser.setText("dozie");
-        edtPassword.setText("evans909");*/
         while (cursor.moveToNext()) {
             id = cursor.getString(cursor.getColumnIndex(helper.COL_ID));
             user = cursor.getString(cursor.getColumnIndex(helper.COL_TITLE));
             password = cursor.getString(cursor.getColumnIndex(helper.COL_GENRE));
-            //Toast.makeText(this, "user "+ user, Toast.LENGTH_LONG).show();
+
             if(user != null && password != null){
                 edtUser.setText(user);
                 edtUser.setSelection(user.length());
@@ -271,10 +259,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /*private void initializeFramework() {
-        QBSettings.getInstance().init(getApplicationContext(),APP_ID,AUTH_KEY,AUTH_SECRET);
-        QBSettings.getInstance().setAccountKey(ACCOUNT_KEY);
-    }*/
 
     private void centerTitle() {
         ArrayList<View> textViews = new ArrayList<>();
@@ -323,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         final QBUser qbUser = new QBUser(user, password);
-        //Log.d("CREATION", "in story fragment password is " + password);
+
         QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {

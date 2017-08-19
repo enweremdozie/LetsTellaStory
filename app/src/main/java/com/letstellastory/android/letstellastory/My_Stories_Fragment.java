@@ -1,5 +1,6 @@
 package com.letstellastory.android.letstellastory;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -55,7 +56,6 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
     boolean haspassed = false;
     Integer currentUser;
     String dialogID;
-    //int contextMenuIndexClicked = -1;
 
     @Override
     public void onResume() {
@@ -76,6 +76,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         DBHelper helper = new DBHelper(getActivity().getBaseContext());
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = helper.getMyStoriesInformations(db);
+
         try {
             // get data from cursor
         } catch (Exception e) {
@@ -97,6 +98,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
     }
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -115,6 +117,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         registerForContextMenu(gridview);
 
 
+
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -124,18 +127,18 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
                 genreShow = (TextView) view.findViewById(R.id.genreView);
                 ImageView image_unread;
                 QBChatDialog qbChatDialog = (QBChatDialog) gridview.getAdapter().getItem(position);
+
+                Log.d("DIALOGTYPE", qbChatDialog.getType().toString());
                 dialogID = qbChatDialog.getDialogId();
                 hasposted = checkIfhasPosted(qbChatDialog.getDialogId());
                 haspassed = checkifHaspassed(qbChatDialog.getDialogId());
-                //Log.d("DIALOGID", "DIalog ID: " + dialogID);
-                //Log.d("DIALOGID", "DIalog ID: " + qbChatDialog.getDialogId());
+
 
                 Intent intent = new Intent(getActivity(), Story.class);
                 intent.putExtra("story", storyShow.getText());
                 intent.putExtra(Common.DIALOG_EXTRA, qbChatDialog);
                 intent.putExtra("position", position);
                 intent.putExtra("dialogID", dialogID);
-                //intent.putExtra("dialogID", qbChatDialog.getDialogId());
                 intent.putExtra("hasposted", hasposted);
                 intent.putExtra("haspassed", haspassed);
                 intent.putExtra("genre", genreShow.getText());
@@ -144,16 +147,12 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
                 intent.putExtra("currentUser", currentUser.toString());
 
                 getActivity().startActivity(intent);
-                //getAll();
+
             }
         });
 
         loadStoryDialogs();
 
-
-        //Integer currentUserID = QBAuth.getSession().get;
-
-        //Log.d("CREATION", "current user: " + currentUserID);
 
         return view;
     }
@@ -236,8 +235,7 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
     public boolean onContextItemSelected(MenuItem item) {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-        //contextMenuIndexClicked = info.position;
-        //QBChatDialog chatDialog =
+
 
         switch(item.getItemId()){
             case R.id.context_delete_dialog:
@@ -253,60 +251,30 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         final QBChatDialog chatDialog = (QBChatDialog) gridview.getAdapter().getItem(index);
         Integer adminID = chatDialog.getUserId();
 
-        //List<Integer> occupantsId = chatDialog.getOccupants();
-
 
 
         Log.d("CREATION", "admin user: " + adminID);
         Log.d("CREATION", "current user: " + currentUser);
 
-       // if (adminID.equals(currentUser)){
             QBRestChatService.deleteDialog(chatDialog.getDialogId(), false)
                     .performAsync(new QBEntityCallback<Void>() {
                         @Override
                         public void onSuccess(Void aVoid, Bundle bundle) {
-                            QBChatDialogHolder.getInstance().removeDialog(chatDialog.getDialogId());
-                            deleteDBDialogPass(chatDialog.getDialogId());
-                            deleteDBDialogPost(chatDialog.getDialogId());
-                            StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), QBChatDialogHolder.getInstance().getAllChatDialogs());
-                            gridview.setAdapter(adapter);
-                            adapter.notifyDataSetChanged();
+                                QBChatDialogHolder.getInstance().removeDialog(chatDialog.getDialogId());
+                                deleteDBDialogPass(chatDialog.getDialogId());
+                                deleteDBDialogPost(chatDialog.getDialogId());
+                                StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), QBChatDialogHolder.getInstance().getAllGroupChatDialogs());
+                                gridview.setAdapter(adapter);
+                                adapter.notifyDataSetChanged();
+                            }
 
-                        }
 
                         @Override
                         public void onError(QBResponseException e) {
 
                         }
                     });
-          //  }
 
-           /* else{
-            Toast.makeText(getActivity(), "Not story admin", Toast.LENGTH_SHORT).show();
-        }*/
-           /* else {
-            if(chatDialog != null){
-
-                    QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
-                QBUser qbUser = (QBUser) QBUsers.getUser(currentUser);
-                     requestBuilder.removeUsers(qbUser);
-
-
-
-                    /*QBRestChatService.updateGroupChatDialog(chatDialog, requestBuilder)
-                            .performAsync(new QBEntityCallback<QBChatDialog>() {
-                                @Override
-                                public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
-                                    Toast.makeText(getContext(), "REMOVAL successful", Toast.LENGTH_SHORT).show();
-                                }
-
-                                @Override
-                                public void onError(QBResponseException e) {
-
-                                }
-                            });
-                }
-            }*/
 
 
     }
@@ -385,9 +353,11 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
 
     private void loadStoryDialogs() {
 
-        /*final ProgressDialog updateDialog = new ProgressDialog(getActivity().getBaseContext());
-        updateDialog.setMessage("Loading stories...");
-        updateDialog.show();*/
+        final ProgressDialog mDialog = new ProgressDialog(getActivity());
+        mDialog.setMessage("Loading stories");
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
+
 
         QBRequestGetBuilder requestBuilder = new QBRequestGetBuilder();
         requestBuilder.setLimit(100);
@@ -395,22 +365,23 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         QBRestChatService.getChatDialogs(null, requestBuilder).performAsync(new QBEntityCallback<ArrayList<QBChatDialog>>() {
             @Override
             public void onSuccess(final ArrayList<QBChatDialog> qbChatDialogs, Bundle bundle) {
-                //updateDialog.dismiss();
+                mDialog.dismiss();
                 QBChatDialogHolder.getInstance().putDialogs(qbChatDialogs);
 
                 Set<String> setIds = new HashSet<String>();
-                for(QBChatDialog chatDialog: qbChatDialogs){
+                for(final QBChatDialog chatDialog: qbChatDialogs){
                     setIds.add(chatDialog.getDialogId());
 
                     QBRestChatService.getTotalUnreadMessagesCount(setIds, QBUnreadMessageHolder.getInstance().getBundle())
                             .performAsync(new QBEntityCallback<Integer>() {
                                 @Override
                                 public void onSuccess(Integer integer, Bundle bundle) {
-                                    QBUnreadMessageHolder.getInstance().setBundle(bundle);
-                                    StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), QBChatDialogHolder.getInstance().getAllChatDialogs());
-                                    gridview.setAdapter(adapter);
-                                    adapter.notifyDataSetChanged();
-                                }
+                                        QBUnreadMessageHolder.getInstance().setBundle(bundle);
+                                        StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), QBChatDialogHolder.getInstance().getAllGroupChatDialogs());
+                                        gridview.setAdapter(adapter);
+                                        adapter.notifyDataSetChanged();
+                                    }
+
 
                                 @Override
                                 public void onError(QBResponseException e) {
@@ -432,8 +403,6 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
 
     private void createSessionForStory(){
 
-        //String user = theStories.user;
-        //String password = theStories.password;
 
         QBUsers.getUsers(null).performAsync(new QBEntityCallback<ArrayList<QBUser>>() {
             @Override
@@ -448,11 +417,11 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
         });
 
         final QBUser qbUser = new QBUser(user, password);
-        //Log.d("CREATION", "in story fragment password is " + password);
+
         QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
-                Log.d("LISTENER1", "1");
+
                 qbUser.setId(qbSession.getUserId());
                 currentUser = qbSession.getUserId();
                 try {
@@ -460,17 +429,14 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
                 } catch (BaseServiceException e) {
                     e.printStackTrace();
                 }
-                    Log.d("LISTENER1", "2");
 
-                //QBSystemMessagesManager qbSystemMessagesManager = QBChatService.getInstance().getSystemMessagesManager();
-                //qbSystemMessagesManager.addSystemMessageListener(My_Stories_Fragment.this);
 
 
                 QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
                     @Override
                     public void onSuccess(Object o, Bundle bundle) {
-                        //mDialog.dismiss();
-                        Log.d("LISTENER1", "3");
+
+
                         QBSystemMessagesManager qbSystemMessagesManager = QBChatService.getInstance().getSystemMessagesManager();
                         qbSystemMessagesManager.addSystemMessageListener(My_Stories_Fragment.this);
 
@@ -507,18 +473,18 @@ public class My_Stories_Fragment extends Fragment implements QBSystemMessageList
     @Override
     public void processMessage(QBChatMessage qbChatMessage) {
 
-        //Log.d("CREATION", "Enters processMessage");
 
         QBRestChatService.getChatDialogById(qbChatMessage.getBody()).performAsync(new QBEntityCallback<QBChatDialog>() {
 
             @Override
         public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
-            QBChatDialogHolder.getInstance().putDialog(qbChatDialog);
-            ArrayList<QBChatDialog> adapterSource = QBChatDialogHolder.getInstance().getAllChatDialogs();
-            StoryDialogAdapters adapters = new StoryDialogAdapters(getActivity().getBaseContext(), adapterSource);
-            gridview.setAdapter(adapters);
-            adapters.notifyDataSetChanged();
-        }
+                    QBChatDialogHolder.getInstance().putDialog(qbChatDialog);
+                    ArrayList<QBChatDialog> adapterSource = QBChatDialogHolder.getInstance().getAllGroupChatDialogs();
+                    StoryDialogAdapters adapters = new StoryDialogAdapters(getActivity().getBaseContext(), adapterSource);
+                    gridview.setAdapter(adapters);
+                    adapters.notifyDataSetChanged();
+                }
+
 
         @Override
         public void onError(QBResponseException e) {

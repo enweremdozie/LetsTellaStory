@@ -43,10 +43,10 @@
         <activity
             android:name=".StartAStory"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustResize"/>
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".Story"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Story_Grid"
             android:screenOrientation="portrait" />
@@ -110,7 +110,12 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".ForgotPassword"></activity>
+        <activity android:name=".ForgotPassword"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".StartALocalStory"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize">
+        </activity>
     </application>
 
 </manifest>

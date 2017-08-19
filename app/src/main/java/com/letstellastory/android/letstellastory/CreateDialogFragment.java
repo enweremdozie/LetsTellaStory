@@ -38,7 +38,6 @@ public class CreateDialogFragment extends DialogFragment {
 
                 builder.setPositiveButton("GO", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //Context context = getContext();
 
                         Intent intent = new Intent(getActivity(), StartAStory.class);
                         Log.d("LOADSTORY", "password in Dialog: " + password);
@@ -48,17 +47,14 @@ public class CreateDialogFragment extends DialogFragment {
                         intent.putExtra("password", password);
                         intent.putExtra("currentUser", currentUser);
                         startActivity(intent);
-                        //getActivity().finish();
-                        // You don't have to do anything here if you just want it dismissed when clicked
+
                     }
                 });
                 builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // You don't have to do anything here if you just want it dismissed when clicked
                     }
                 });
 
-                // Create the AlertDialog object and return it
                 return builder.create();
             }
 
