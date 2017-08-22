@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.quickblox.auth.QBAuth;
 import com.quickblox.auth.session.QBSession;
+import com.quickblox.chat.QBChatService;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.QBResponseException;
 import com.quickblox.users.QBUsers;
@@ -29,10 +30,25 @@ public class SignUpActivity extends AppCompatActivity {
     Button btnSignup, btnCancel;
     EditText edtUser, edtPassword, edtFullName, edtEmail;
 
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        QBChatService.getInstance().setReconnectionAllowed(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        QBChatService.getInstance().setReconnectionAllowed(true);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        QBChatService.getInstance().setReconnectionAllowed(true);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);

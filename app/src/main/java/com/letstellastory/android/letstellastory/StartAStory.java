@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.quickblox.auth.QBAuth;
 import com.quickblox.auth.session.QBSession;
+import com.quickblox.chat.QBChatService;
 import com.quickblox.chat.QBRestChatService;
 import com.quickblox.chat.model.QBChatDialog;
 import com.quickblox.chat.model.QBDialogType;
@@ -49,12 +50,14 @@ public class StartAStory extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        QBChatService.getInstance().setReconnectionAllowed(true);
         createSessionForStory();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        QBChatService.getInstance().setReconnectionAllowed(true);
         createSessionForStory();
     }
 
@@ -62,6 +65,9 @@ public class StartAStory extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_astory);
+
+        QBChatService.getInstance().setReconnectionAllowed(true);
+
         cancel = (TextView) findViewById(R.id.cancel);
         okay = (TextView) findViewById(R.id.ok);
 

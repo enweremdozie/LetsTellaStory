@@ -53,12 +53,14 @@ public class UserProfile extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        QBChatService.getInstance().setReconnectionAllowed(true);
         createSessionForStory();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        QBChatService.getInstance().setReconnectionAllowed(true);
         createSessionForStory();
     }
 
@@ -66,6 +68,8 @@ public class UserProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+
+        QBChatService.getInstance().setReconnectionAllowed(true);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);

@@ -52,12 +52,15 @@ public class theStories extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        QBChatService.getInstance().setReconnectionAllowed(true);
+
         createSessionForStory();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        QBChatService.getInstance().setReconnectionAllowed(true);
 
         createSessionForStory();
 
@@ -75,6 +78,7 @@ public class theStories extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_the_stories);
 
+        QBChatService.getInstance().setReconnectionAllowed(true);
         setTitle("STORIES");
         centerTitle();
         createSessionForStory();
@@ -251,28 +255,7 @@ public class theStories extends AppCompatActivity {
         QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
-                /*qbUser.setId(qbSession.getUserId());
-                Log.d("USERID1", "userID session " + qbSession.getUserId());
 
-                //userID = qbUser.getId();
-                //Log.d("USERID1", "userID init " + userID);
-                try {
-                    qbUser.setPassword(BaseService.getBaseService().getToken());
-                } catch (BaseServiceException e) {
-                    e.printStackTrace();
-                }
-
-                QBChatService.getInstance().login(qbUser, new QBEntityCallback() {
-                    @Override
-                    public void onSuccess(Object o, Bundle bundle) {
-                        //mDialog.dismiss();
-                    }
-
-                    @Override
-                    public void onError(QBResponseException e) {
-                        Log.e("ERROR",""+e.getMessage());
-                    }
-                });*/
             }
 
             @Override

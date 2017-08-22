@@ -73,6 +73,7 @@ public class ListUsersActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        QBChatService.getInstance().setReconnectionAllowed(true);
         createSessionForStory();
     }
 
@@ -81,6 +82,7 @@ public class ListUsersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_users);
 
+        QBChatService.getInstance().setReconnectionAllowed(true);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);

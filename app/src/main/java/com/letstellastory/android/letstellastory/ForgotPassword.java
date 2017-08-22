@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.quickblox.chat.QBChatService;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.QBResponseException;
 import com.quickblox.users.QBUsers;
@@ -26,9 +27,18 @@ Button btnReset, btnCancel;
     EditText email;
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        QBChatService.getInstance().setReconnectionAllowed(true);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
+
+        QBChatService.getInstance().setReconnectionAllowed(true);
+
         setTitle("Reset your password");
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);

@@ -117,6 +117,7 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     @Override
     protected void onResume() {
         super.onResume();
+        QBChatService.getInstance().setReconnectionAllowed(true);
 
         createSessionForStory();
 
@@ -133,6 +134,8 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
     @Override
     protected void onRestart() {
         super.onRestart();
+        QBChatService.getInstance().setReconnectionAllowed(true);
+
         createSessionForStory();
     }
 
@@ -141,6 +144,9 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story);
         //db = new DBHelper(this);
+
+        QBChatService.getInstance().setReconnectionAllowed(true);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -232,7 +238,8 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
             QBStoryMessageHolder.getInstance().putStory(qbChatDialog.getDialogId(), storyMessage);
             ArrayList<QBChatMessage> stories = QBStoryMessageHolder.getInstance().getStoryMessageByDialogId(qbChatDialog.getDialogId());
             adapter = new StoryMessageAdapter(getBaseContext(), stories);
-
+            lstStoryMessages.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
 
 
             if (qbChatDialog.getType().toString().equals("GROUP")) {
@@ -251,9 +258,12 @@ public class Story extends AppCompatActivity implements QBChatDialogMessageListe
                 pass.setVisibility(View.GONE);
                 canPassState = true;
 
+
+
                 if (currentUser.equals("31009125")) {
                     addAllUsers();
                 }
+
 
                 storyED.setText("");
             }
