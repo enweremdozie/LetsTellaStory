@@ -69,7 +69,6 @@ public class theStories extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         logOut();
     }
 
@@ -78,7 +77,9 @@ public class theStories extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_the_stories);
 
+        QBChatService.setDefaultAutoSendPresenceInterval(600);
         QBChatService.getInstance().setReconnectionAllowed(true);
+
         setTitle("STORIES");
         centerTitle();
         createSessionForStory();
@@ -95,7 +96,6 @@ public class theStories extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.story_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -304,7 +304,7 @@ public class theStories extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.getItem(2).setVisible(false);
 
-        if(whichFrag == 1 &&  QBChatService.getInstance().getUser().getId().toString().equals("31009125")){
+        if(whichFrag == 1 && QBChatService.getInstance().getUser().getId().toString().equals("31009125")){
             menu.getItem(1).setVisible(true);
         }
 

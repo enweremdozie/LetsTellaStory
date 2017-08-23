@@ -66,6 +66,7 @@ public class StartALocalStory extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_astory);
 
+        QBChatService.setDefaultAutoSendPresenceInterval(600);
         QBChatService.getInstance().setReconnectionAllowed(true);
 
         cancel = (TextView) findViewById(R.id.cancel);

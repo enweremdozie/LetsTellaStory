@@ -1,8 +1,6 @@
 package com.letstellastory.android.letstellastory;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -41,7 +39,6 @@ import com.quickblox.users.model.QBUser;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -51,8 +48,6 @@ import java.util.Set;
 public class Local_Stories_Fragment extends Fragment implements QBSystemMessageListener, QBChatDialogMessageListener {
     GridView gridview;
     String story, genre, user, password;
-    boolean hasposted = false;
-    boolean haspassed = false;
     Integer currentUser;
     String dialogID;
 
@@ -84,107 +79,26 @@ public class Local_Stories_Fragment extends Fragment implements QBSystemMessageL
                 ImageView image_unread;
                 QBChatDialog qbChatDialog = (QBChatDialog) gridview.getAdapter().getItem(position);
                 dialogID = qbChatDialog.getDialogId();
-                hasposted = checkIfhasPosted(qbChatDialog.getDialogId());
-                haspassed = checkifHaspassed(qbChatDialog.getDialogId());
-                //Log.d("DIALOGID", "DIalog ID: " + dialogID);
-                //Log.d("DIALOGID", "DIalog ID: " + qbChatDialog.getDialogId());
 
                 Intent intent = new Intent(getActivity(), Story.class);
                 intent.putExtra("story", storyShow.getText());
                 intent.putExtra(Common.DIALOG_EXTRA, qbChatDialog);
                 intent.putExtra("position", position);
                 intent.putExtra("dialogID", dialogID);
-                //intent.putExtra("dialogID", qbChatDialog.getDialogId());
-                intent.putExtra("hasposted", hasposted);
-                intent.putExtra("haspassed", haspassed);
                 intent.putExtra("genre", genreShow.getText());
                 intent.putExtra("user", user);
                 intent.putExtra("password", password);
                 intent.putExtra("currentUser", currentUser.toString());
 
                 getActivity().startActivity(intent);
-                //getAll();
             }
         });
 
         loadStoryDialogs();
 
-
-        //Integer currentUserID = QBAuth.getSession().get;
-
-        //Log.d("CREATION", "current user: " + currentUserID);
-
         return view;
     }
 
-
-
-    private boolean checkifHaspassed(String dialogID) {
-        DBHelper helper = new DBHelper(getActivity().getBaseContext());
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = helper.getPassedStoryInfo(db);
-        boolean state = false;
-        String dialog;
-        if(cursor.getCount() == 0){
-            state = false;
-        }
-
-        else if (cursor.getCount() > 0){
-            while(cursor.moveToNext() && state != true){
-                dialog = cursor.getString(1);
-
-                if(dialogID.equals(dialog)){
-                    state = true;
-                }
-
-                else{
-                    state = false;
-                }
-            }
-        }
-
-        return state;
-
-    }
-
-    private boolean checkIfhasPosted(String dialogID) {
-        DBHelper helper = new DBHelper(getActivity().getBaseContext());
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = helper.getPostedStoryInfo(db);
-        boolean state = false;
-        String dialog;
-        if(cursor.getCount() == 0){
-            state = false;
-        }
-
-        else if (cursor.getCount() > 0){
-            while(cursor.moveToNext() && state != true){
-                dialog = cursor.getString(1);
-
-                if(dialogID.equals(dialog)){
-                    state = true;
-                }
-
-                else{
-                    state = false;
-                }
-            }
-        }
-        return state;
-    }
-
-
-    public void getAll(){//print all from table 2 so we know if stuff is being deleted or inserted right
-        DBHelper helper = new DBHelper(getActivity().getBaseContext());
-        //SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = helper.getAllData();
-
-        StringBuffer buffer = new StringBuffer();
-        while(cursor.moveToNext()){
-            buffer.append("posted: " + cursor.getString(1)+ "\n");
-            //Log.e("BUFFERCHECK", buffer.toString());
-        }
-    }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -195,156 +109,12 @@ public class Local_Stories_Fragment extends Fragment implements QBSystemMessageL
     public boolean onContextItemSelected(MenuItem item) {
 
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-        //contextMenuIndexClicked = info.position;
-        //QBChatDialog chatDialog =
 
-        switch(item.getItemId()){
-            case R.id.context_delete_dialog:
-
-                deleteDialog(info.position);
-
-                break;
-        }
         return true;
     }
 
-    private void deleteDialog(int index) {
-        final QBChatDialog chatDialog = (QBChatDialog) gridview.getAdapter().getItem(index);
-        Integer adminID = chatDialog.getUserId();
-
-        //List<Integer> occupantsId = chatDialog.getOccupants();
-
-
-
-        Log.d("CREATION", "admin user: " + adminID);
-        Log.d("CREATION", "current user: " + currentUser);
-
-        // if (adminID.equals(currentUser)){
-        QBRestChatService.deleteDialog(chatDialog.getDialogId(), false)
-                .performAsync(new QBEntityCallback<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid, Bundle bundle) {
-                            QBChatDialogHolder.getInstance().removeDialog(chatDialog.getDialogId());
-                            deleteDBDialogPass(chatDialog.getDialogId());
-                            deleteDBDialogPost(chatDialog.getDialogId());
-                            StoryDialogAdapters adapter = new StoryDialogAdapters(getActivity().getBaseContext(), QBChatDialogHolder.getInstance().getAllLocalGroupChatDialogs());
-                            gridview.setAdapter(adapter);
-                            adapter.notifyDataSetChanged();
-                        }
-
-
-
-                    @Override
-                    public void onError(QBResponseException e) {
-
-                    }
-                });
-        //  }
-
-           /* else{
-            Toast.makeText(getActivity(), "Not story admin", Toast.LENGTH_SHORT).show();
-        }*/
-           /* else {
-            if(chatDialog != null){
-
-                    QBDialogRequestBuilder requestBuilder = new QBDialogRequestBuilder();
-                QBUser qbUser = (QBUser) QBUsers.getUser(currentUser);
-                     requestBuilder.removeUsers(qbUser);
-
-
-
-                    /*QBRestChatService.updateGroupChatDialog(chatDialog, requestBuilder)
-                            .performAsync(new QBEntityCallback<QBChatDialog>() {
-                                @Override
-                                public void onSuccess(QBChatDialog qbChatDialog, Bundle bundle) {
-                                    Toast.makeText(getContext(), "REMOVAL successful", Toast.LENGTH_SHORT).show();
-                                }
-
-                                @Override
-                                public void onError(QBResponseException e) {
-
-                                }
-                            });
-                }
-            }*/
-
-
-    }
-
-    private void deleteDBDialogPost(String dialogID) {
-        String id = "";
-
-        DBHelper helper = new DBHelper(getActivity().getBaseContext());
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = helper.getPostedStoryInfo(db);
-        boolean state = false;
-        String dialog;
-
-
-        while(cursor.moveToNext() && state != true){
-            dialog = cursor.getString(1);
-            id = cursor.getString(0);
-
-            if(dialogID.equals(dialog)){
-                state = true;
-            }
-
-            else{
-                state = false;
-            }
-        }
-
-        helper.deleteSingleRowPost(id);
-    }
-
-
-    private void deleteDBDialogPass(String dialogID) {
-        String id = "";
-
-        DBHelper helper = new DBHelper(getActivity().getBaseContext());
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = helper.getPassedStoryInfo(db);
-        boolean state = false;
-        String dialog;
-
-
-        while(cursor.moveToNext() && state != true){
-            dialog = cursor.getString(1);
-            id = cursor.getString(0);
-
-            if(dialogID.equals(dialog)){
-                state = true;
-            }
-
-            else{
-                state = false;
-            }
-        }
-        //Log.d("CREATION", "ID for deleted grid: " + id);
-        helper.deleteSingleRowPass(id);
-    }
-
-    private List<ItemObject> getListItemData() {
-        List<ItemObject> listViewItems = new ArrayList<ItemObject>();
-        DBHelper helper = new DBHelper(this.getContext());
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = helper.getMyStoriesInformations(db);
-        String id,mystory,mygenre;
-
-        while(cursor.moveToNext()){
-            id = cursor.getString(cursor.getColumnIndex(helper.COL_ID));
-            mystory = cursor.getString(cursor.getColumnIndex(helper.COL_TITLE));
-            mygenre = cursor.getString(cursor.getColumnIndex(helper.COL_GENRE));
-            listViewItems.add(new ItemObject(mystory, mygenre));
-            //Product product = new Product(id,mystory,mygenre);
-
-        }
-
-        return listViewItems;
-    }
 
     private void loadStoryDialogs() {
-
         /*final ProgressDialog updateDialog = new ProgressDialog(getActivity().getBaseContext());
         updateDialog.setMessage("Loading stories...");
         updateDialog.show();*/
@@ -394,9 +164,6 @@ public class Local_Stories_Fragment extends Fragment implements QBSystemMessageL
 
     private void createSessionForStory(){
 
-        //String user = theStories.user;
-        //String password = theStories.password;
-
         QBUsers.getUsers(null).performAsync(new QBEntityCallback<ArrayList<QBUser>>() {
             @Override
             public void onSuccess(ArrayList<QBUser> qbUsers, Bundle bundle) {
@@ -410,7 +177,6 @@ public class Local_Stories_Fragment extends Fragment implements QBSystemMessageL
         });
 
         final QBUser qbUser = new QBUser(user, password);
-        //Log.d("CREATION", "in story fragment password is " + password);
         QBAuth.createSession(qbUser).performAsync(new QBEntityCallback<QBSession>() {
             @Override
             public void onSuccess(QBSession qbSession, Bundle bundle) {
@@ -454,7 +220,6 @@ public class Local_Stories_Fragment extends Fragment implements QBSystemMessageL
 
     @Override
     public void processMessage(String s, QBChatMessage qbChatMessage, Integer integer) {
-        //Log.d("CREATION", "Enters processMessage");
 
         loadStoryDialogs();
     }
@@ -466,8 +231,6 @@ public class Local_Stories_Fragment extends Fragment implements QBSystemMessageL
 
     @Override
     public void processMessage(QBChatMessage qbChatMessage) {
-
-        //Log.d("CREATION", "Enters processMessage");
 
         QBRestChatService.getChatDialogById(qbChatMessage.getBody()).performAsync(new QBEntityCallback<QBChatDialog>() {
 

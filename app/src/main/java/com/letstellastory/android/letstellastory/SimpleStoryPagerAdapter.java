@@ -49,7 +49,7 @@ public class SimpleStoryPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 frag = 1;
                 activity.setFragPos(position);
-                return "LOCAL STORIES";
+                return "SHARED STORIES";
         }
 
         return null;

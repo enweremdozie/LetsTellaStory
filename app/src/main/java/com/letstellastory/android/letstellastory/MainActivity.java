@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnLogin, btnSignUp;
     EditText edtUser, edtPassword;
-    DBHelper helper;
     SQLiteDatabase sqLiteDatabase;
     String id, user, password;
     TextView forgotPass;
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         if(firstRun){
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Welcome");
-            builder.setMessage("Thank you for being a part of \"Lets tell a story\", enjoy creating stories and being a part of the local stories with people around the world");// + "\n" +
+            builder.setMessage("Thank you for being a part of \"Lets tell a story\", we hope you enjoy creating your own stories and being a part of the shared stories with people around the world");// + "\n" +
 
 
 
@@ -92,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int id) {
 }
             });
-
 
             builder.show();
             getSharedPreferences("PREFERENCE", MODE_PRIVATE)
@@ -157,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
 
         edtPassword = (EditText) findViewById(R.id.main_editPassword);
         edtUser = (EditText) findViewById(R.id.main_editLogin);
-        getListItemData();
+        getUserLogin();
 
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +172,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String user = edtUser.getText().toString();
                 final String password = edtPassword.getText().toString();
+
+                DBUserHelper helper = new DBUserHelper(MainActivity.this);
+                helper.insertUser(user,password);
 
                 QBUser qbUser = new QBUser(user, password);
 
@@ -228,17 +229,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void getListItemData() {
-        DBHelper helper = new DBHelper(MainActivity.this);
+    private void getUserLogin() {
+        DBUserHelper helper = new DBUserHelper(MainActivity.this);
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = helper.getMyStoriesInformations(db);
+        Cursor cursor = helper.getUserInfo(db);
 
 
 
         while (cursor.moveToNext()) {
             id = cursor.getString(cursor.getColumnIndex(helper.COL_ID));
-            user = cursor.getString(cursor.getColumnIndex(helper.COL_TITLE));
-            password = cursor.getString(cursor.getColumnIndex(helper.COL_GENRE));
+            user = cursor.getString(cursor.getColumnIndex(helper.COL_USER));
+            password = cursor.getString(cursor.getColumnIndex(helper.COL_PASSWORD));
 
             if(user != null && password != null){
                 edtUser.setText(user);
@@ -343,9 +344,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        DBHelper helper = new DBHelper(MainActivity.this);
+        DBUserHelper helper = new DBUserHelper(MainActivity.this);
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = helper.getMyStoriesInformations(db);
+        Cursor cursor = helper.getUserInfo(db);
         try {
             // get data from cursor
         } catch (Exception e) {
