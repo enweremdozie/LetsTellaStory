@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.quickblox.auth.QBAuth;
 import com.quickblox.auth.session.QBSession;
+import com.quickblox.auth.session.QBSettings;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.QBResponseException;
@@ -26,7 +27,6 @@ import com.quickblox.users.model.QBUser;
 import java.util.ArrayList;
 
 public class SignUpActivity extends AppCompatActivity {
-
     Button btnSignup, btnCancel;
     EditText edtUser, edtPassword, edtFullName, edtEmail;
 
@@ -40,6 +40,9 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
+        QBSettings.getInstance().init(getApplicationContext(),"60149","NnE9q3LKjvKz6-e","hcWYgEvZmpcn5s8");
+
         QBChatService.getInstance().setReconnectionAllowed(true);
     }
 
@@ -47,6 +50,9 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
+        QBSettings.getInstance().init(getApplicationContext(),"60149","NnE9q3LKjvKz6-e","hcWYgEvZmpcn5s8");
 
         QBChatService.setDefaultAutoSendPresenceInterval(600);
         QBChatService.getInstance().setReconnectionAllowed(true);

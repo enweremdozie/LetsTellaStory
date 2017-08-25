@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         //helper.onCreate(sqLiteDatabase);
         QBSettings.getInstance().setAccountKey(ACCOUNT_KEY);
         QBSettings.getInstance().init(getApplicationContext(), APP_ID,AUTH_KEY,AUTH_SECRET );
+
         forgotPass = (TextView) findViewById(R.id.forgot_password);
 
        forgotPass.setOnClickListener(new View.OnClickListener() {

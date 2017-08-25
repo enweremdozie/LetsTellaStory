@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.quickblox.auth.QBAuth;
 import com.quickblox.auth.session.QBSession;
+import com.quickblox.auth.session.QBSettings;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.QBResponseException;
@@ -60,6 +61,10 @@ public class theStories extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
+
+        QBSettings.getInstance().init(getApplicationContext(),"60149","NnE9q3LKjvKz6-e","hcWYgEvZmpcn5s8");
+
         QBChatService.getInstance().setReconnectionAllowed(true);
 
         createSessionForStory();
@@ -76,6 +81,10 @@ public class theStories extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_the_stories);
+
+        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
+        QBSettings.getInstance().init(getApplicationContext(),"60149","NnE9q3LKjvKz6-e","hcWYgEvZmpcn5s8");
+
 
         QBChatService.setDefaultAutoSendPresenceInterval(600);
         QBChatService.getInstance().setReconnectionAllowed(true);

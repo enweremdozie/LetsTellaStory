@@ -55,7 +55,7 @@
             android:background="@layout/rounded_button"
             android:paddingTop="7dp"
             android:maxLength="150"
-            android:paddingLeft="5dp"/>
+            android:paddingLeft="5dp" />
     </android.support.design.widget.TextInputLayout>
 
 

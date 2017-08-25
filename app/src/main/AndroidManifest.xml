@@ -46,7 +46,8 @@
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".Story"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity
             android:name=".Story_Grid"
             android:screenOrientation="portrait" />
