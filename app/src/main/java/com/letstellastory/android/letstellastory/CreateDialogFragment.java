@@ -24,7 +24,10 @@ public class CreateDialogFragment extends DialogFragment {
             story = mArgs.getString("story");
             genre = mArgs.getString("genre");
             currentUser = mArgs.getString("currentUser");
-            Log.d("CURRENTUSER", "current user in Dialog: " + currentUser);
+
+            Log.d("CURRENTUSERDIALOG", "current password in dialog: " + password);
+            Log.d("CURRENTUSERDIALOG", "current user in dialog: " + user);
+            Log.d("CURRENTUSERDIALOG", "current user in Dialog in dialog: " + currentUser);
 
            // Log.d("CREATION", "in DialogFrag password is " + password);
                 // Use the Builder class for convenient dialog construction

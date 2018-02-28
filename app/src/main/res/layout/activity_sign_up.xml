@@ -6,55 +6,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/gradient1"
+
     tools:context="com.letstellastory.android.letstellastory.SignUpActivity"
     android:padding="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="80dp">
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/signup_editLogin"
-                android:hint="Enter your username"
-                android:padding="5dp"
+                android:hint="USERNAME"
+                android:drawablePadding="15dp"
+                android:padding="10dp"
+                android:layout_marginBottom="20dp"
+                android:paddingLeft="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_user_light_theme"
                 android:background="@layout/rounded_border_edittext"/>
-        </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/signup_editFullName"
-                android:hint="Enter your full name"
-                android:padding="5dp"
+                android:hint="FULL NAME"
+                android:drawablePadding="15dp"
+                android:padding="10dp"
+                android:layout_marginBottom="20dp"
+                android:paddingLeft="15dp"
+                android:drawableLeft="@drawable/ic_action_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@layout/rounded_border_edittext"/>
-        </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/signup_editPassword"
-                android:hint="Enter your password"
-                android:padding="5dp"
+                android:hint="PASSWORD"
+                android:padding="10dp"
+                android:drawablePadding="15dp"
+                android:drawableLeft="@drawable/ic_lock"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@layout/rounded_border_edittext"/>
-        </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+
+        <!--android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -66,12 +68,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@layout/rounded_border_edittext"/>
-        </android.support.design.widget.TextInputLayout>
+        </android.support.design.widget.TextInputLayout-->
+
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_below="@+id/group_login"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:weightSum="2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,11 +83,13 @@
 
         <Button
             android:id="@+id/signup_btnSignUp"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#FAFAFA"
             android:text="Sign Up"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_margin="15dp"
             android:background="@layout/rounded_button"
             android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
@@ -91,10 +97,12 @@
 
         <Button
             android:id="@+id/signup_btnCancel"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#FAFAFA"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_margin="15dp"
             android:text="Cancel"
             android:background="@layout/rounded_button"
             android:layout_marginLeft="5dp"

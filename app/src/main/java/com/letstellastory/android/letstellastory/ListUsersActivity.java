@@ -101,8 +101,8 @@ public class ListUsersActivity extends AppCompatActivity {
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        setTitle("USERS");
-        centerTitle();
+        setTitle("Users");
+        //centerTitle();
 
         mode = getIntent().getStringExtra(Common.UPDATE_MODE);
         qbChatDialog = (QBChatDialog) getIntent().getSerializableExtra(Common.UPDATE_DIALOG_EXTRA);
@@ -402,12 +402,12 @@ public class ListUsersActivity extends AppCompatActivity {
                     if (position == i) {
                         posClicked = position;
                         userInStory = isInStory();
-                        lstUsers.getChildAt(i).setBackgroundColor(Color.LTGRAY);
+                        lstUsers.getChildAt(i).setBackgroundColor(Color.DKGRAY);
                     }
 
                     else {
                         check[0] = false;
-                        lstUsers.getChildAt(i).setBackgroundColor(Color.WHITE);
+                        lstUsers.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
                     }
                 }
 

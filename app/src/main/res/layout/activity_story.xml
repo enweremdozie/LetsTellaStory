@@ -28,35 +28,27 @@
         android:layout_alignParentTop="true"
         android:divider="@android:color/transparent"
         android:stackFromBottom="false"
-        android:layout_above="@+id/editLayout"
+        android:layout_above="@+id/storyEdit"
         android:paddingTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         ></ListView>
 
 
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/editLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/postStory"
-        android:layout_toStartOf="@+id/postStory"
-        android:visibility="visible"
-        android:paddingLeft="5dp"
-        android:paddingBottom="5dp">
-
         <EditText
             android:id="@+id/storyEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/what_happens_next"
-            android:background="@layout/rounded_button"
-            android:paddingTop="7dp"
+            android:paddingTop="10dp"
             android:maxLength="150"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/postStory"
+            android:layout_toStartOf="@+id/postStory"
+            android:visibility="visible"
+            android:paddingBottom="5dp"
             android:paddingLeft="5dp" />
-    </android.support.design.widget.TextInputLayout>
+
 
 
         <!--TextView
@@ -79,8 +71,8 @@
       android:id="@+id/amount"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_alignTop="@+id/editLayout"
-      android:layout_toRightOf="@+id/editLayout">
+      android:layout_alignTop="@+id/storyEdit"
+      android:layout_toRightOf="@+id/storyEdit">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -107,9 +99,7 @@
           android:layout_weight="1"
           android:textSize="12sp"
           android:visibility="visible"
-          android:textColor="@android:color/black"
-
-          />
+          android:textColor="@android:color/black" />
 
     </LinearLayout>
 

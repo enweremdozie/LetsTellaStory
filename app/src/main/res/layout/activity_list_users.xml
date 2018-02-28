@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.letstellastory.android.letstellastory.ListUsersActivity"
     android:padding="5dp"
-    >
+    android:background="@drawable/gradient1">
 
 
     <ListView
@@ -14,15 +14,17 @@
         android:layout_marginBottom="40dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true"
-        ></ListView>
+        android:clickable="true">
+    </ListView>
 
     <Button
         android:id="@+id/btn_pass_story"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="PASS"
-        android:textColor="#FAFAFA"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
         android:background="@layout/rounded_button"
         android:layout_alignParentBottom="true"
         android:focusable="false"/>

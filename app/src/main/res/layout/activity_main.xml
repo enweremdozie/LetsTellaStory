@@ -7,52 +7,59 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#FAFAFA"
+    android:background="@drawable/gradient1"
     tools:context="com.letstellastory.android.letstellastory.MainActivity"
     android:padding="10dp">
+
+    <!--ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_letstellastory_icon_new"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/-->
 
     <LinearLayout
         android:id="@+id/group_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="20dp">
+        android:paddingTop="100dp">
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+
 
             <EditText
                 android:id="@+id/main_editLogin"
-                android:hint="Enter your username"
-                android:padding="5dp"
+                android:hint="USERNAME"
+                android:drawablePadding="15dp"
+                android:padding="10dp"
+                android:layout_marginBottom="20dp"
+                android:paddingLeft="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@layout/rounded_border_edittext"/>
-        </android.support.design.widget.TextInputLayout>
+                android:background="@layout/rounded_border_edittext"
+                android:drawableLeft="@drawable/ic_user_light_theme" />
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp">
+
 
             <EditText
                 android:id="@+id/main_editPassword"
-                android:hint="Enter your password"
-                android:padding="5dp"
+                android:hint="PASSWORD"
+                android:padding="10dp"
+                android:drawablePadding="15dp"
+                android:drawableLeft="@drawable/ic_lock"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@layout/rounded_border_edittext"/>
-        </android.support.design.widget.TextInputLayout>
-
 
     </LinearLayout>
+
+
 
     <LinearLayout
         android:layout_below="@+id/group_login"
         android:id="@+id/buttons"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:weightSum="2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -61,10 +68,12 @@
 
         <Button
             android:id="@+id/main_btnLogin"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#FAFAFA"
+            android:layout_margin="15dp"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="#FFFFFF"
             android:text="Login"
             android:background="@layout/rounded_button"
             android:layout_marginRight="5dp"
@@ -73,11 +82,13 @@
 
         <Button
             android:id="@+id/main_btnSignUp"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
+            android:layout_margin="15dp"
             android:layout_height="wrap_content"
-            android:textColor="#FAFAFA"
-            android:text="SignUp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:text="Register"
             android:background="@layout/rounded_button"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
@@ -88,8 +99,8 @@
         android:id="@+id/forgot_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Forgot my password"
-        android:textColor="#3F51B5"
+        android:text="Forgot your password"
+        android:textColor="#304FFE"
         android:padding="10dp"
         android:gravity="center"
         android:layout_below="@+id/buttons"

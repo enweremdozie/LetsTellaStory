@@ -55,19 +55,19 @@ public class theStories extends AppCompatActivity {
         super.onRestart();
         QBChatService.getInstance().setReconnectionAllowed(true);
 
-        createSessionForStory();
+        //createSessionForStory();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
 
         QBSettings.getInstance().init(getApplicationContext(),"60149","NnE9q3LKjvKz6-e","hcWYgEvZmpcn5s8");
+        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
 
         QBChatService.getInstance().setReconnectionAllowed(true);
 
-        createSessionForStory();
+        //createSessionForStory();
 
     }
 
@@ -82,16 +82,16 @@ public class theStories extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_the_stories);
 
-        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
         QBSettings.getInstance().init(getApplicationContext(),"60149","NnE9q3LKjvKz6-e","hcWYgEvZmpcn5s8");
+        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
 
 
         QBChatService.setDefaultAutoSendPresenceInterval(600);
         QBChatService.getInstance().setReconnectionAllowed(true);
 
-        setTitle("STORIES");
-        centerTitle();
-        createSessionForStory();
+        setTitle("Stories");
+        //centerTitle();
+
 
 
         // Find the view pager that will allow the user to swipe between fragments
@@ -152,7 +152,7 @@ public class theStories extends AppCompatActivity {
         Intent intent = getIntent();
 
         DBHelper mystories = new DBHelper(theStories.this);
-        mystories.insertData_my_stories(user, password);
+
 
         Intent intent2 = getIntent();
         story = intent2.getExtras().getString("title");
@@ -161,6 +161,8 @@ public class theStories extends AppCompatActivity {
         user = intent2.getExtras().getString("user");
         password = intent2.getExtras().getString("password");
 
+        createSessionForStory();
+        mystories.insertData_my_stories(user, password);
         receivePush();
 
     }

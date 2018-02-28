@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/gradient1"
     tools:context="com.letstellastory.android.letstellastory.theStories">
 
 
@@ -14,6 +15,7 @@
         android:id="@+id/story_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:tabTextColor="@android:color/white"
         app:tabMode="fixed"/>
 
     <android.support.v4.view.ViewPager

@@ -85,9 +85,9 @@ public class UserProfile extends AppCompatActivity {
 
         loadUserProfile();
 
-        centerTitle();
+        //centerTitle();
 
-        setTitle("EDIT MY PROFILE");
+        setTitle("Profile");
 
         user_avatar.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -110,8 +110,8 @@ public class UserProfile extends AppCompatActivity {
             public void onClick(View v) {
                 String password = edtPassword.getText().toString();
                 String oldPassword = edtOldPassword.getText().toString();
-                String email = edtEmail.getText().toString();
-                String phone = edtPhone.getText().toString();
+                //String email = edtEmail.getText().toString();
+                //String phone = edtPhone.getText().toString();
                 String fullName = edtFullName.getText().toString();
 
                 QBUser user = new QBUser();
@@ -122,10 +122,10 @@ public class UserProfile extends AppCompatActivity {
                 user.setPassword(password);
                 if(!Common.isNullOrEmptyString(fullName));
                 user.setFullName(fullName);
-                if(!Common.isNullOrEmptyString(email));
+                /*if(!Common.isNullOrEmptyString(email));
                 user.setEmail(email);
                 if(!Common.isNullOrEmptyString(phone));
-                user.setPhone(phone);
+                user.setPhone(phone);*/
 
                final ProgressDialog mDialog = new ProgressDialog(UserProfile.this);
 
@@ -142,7 +142,7 @@ public class UserProfile extends AppCompatActivity {
                     @Override
                     public void onError(QBResponseException e) {
                         Toast.makeText(UserProfile.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-
+                        mDialog.dismiss();
                     }
                 });
             }
@@ -222,12 +222,12 @@ public class UserProfile extends AppCompatActivity {
                     });
         QBUser currentUser = QBChatService.getInstance().getUser();
         String fullName = currentUser.getFullName();
-        String email = currentUser.getEmail();
-        String phone = currentUser.getPhone();
+        //String email = currentUser.getEmail();
+        //String phone = currentUser.getPhone();
 
-        edtEmail.setText(email);
+        //edtEmail.setText(email);
         edtFullName.setText(fullName);
-        edtPhone.setText(phone);
+        //edtPhone.setText(phone);
     }
 
     @Override
@@ -320,8 +320,8 @@ public class UserProfile extends AppCompatActivity {
         btnUpdate = (Button) findViewById(R.id.update_user_btn_update);
         deleteAccount = (Button) findViewById(R.id.delete_account);
 
-        edtEmail = (EditText) findViewById(R.id.update_edt_email);
-        edtPhone = (EditText) findViewById(R.id.update_edt_phone);
+        //edtEmail = (EditText) findViewById(R.id.update_edt_email);
+        //edtPhone = (EditText) findViewById(R.id.update_edt_phone);
         edtFullName = (EditText) findViewById(R.id.update_edt_full_name);
         edtPassword = (EditText) findViewById(R.id.update_edt_password);
         edtOldPassword = (EditText) findViewById(R.id.update_edt_old_password);

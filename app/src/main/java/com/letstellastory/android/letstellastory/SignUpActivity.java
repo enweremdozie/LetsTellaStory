@@ -1,9 +1,11 @@
 package com.letstellastory.android.letstellastory;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
@@ -51,6 +53,20 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
+        builder.setTitle("User Information");
+        builder.setMessage("Please be advised that signing up with \"Let's tell a story\" means you will be required to create a user name and a password and also add your full name to your profile. None of the information you enter here will be shared or used anywhere else but in this app for logging in and recovering forgotten passwords. Thank you for understanding");
+
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                // You don't have to do anything here if you just want it dismissed when clicked
+            }
+        });
+        builder.show();
+
         QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
         QBSettings.getInstance().init(getApplicationContext(),"60149","NnE9q3LKjvKz6-e","hcWYgEvZmpcn5s8");
 
@@ -62,8 +78,8 @@ public class SignUpActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         registerSession();
-        setTitle("SIGN UP");
-        centerTitle();
+        setTitle("Sign up");
+        //centerTitle();
 
 
 
@@ -73,7 +89,7 @@ public class SignUpActivity extends AppCompatActivity {
         edtPassword = (EditText)findViewById(R.id.signup_editPassword);
         edtUser = (EditText)findViewById(R.id.signup_editLogin);
         edtFullName = (EditText)findViewById(R.id.signup_editFullName);
-        edtEmail = (EditText)findViewById(R.id.signup_editEmail);
+        //edtEmail = (EditText)findViewById(R.id.signup_editEmail);
 
         btnCancel.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -87,12 +103,12 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String user = edtUser.getText().toString();
                 String password = edtPassword.getText().toString();
-                String email = edtEmail.getText().toString();
+                //String email = edtEmail.getText().toString();
 
                 QBUser qbUser = new QBUser(user,password);
 
                 qbUser.setFullName(edtFullName.getText().toString());
-                qbUser.setEmail(email);
+                //qbUser.setEmail(email);
 
 
 
@@ -100,7 +116,7 @@ public class SignUpActivity extends AppCompatActivity {
                 QBUsers.signUp(qbUser).performAsync(new QBEntityCallback<QBUser>() {
                     @Override
                     public void onSuccess(QBUser qbUser, Bundle bundle) {
-                        Toast.makeText(SignUpActivity.this, "Please confirm your registration in your email inbox or junk", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SignUpActivity.this, "Registration successful", Toast.LENGTH_LONG).show();
                         finish();
                     }
 
@@ -122,6 +138,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     private void registerSession() {
         QBAuth.createSession().performAsync(new QBEntityCallback<QBSession>() {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Lets tell a story</string>
+    <string name="app_name">Let\'s tell a story</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -11,6 +11,8 @@
     <string name="pass">PASS</string>
     <string name="sender_id">215605351012</string>
     <string name="what_happens_next">What happens next</string>
+    <string name="story_name">Story name</string>
+    <string name="genre">Genre</string>
     <item name="visible" type="id" />
     <item name="masked" type="id" />
 

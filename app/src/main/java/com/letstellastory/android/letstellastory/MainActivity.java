@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        createSessionForStory();
+        //createSessionForStory();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        createSessionForStory();
+        //createSessionForStory();
     }
 
     @Override
@@ -78,30 +78,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        boolean firstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("firstRun", true);
-        if(firstRun){
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Welcome");
-            builder.setMessage("Thank you for being a part of \"Lets tell a story\", we hope you enjoy creating your own stories and being a part of the shared stories with people around the world");// + "\n" +
+
+
+        QBSettings.getInstance().init(getApplicationContext(), APP_ID,AUTH_KEY,AUTH_SECRET );
+        QBSettings.getInstance().setAccountKey(ACCOUNT_KEY);
+        //createSessionForStory();
+        setTitle("Let's tell a story");
+
+
+        /*QBChatService.setDebugEnabled(true); // enable chat logging
+
+        QBChatService.setDefaultPacketReplyTimeout(10000);
+
+        QBChatService.ConfigurationBuilder chatServiceConfigurationBuilder = new QBChatService.ConfigurationBuilder();
+        chatServiceConfigurationBuilder.setSocketTimeout(60); //Sets chat socket's read timeout in seconds
+        chatServiceConfigurationBuilder.setKeepAlive(true); //Sets connection socket's keepAlive option.
+        chatServiceConfigurationBuilder.setUseTls(true); //Sets the TLS security mode used when making the connection. By default TLS is disabled.
+        QBChatService.setConfigurationBuilder(chatServiceConfigurationBuilder);*/
 
 
 
 
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-}
-            });
-
-            builder.show();
-            getSharedPreferences("PREFERENCE", MODE_PRIVATE)
-                    .edit()
-                    .putBoolean("firstRun", false)
-                    .commit();
-        }
 
         //helper.onCreate(sqLiteDatabase);
-        QBSettings.getInstance().setAccountKey(ACCOUNT_KEY);
-        QBSettings.getInstance().init(getApplicationContext(), APP_ID,AUTH_KEY,AUTH_SECRET );
+
 
         forgotPass = (TextView) findViewById(R.id.forgot_password);
 
@@ -149,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
 
         QBSettings.getInstance().setEnablePushNotification(true);
         requestRunTimePermission();
+
+        userInfo();
 
 
         btnLogin = (Button) findViewById(R.id.main_btnLogin);
@@ -201,9 +203,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        createSessionForStory();
+        //createSessionForStory();
 
     }
+
+    private void userInfo() {
+        boolean firstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("firstRun", true);
+        if(firstRun){
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Welcome");
+            builder.setMessage("Thank you for being a part of \"Let's tell a story\", we hope you enjoy creating your own stories and being a part of the shared stories with people around the world");// + "\n" +
+
+
+
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            });
+
+            builder.show();
+
+            getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                    .edit()
+                    .putBoolean("firstRun", false)
+                    .commit();
+        }
+
+    }
+
     private void requestRunTimePermission() {
         if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
@@ -213,6 +241,8 @@ public class MainActivity extends AppCompatActivity {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, REQUEST_CODE);
         }
+
+
     }
 
     @Override
@@ -324,6 +354,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Object o, Bundle bundle) {
                         //mDialog.dismiss();
+
                     }
 
                     @Override
@@ -358,7 +389,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 
 
     public void resetPassword(){

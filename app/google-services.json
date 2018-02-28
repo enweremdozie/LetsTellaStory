@@ -1,12 +1,12 @@
 {
   "project_info": {
-    "project_number": "215605351012",
-    "project_id": "firebase-lets-tell-a-story"
+    "project_number": "210647832792",
+    "project_id": "lets-tell-a-story"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:215605351012:android:1f7add256f9ce579",
+        "mobilesdk_app_id": "1:210647832792:android:1f7add256f9ce579",
         "client_id": "com.letstellastory.android.letstellastory",
         "client_type": 1,
         "android_client_info": {
@@ -15,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "215605351012-4cu81don12v4t2535gm6re87l0pf8aaa.apps.googleusercontent.com",
+          "client_id": "210647832792-4cu81don12v4t2535gm6re87l0pf8aaa.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

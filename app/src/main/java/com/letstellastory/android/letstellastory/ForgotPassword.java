@@ -39,12 +39,12 @@ Button btnReset, btnCancel;
 
         QBChatService.getInstance().setReconnectionAllowed(true);
 
-        setTitle("Reset your password");
+        setTitle("Password reset");
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        centerTitle();
+        //centerTitle();
 
         btnReset = (Button) findViewById(password_reset);
         btnCancel = (Button) findViewById(R.id.password_cancel);

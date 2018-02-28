@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -59,8 +61,8 @@ public class StartAStory extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
         QBSettings.getInstance().init(getApplicationContext(),"60149","NnE9q3LKjvKz6-e","hcWYgEvZmpcn5s8");
+        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
 
         QBChatService.getInstance().setReconnectionAllowed(true);
         createSessionForStory();
@@ -71,8 +73,13 @@ public class StartAStory extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_astory);
 
-        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+
         QBSettings.getInstance().init(getApplicationContext(),"60149","NnE9q3LKjvKz6-e","hcWYgEvZmpcn5s8");
+        QBSettings.getInstance().setAccountKey("UYy6wj-dzPJ4ePBZdMJM");
 
         QBChatService.setDefaultAutoSendPresenceInterval(600);
         QBChatService.getInstance().setReconnectionAllowed(true);
@@ -91,8 +98,8 @@ public class StartAStory extends AppCompatActivity {
         Log.d("CURRENTUSER1", "current user in SAS: " + currentUser);
 
 
-        setTitle("START A STORY");
-        centerTitle();
+        setTitle("About story");
+        //centerTitle();
 
         length.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -226,6 +233,16 @@ public class StartAStory extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 
